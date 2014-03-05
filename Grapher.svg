@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init()" onresize="aspectRatio(); modeIndicatorPosition();" xml:space="preserve" width="100%" height="100%">
-    <script type="text/javascript" xlink:href="graphApp.js" />
-    <script type="text/javascript" xlink:href="panel.js" />
-    <script type="text/javascript" xlink:href="global.js" />
+    <script type="text/javascript" xlink:href="js/graphApp.js" />
+    <script type="text/javascript" xlink:href="js/panel.js" />
+    <script type="text/javascript" xlink:href="js/global.js" />
 	<script type="text/javascript" xlink:href="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" /> 
     <script type="text/javascript">
         <![CDATA[

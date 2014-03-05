@@ -486,7 +486,7 @@ var test = 0;
         this.layout.stop();
 
 
-    };
+    }; 
 
     // Array.forEach implementation for IE support..
     //https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/forEach

@@ -3,7 +3,126 @@ var testing = 1;
 /********************************************************************* Global Variables  */
 
 var kpressBool;/* Used as a check for if the keyboard is pressed down, only 
-used in functions Kpress and backspace *
+used in functions Kpress and backspace */
+
+function aspectRatio() {
+    var windowAR = window.innerWidth / window.innerHeight;
+    var docW = (+document.getElementById('CanvasBg').getAttributeNS(null, "width"));
+    var docH = (+document.getElementById('CanvasBg').getAttributeNS(null, "height"));
+    var docAR = docW / docH;
+    var vBox = Graph.Canvas.getAttributeNS(null, "viewBox");
+    var CanvasBg = document.getElementById("CanvasBg");
+    var SVGwidth = Math.max((+CanvasBg.getAttributeNS(null, "width")), (+CanvasBg.getAttributeNS(null, "width"))) + 10;
+    vBox = vBox.split(" ");
+    var minX = Graph.Canvas.viewbox.minX
+    var minY = Graph.Canvas.viewbox.minY
+    var width = Graph.Canvas.viewbox.width
+    var height = Graph.Canvas.viewbox.height
+    var viewBoxAR = width / height;
+    if (window.innerWidth > docW) {
+        document.getElementById('CanvasBg').setAttributeNS(null, "width", window.innerWidth);
+    }
+    if (window.innerHeight > docH) {
+        document.getElementById('CanvasBg').setAttributeNS(null, "height", window.innerHeight);
+    }
+    if (windowDimensions.width != window.innerWidth) {
+        //var windowWidthDiff=window.innerWidth-windowDimensions.width;
+        //var windowWidthViewRatio=Graph.Canvas.viewbox.width/windowDimensions.width;
+        var newWidth = Math.floor(height * windowAR);
+        //var newWidth = width+(windowWidthDiff*windowWidthViewRatio);
+        Graph.Canvas.setAttributeNS(null, "width", window.innerWidth);
+        Graph.Canvas.setAttributeNS(null, "height", window.innerHeight);
+        Graph.Canvas.setAttributeNS(null, "viewBox", minX + " " + minY + " " + newWidth + " " + height);
+        Graph.Canvas.viewbox.minX = minX;
+        Graph.Canvas.viewbox.minY = minY;
+        Graph.Canvas.viewbox.width = newWidth;
+        Graph.Canvas.viewbox.height = height;
+        windowDimensions.width = window.innerWidth;
+    }
+    if (windowDimensions.height != window.innerHeight) {
+        //var windowHeightDiff=window.innerHeight-windowDimensions.height;
+        //var windowHeightViewRatio=Graph.Canvas.viewbox.height/windowDimensions.height;
+        var newHeight = Math.floor(width * (1 / windowAR));
+        //var newHeight = height+(windowHeightDiff*windowHeightViewRatio);
+        Graph.Canvas.setAttributeNS(null, "width", window.innerWidth);
+        Graph.Canvas.setAttributeNS(null, "height", window.innerHeight);
+        Graph.Canvas.setAttributeNS(null, "viewBox", minX + " " + minY + " " + width + " " + newHeight);
+        Graph.Canvas.viewbox.minX = minX;
+        Graph.Canvas.viewbox.minY = minY;
+        Graph.Canvas.viewbox.width = width;
+        Graph.Canvas.viewbox.height = newHeight;
+        windowDimensions.height = window.innerHeight;
+    }
+    if ((Graph.Canvas.viewbox.minX + Graph.Canvas.viewbox.width) > docW) {
+        Graph.Canvas.viewbox.minX = docW - Graph.Canvas.viewbox.width;
+    }
+    if ((Graph.Canvas.viewbox.minY + Graph.Canvas.viewbox.height) > docH) {
+        Graph.Canvas.viewbox.minY = docH - Graph.Canvas.viewbox.height;
+    }
+    if (Graph.Canvas.viewbox.minX < 0) {
+        Graph.Canvas.viewbox.minX = 0;
+    }
+    if (Graph.Canvas.viewbox.minY < 0) {
+        Graph.Canvas.viewbox.minY = 0;
+    }
+    if (Graph.Canvas.viewbox.minX == 0 && Graph.Canvas.viewbox.width > docW) {
+        document.getElementById('CanvasBg').setAttributeNS(null, "width", Graph.Canvas.viewbox.width);
+    }
+    if (Graph.Canvas.viewbox.minY == 0 && Graph.Canvas.viewbox.height > docH) {
+        document.getElementById('CanvasBg').setAttributeNS(null, "height", Graph.Canvas.viewbox.height);
+    }
+    redrawNavPanel();
+    if (helpFlag == true) {
+        helpPlace();
+    }
+}
+function modeIndicatorPosition() {
+    var mode = document.getElementById('mode');
+    var rect = mode.firstChild;
+    var text = rect.nextSibling;
+    var rightEdge = window.innerWidth - (bwidth + 2)
+    if (rightEdge > buttons.length * (bwidth + 2) - 2) {
+        rect.setAttributeNS(null, "x", rightEdge);
+        rect.setAttributeNS(null, "y", 0);
+        text.setAttributeNS(null, "x", rightEdge + 15);
+        text.setAttributeNS(null, "y", 15);
+    }
+    else {
+        rect.setAttributeNS(null, "x", 0);
+        rect.setAttributeNS(null, "y", barheight + 2);
+        text.setAttributeNS(null, "x", 15);
+        text.setAttributeNS(null, "y", barheight + 17);
+    }
+}
+function init() {
+    xmlns = 'http://www.w3.org/2000/svg';
+    xlinkns = 'http://www.w3.org/1999/xlink';
+    top.SVGRegister = import2; // added debug 8-5 then for additional change SVGRegister to import2
+    top.SVGRegister2 = export1;
+    top.SVGRegister3 = localImport;
+    //document.documentElement.setAttributeNS(null, "viewBox", "0 0 "+window.innerWidth+" "+window.innerHeight);
+    document.documentElement.addEventListener("mousedown", function (evt) { evt.preventDefault(); }, false);
+    document.documentElement.addEventListener("keypress", function (evt) { if (evt.keyCode == 8) evt.preventDefault(); }, false);
+    windowDimensions = { width: window.innerWidth, height: window.innerHeight };
+    Graph = new graph();
+    if (window.addEventListener) {
+        window.addEventListener("resize", aspectRatio, false);
+        window.addEventListener("resize", modeIndicatorPosition, false);
+    }
+    //var c = ["blue","yellow"]; //colors may still be sent as a parameter to addMenu()
+    addMenu(0);
+    addMenu(1);
+    addMenu(2);
+    addMenu(3);
+    addMenu(4, true); var HelpColors = new Array("none", "red", "blue", "purple");
+    addMenu(5, false, HelpColors);
+    appendHelp();
+    document.getElementById('helpFile').addEventListener("mousedown", function (evt) {
+        if (evt.button === 0 || evt.button === undefined) { evt.preventDefault(); showHide('visible', 5); }
+    }, false);
+    window.focus();
+    logAction("start");
+}
 
 
 /********************************************************************************* graph 
@@ -1402,146 +1521,6 @@ function hopNodes(){
 		output+="The shortest path from " + i + " to " + endNode + " starts with the motion of " + i + " to " + pathHolder[0] + "\n";
 		i=pathHolder[0];
 	}
-}
-
-/***************************************************************** runCurrentPermutation */
-function runCurrentPermutation(){
-
-
-
-	adjacencyMatrix();
-	GravityBadReason = new String();
-	startValue = Graph.nodenum - sz;
-	subgraph=0;
-	Gravity = new Array();
-	msg = new String();
-	numOfPermutations = 0;
-  	for (i=0; i<sz; i++)
-  		{
-			Gravity[i]=i;
-	 	}
-	if (CheckGravity(0) != 0)
-		{
-			msg = "This permutation is flavored correctly.";
-			message(msg);
-		}
-	else 
-		{
-			var user_response = prompt(GravityBadReason,"y")	;
-			if (user_response == "Y" || user_response == "y")
-			{
-				adjacencyMatrix();
-				CorrectGravity = new Array();
-				CorrectIndex = 0;
-				p=0;
-				results = 0;
-				counter=0;
-				Permute(sz);
-				if (results == 1)
-				{
-					resultsTest();
-					if (numOfPermutations > 1)
-					{
-						msg = "There were " + numOfPermutations + " permutations were found for this structure.\nHere is one of them."
-						for (var j=0; j<sz; j++)
-							{
-								document.getElementById("g"+(j+startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[0][j]).toString();
-							}
-						message(msg);
-					}
-					else {
-						msg = "A proper permutation has been found for this graph. It is currently being displayed.";
-						for (var j=0; j<sz; j++)
-							{
-								document.getElementById("g"+(j+startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[0][j]).toString();
-							}
-						message(msg);
-						  }
-				}
-				else
-				{
-					msg = "A proper permutation for this graph does not appear to exist.";
-					message(msg);
-				}	
-			}				
-		}
-	}
-
-/*********************************************************************** nextPermutation */	
-function nextPermutation(){
-	counter++;
-	if (counter < CorrectIndex)
-	{
-	msg = "Displaying permutation " + (counter+1) + ".";
-		if (subgraph==0)
-			{
-				for (var j=0; j<sz; j++)
-				{
-		 		document.getElementById("g"+(j+startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
-				}
-			}
-		else
-			{
-				for (var j=0; j<sz;j++)
-				{
-		 		document.getElementById("g"+OrigSubGraph[j]).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
-				}	
-			}
-	}
-	else
-	{
-	 msg = "There are no further permutations available."		
-	}
-	message(msg);
-}
-
-/******************************************************************* previousPermutation */	
-function previousPermutation(){
-	counter--;
-	if (counter >= 0)
-	{
-		msg = "Displaying permutation " + (counter+1) + ".";
-		if (subgraph==0)
-			{
-				for (var j=0; j<sz; j++)
-				{
-		 		document.getElementById("g"+(j+startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
-				}
-			}
-		else
-			{
-				for (var j=0; j<sz; j++)
-				{
-		 		document.getElementById("g"+OrigSubGraph[j]).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
-				}		
-			}
-		//counter--;
-	}
-	else
-	{
-	 msg = "There are no further permutations available."		
-	}
-	message(msg);
-}
-
-/*************************************************************************** resultsTest */
-function resultsTest(){
-	TrueGravity=0;
-	FalseGravity=0;
-	ProperGravity = Create2DArray();
-	for (var z=0; z<CorrectIndex; z++)
-	{
-		Gravity = CorrectGravity[z];
-		if (CheckGravity(0) != 0)
-		{
-			ProperGravity[TrueGravity] = CorrectGravity[z];
-			TrueGravity++;		
-		}
-		else
-		{
-			FalseGravity++;
-		}		
-	}	
 }
 
 /****************************************************************************** subGraph */

@@ -401,3 +401,120 @@ function landmarksVantagePoints() {
         }//end big if
     }//end i
 }//end landmarksVantagePoints
+
+/***************************************************************** runCurrentPermutation */
+function runCurrentPermutation() {
+
+
+
+    adjacencyMatrix();
+    GravityBadReason = new String();
+    startValue = Graph.nodenum - sz;
+    subgraph = 0;
+    Gravity = new Array();
+    msg = new String();
+    numOfPermutations = 0;
+    for (i = 0; i < sz; i++) {
+        Gravity[i] = i;
+    }
+    if (CheckGravity(0) != 0) {
+        msg = "This permutation is flavored correctly.";
+        message(msg);
+    }
+    else {
+        var user_response = prompt(GravityBadReason, "y");
+        if (user_response == "Y" || user_response == "y") {
+            adjacencyMatrix();
+            CorrectGravity = new Array();
+            CorrectIndex = 0;
+            p = 0;
+            results = 0;
+            counter = 0;
+            Permute(sz);
+            if (results == 1) {
+                resultsTest();
+                if (numOfPermutations > 1) {
+                    msg = "There were " + numOfPermutations + " permutations were found for this structure.\nHere is one of them."
+                    for (var j = 0; j < sz; j++) {
+                        document.getElementById("g" + (j + startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[0][j]).toString();
+                    }
+                    message(msg);
+                }
+                else {
+                    msg = "A proper permutation has been found for this graph. It is currently being displayed.";
+                    for (var j = 0; j < sz; j++) {
+                        document.getElementById("g" + (j + startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[0][j]).toString();
+                    }
+                    message(msg);
+                }
+            }
+            else {
+                msg = "A proper permutation for this graph does not appear to exist.";
+                message(msg);
+            }
+        }
+    }
+}
+
+/*********************************************************************** nextPermutation */
+function nextPermutation() {
+    counter++;
+    if (counter < CorrectIndex) {
+        msg = "Displaying permutation " + (counter + 1) + ".";
+        if (subgraph == 0) {
+            for (var j = 0; j < sz; j++) {
+                document.getElementById("g" + (j + startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
+            }
+        }
+        else {
+            for (var j = 0; j < sz; j++) {
+                document.getElementById("g" + OrigSubGraph[j]).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
+            }
+        }
+    }
+    else {
+        msg = "There are no further permutations available."
+    }
+    message(msg);
+}
+
+/******************************************************************* previousPermutation */
+function previousPermutation() {
+    counter--;
+    if (counter >= 0) {
+        msg = "Displaying permutation " + (counter + 1) + ".";
+        if (subgraph == 0) {
+            for (var j = 0; j < sz; j++) {
+                document.getElementById("g" + (j + startValue)).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
+            }
+        }
+        else {
+            for (var j = 0; j < sz; j++) {
+                document.getElementById("g" + OrigSubGraph[j]).firstChild.nextSibling.firstChild.nodeValue = (CorrectGravity[counter][j]).toString();
+            }
+        }
+        //counter--;
+    }
+    else {
+        msg = "There are no further permutations available."
+    }
+    message(msg);
+}
+
+/*************************************************************************** resultsTest */
+function resultsTest() {
+    TrueGravity = 0;
+    FalseGravity = 0;
+    ProperGravity = Create2DArray();
+    for (var z = 0; z < CorrectIndex; z++) {
+        Gravity = CorrectGravity[z];
+        if (CheckGravity(0) != 0) {
+            ProperGravity[TrueGravity] = CorrectGravity[z];
+            TrueGravity++;
+        }
+        else {
+            FalseGravity++;
+        }
+    }
+}
+

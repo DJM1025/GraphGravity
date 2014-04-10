@@ -4,11 +4,65 @@
     <title>Graph Gravity</title>
 </head>
 <body>
-    <script>
-        
-        alert(screen.availHeight)
 
+    <div id="output" ></div><br>
+    <svg id="svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="400" style="right: 0px; position: fixed;">
+
+        <defs>
+            <g id="sideClick">
+                <rect fill="black" height="50" width="26" stroke="red" stroke-width="2" x="1" y="1" ry="10" />
+                <rect fill="gray" height="34" width="1" stroke="gray" stroke-width="2" x="6" y="9" ry="1" />
+                <rect fill="gray" height="34" width="1" stroke="gray" stroke-width="2" x="11" y="9" ry="1" />
+            </g>
+        </defs>
+        <use xlink:href="#sideClick" transform="translate(0, 80)" />
+    </svg>
+
+
+
+    <script>
+        var output = document.getElementById("output");
+        //alert(screen.availHeight)
+        function extrudePanel() {
+
+        }
+        function screenSize() {
+            this.width = screen.width;
+            this.height = screen.height;
+            output.innerHTML = this.width + "  " + this.height + "  " + screen.availWidth + "  " + screen.availHeight + "  " + window.innerWidth + "  " + window.innerHeight
+
+        }
+        function Panel() {
+            var xmlns = "http://www.w3.org/2000/svg";
+            var xlink = "http://www.w3.org/1999/xlink";
+            var svgc = document.getElementById("svg");
+            
+
+
+
+            this.sideClick = document.getElementById("sideClick");
+            this.rect = document.createElementNS(xmlns, "rect");
+            this.rect.setAttributeNS(null, "x", "16");
+            this.rect.setAttributeNS(null, "height", "50");
+            this.rect.setAttributeNS(null, "width", "5");
+            this.rect.setAttributeNS(null, "fill", "black");
+            this.sideClick.setAttributeNS(null,"translate" , "transform("+ +","+ +")")
+            svgc.appendChild(this.rect);
+
+        }
+            function point(x,y){
+                this.x=x;
+                this.y=y;
+            }
+
+        function svgElement() {
+
+        }
+        Panel();
+        screenSize();
     </script>
 
+
+    
 </body>
 </html>

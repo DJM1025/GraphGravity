@@ -1,0 +1,9 @@
+﻿<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="0" height="0">
+	<defs>
+	<g id="sideClick">
+		<rect fill="black" height="50"  width="25" stroke="red" stroke-width="2" x="20" y="20" ry="10" />
+		<rect fill="gray" height="34" width="2" stroke="gray" stroke-width="2" x="25" y="28" ry="1" />
+		<rect fill="gray" height="34" width="2" stroke="gray" stroke-width="2" x="30" y="28" ry="1" />
+	</g>
+    </defs>
+</svg>

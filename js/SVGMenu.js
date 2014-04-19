@@ -1,85 +1,11 @@
-﻿var MenuStructure = {
-    'File': {
-        'Item': document.createElementNS(null, "g"),
-        'SubItems': {
-            'Import': {
-                'Item': document.createElementNS(null, "g"),
-                'SubItems': {
-                    'Local': {
-                        'Item': document.createElementNS(null, "g")
-                    },
-                    'Server': {
-                        'Item': document.createElementNS(null, "g")
-                    },
-                    'Clipboard': {
-                        'Item': document.createElementNS(null, "g")
-                    }
-                }
-            },
-            'Export': {
-                'Item': document.createElementNS(null, "g"),
-                'SubItems': {
-                    'Local': {
-                        'Item': document.createElementNS(null, "g")
-                    },
-                    'Server': {
-                        'Item': document.createElementNS(null, "g")
-                    },
-                    'Clipboard': {
-                        'Item': document.createElementNS(null, "g")
-                    }
-                }
-            }
-        }
-    },
-    'Edit': {
-    },
-    'View': {
-    }
-};
+﻿
+//TO DO'S
+//ADD ALL METHODS TO SVGMenu.prototype possibly - though this may eliminate closure capability
+//CHANGE THE MENU TO HIDE ONLY WHEN THE USER CLICKS ON A DIFFERENT CONTROL BESIDES THE MENU
+//add xmlns to this file because it is in only in Graph.js atm
+//prolly should use parentElement - just use parentNode (or in any case such as nextElementSibling)
+function SVGMenu(x, y) {    
 
-var menuHeirarchy = {
-    'File': {
-        'Item': document.createElementNS(null, "g"),
-        'Import': {
-            'Item': document.createElementNS(null, "g"),
-            'Local': {
-                'Item': document.createElementNS(null, "g"),
-                'Parent': "Import.Item",
-                'Children': {},
-                'Open': null
-            },
-            'Server': {
-                'Item': document.createElementNS(null, "g")
-            },
-            'Clipboard': {
-                'Item': document.createElementNS(null, "g")
-            },
-            'Open': "Clipboard",
-            'Parent': "File.Item",
-            'Children': "Local.Item, Server.Item, Clipboard.Item"
-        },
-        'Export': {
-            'Item': document.createElementNS(null, "g"),
-            'Local': {
-                'Item': document.createElementNS(null, "g")
-            },
-            'Server': {
-                'Item': document.createElementNS(null, "g")
-            },
-            'Clipboard': {
-                'Item': document.createElementNS(null, "g")
-            },
-            'Parent': "File",
-            'Children': "Local.Item, Server.Item, Clipboard.Item"
-        },
-        'Open': "Import",
-        'Parent': "File.Item",
-        'Children': "Local.Item, Server.Item, Clipboard.Item"
-    }
-};
-
-function SVGMenu(x, y) {
     var staticWidth = 150;
     var staticHeight = 30;
     var hideTimer;
@@ -88,7 +14,18 @@ function SVGMenu(x, y) {
         'Menu': (function () {
             var menuGroup = document.createElementNS(xmlns, "g");
             menuGroup.setAttributeNS(null, "fill", "red");
-            menuGroup.addEventListener("mouseout", function (event) {
+            window.addEventListener("click", function(event){
+                if(event.target === Graph.plane.background){
+                    if(menuHeirarchy.OpenItem !== null){
+                        hide(menuHeirarchy.OpenItem, true);
+                    }
+                }
+            }, false);
+            /*menuGroup.addEventListener("blur", function(event){
+                hide(this, true);
+            }, false);*/
+            /*menuGroup.addEventListener("mouseout", function (event) {
+                console.log(event.relatedTarget, menuHeirarchy.OpenItem);
                 if (event.relatedTarget) {
                     var relatedTarget = event.relatedTarget.parentElement;
                     if (relatedTarget.topParent !== this) {
@@ -100,7 +37,7 @@ function SVGMenu(x, y) {
                         delayHide()
                     }
                 }                
-            }, false);
+            }, false);*/
             return menuGroup;
         })(),
         'nextX': x,
@@ -303,6 +240,14 @@ function SVGMenu(x, y) {
         //console.log(menuHeirarchy);
     };
 
+    this.insertSubItemBefore = function (newSubItem, something) {
+
+    }
+
+    this.insertSubItemAfter = function (newSubItem, something) {
+
+    }
+
     this.removeSubItem = function (parentHeirarchy, title) {
         /*var heirarchy = menuHeirarchy;
         var errorString = "";
@@ -352,19 +297,66 @@ function SVGMenu(x, y) {
 (function presetMenu() {
     var menu = new SVGMenu(0, 0);
     menu.addHeaderItem("File");
-    menu.addHeaderItem("Edit");
-    menu.addHeaderItem("Select");
-    menu.addHeaderItem("Gravity");
     menu.addSubItem(["File"], "Import");
-    menu.addSubItem(["File"], "Export");
+    menu.addSubItem(["File", "Import"], "Local");
+    menu.addSubItem(["File", "Import"], "Server");
+    menu.addSubItem(["File", "Import"], "Clipboard");
+    menu.addSubItem(["File", "Import"], "Website");
+    menu.addSubItem(["File"], "Export");    
+    menu.addSubItem(["File", "Export"], "Local");
+    menu.addSubItem(["File", "Export"], "Server");
+    menu.addSubItem(["File", "Export"], "Clipboard");
+    menu.addSubItem(["File", "Export"], "Website");
+
+    menu.addHeaderItem("Edit");
+    menu.addSubItem(["Edit"], "Undo");
+    menu.addSubItem(["Edit"], "Redo");
+    menu.addSubItem(["Edit"], "Cut");
+    menu.addSubItem(["Edit"], "Copy");
+    menu.addSubItem(["Edit"], "Paste");
+    menu.addSubItem(["Edit"], "Delete");
+    menu.addSubItem(["Edit"], "Scale");
+
+    menu.addHeaderItem("Select");    
+    menu.addSubItem(["Select"], "All");
+    menu.addSubItem(["Select"], "None");
+    menu.addSubItem(["Select"], "Invert");
+    menu.addSubItem(["Select"], "Cut-points");
+    menu.addSubItem(["Select"], "Dominate");
+    menu.addSubItem(["Select"], "Shortest Path");
+
+    menu.addHeaderItem("View");
+    menu.addSubItem(["View"], "Panel");
+    menu.addSubItem(["View"], "History");
+    menu.addSubItem(["View"], "Spreadsheet");
+    menu.addSubItem(["View"], "Help");
+
+    menu.addHeaderItem("Graph");
+    menu.addSubItem(["Graph"], "Gravity");
+    menu.addSubItem(["Graph", "Gravity"], "Landmarks");
+    menu.addSubItem(["Graph", "Gravity"], "Vantage Points");
+    menu.addSubItem(["Graph", "Gravity"], "Current Flavoring");
+    menu.addSubItem(["Graph", "Gravity"], "Find Flavoring");
+    menu.addSubItem(["Graph", "Gravity"], "Options");
+    menu.addSubItem(["Graph"], "Create Random");
+    menu.addSubItem(["Graph", "Create Random"], "Adjacency Matrix");
+    menu.addSubItem(["Graph", "Create Random"], "Visual");
+    menu.addSubItem(["Graph", "Create Random"], "Tree");
+    menu.addSubItem(["Graph", "Create Random"], "Options");
+    menu.addSubItem(["Graph"], "Complement");
+    menu.addSubItem(["Graph"], "Extrude");
+    menu.addSubItem(["Graph"], "Breadth-First");
+    menu.addSubItem(["Graph"], "Force");
+    menu.addSubItem(["Graph"], "Adjacency Matrix");
+    /*menu.addSubItem(["Gravity"], "Run Gravity");
     menu.addSubItem(["File", "Import"], "Local");
     menu.addSubItem(["File", "Import"], "Server");
     menu.addSubItem(["File", "Import"], "Clipboard");
     menu.addSubItem(["File", "Export"], "Local");
     menu.addSubItem(["File", "Export"], "Server");
     menu.addSubItem(["File", "Export"], "Clipboard");
-    menu.addSubItem(["File", "Export", "Clipboard"], "ClipArt");
-    menu.addSubItem(["File", "Export", "Clipboard"], "No Clippy");
+    menu.addSubItem(["File", "Export", "Clipboard"], "Option 1");
+    menu.addSubItem(["File", "Export", "Clipboard"], "Option 2");
     menu.addSubItem(["Edit"], "Undo");
     menu.addSubItem(["Edit"], "Redo");
     menu.addSubItem(["Edit"], "Copy");
@@ -375,176 +367,10 @@ function SVGMenu(x, y) {
     menu.addSubItem(["Select"], "None");
     menu.addSubItem(["Select"], "Invert");
     menu.addSubItem(["Select"], "Expand");
-    //menu.bindAction(["File", "Import", "Local"], Graph.selectAllNodes);
+    menu.bindAction(["Gravity", "Run Gravity"], Graph.runGravity);*/
 
     //menu.removeSubItem(["File", "Export", "Clipboard"], "No Clippy");
     //menu.removeSubItem(["File"], "Import");
     menu.append(root);
 })();
 
-/*function menuSVG(x, y) {
-
-    function createMenuCell(title, cellX, cellY, header) {
-        var cellContainer = document.createElementNS(xmlns, "g");
-        cellContainer.setAttributeNS(null, "fill", "red");
-
-        var cellRect = document.createElementNS(xmlns, "rect");
-        cellRect.setAttributeNS(null, "x", cellX);
-        cellRect.setAttributeNS(null, "y", cellY);
-        cellRect.setAttributeNS(null, "width", header ? staticWidth : (staticWidth * 3));
-        cellRect.setAttributeNS(null, "height", staticHeight);
-        //cellRect.setAttributeNS(null, "pointer-events", "visibleFill");
-
-        var cellText = document.createElementNS(xmlns, "text");
-        cellText.setAttributeNS(null, "font-family", "Arial");
-        cellText.setAttributeNS(null, "font-size", header ? 12 : 11);
-        cellText.setAttributeNS(null, "fill", "white");
-        cellText.setAttributeNS(null, "font-weight", "bold");
-        cellText.setAttributeNS(null, "x", header ? (cellX + (staticWidth/2)) : (cellX + ((staticWidth * 3) / 6)));
-        cellText.setAttributeNS(null, "alignment-baseline", "middle");
-        cellText.setAttributeNS(null, "y", (cellY + (staticHeight / 2)));
-        cellText.setAttributeNS(null, "text-anchor", header ? "middle" : "start");
-        cellText.setAttributeNS(null, "stroke-width", 0);
-        cellText.setAttributeNS(null, "pointer-events", "none");
-        cellText.textContent = header ? title.toUpperCase() : title;
-        
-        cellContainer.appendChild(cellRect);
-        cellContainer.appendChild(cellText);        
-
-        //cellContainer.setAttributeNS(null, "name", title);
-        return cellContainer;
-    }
-
-    var optionLookUpTable = {};
-    var staticWidth = 75;
-    var staticHeight = 30;
-
-    var menuContainer = document.createElementNS(xmlns, "g");
-    menuContainer.setAttributeNS(null, "stroke", "red");
-    menuContainer.setAttributeNS(null, "stroke-width", "5");
-
-    this.addMenuHeader = function (title) {
-        var menuItemContainer = document.createElementNS(xmlns, "g");
-        var menuHeader = createMenuCell(title, x, y, true);
-        menuHeader.addEventListener("click", function () {
-            this.open = true;
-            var options = optionLookUpTable[title].optionList;
-            for (var option in options) {
-                options[option].container.style.visibility = "visible";
-            }
-            //stop propogation? - dont think since its the top group
-        }, false);
-
-        menuHeader.addEventListener("mouseover", function () {
-            this.setAttributeNS(null, "fill", "#FF674C");
-        }, false);
-
-        menuHeader.addEventListener("mouseout", function () {
-            if (!this.open) {
-                this.setAttributeNS(null, "fill", "red");
-            }
-        }, false);
-
-        menuItemContainer.appendChild(menuHeader);
-
-        optionLookUpTable[title] = {
-            'container': menuContainer.appendChild(menuItemContainer),
-            'optionList': {},
-            'nextX': x,
-            'nextY': (y + staticHeight),
-            'header': true
-        };
-
-        x += staticWidth;
-    }
-
-    this.addOptionItem = function (parentTitle, title, imageSrcPath) {
-       
-        var parent = optionLookUpTable[parentTitle];
-
-        var newOptionItem = createMenuCell(title, parent.nextX, parent.nextY, false);
-        newOptionItem.style.visibility = "hidden";
-
-        newOptionItem.addEventListener("click", function (event) {            
-            var options = optionLookUpTable[title].optionList;
-            for (var option in options) {
-                options[option].container.style.visibility = "visible";
-            }
-            event.stopPropagation();
-        }, false);
-
-        newOptionItem.addEventListener("mouseover", function () {
-            this.setAttributeNS(null, "fill", "#FF674C");            
-            event.stopPropagation();
-        }, false);
-
-        newOptionItem.addEventListener("mouseout", function (event) {
-            this.setAttributeNS(null, "fill", "red");
-            var parentOptionList = optionLookUpTable[title].optionList;
-            for (var option in parentOptionList) {
-                var childOption = parentOptionList[option];
-                childOption.container.style.visibility = "hidden";
-                childOption.container.setAttributeNS(null, "fill", "red");
-            }
-
-
-            //var parentOption = optionLookUpTable[parentTitle];
-            //var parentOptionList = parentOption.optionList;
-            //for (var option in parentOptionList) {
-              //  var childOption = parentOptionList[option];
-                //if (childOption.container !== optionLookUpTable[title].container) {
-                  //  var childOptionList = childOption.optionList;
-                    //for (var opt in childOptionList) {
-                      //  childOptionList[opt].container.style.visibility = "hidden";
-                        //childOptionList[opt].container.setAttributeNS(null, "fill", "red");
-                    //}
-               // }
-            //}
-
-            event.stopPropagation();
-        }, false);
-        
-        if (!parent.header) {
-            if (!parent.expandArrow) {
-                var expandArrow = document.createElementNS(xmlns, "text");
-                expandArrow.setAttributeNS(null, "font-family", "Arial");
-                expandArrow.setAttributeNS(null, "font-size", 11);
-                expandArrow.setAttributeNS(null, "fill", "white");
-                expandArrow.setAttributeNS(null, "font-weight", "bold");
-                expandArrow.setAttributeNS(null, "x", parent.nextX - ((staticWidth * 3) / 10));
-                expandArrow.setAttributeNS(null, "alignment-baseline", "middle");
-                expandArrow.setAttributeNS(null, "y", parent.nextY + (staticHeight / 2));
-                expandArrow.setAttributeNS(null, "text-anchor", "start");
-                expandArrow.setAttributeNS(null, "stroke-width", 0);
-                expandArrow.setAttributeNS(null, "pointer-events", "none");
-                expandArrow.textContent = ">";
-                parent.expandArrow = parent.container.appendChild(expandArrow);
-            }
-        }
-
-        optionLookUpTable[title] = optionLookUpTable[parentTitle].optionList[title] = {
-            'container': parent.container.appendChild(newOptionItem),
-            'optionList': {},
-            'nextX': (parent.nextX + (staticWidth * 3)),
-            'nextY': parent.nextY
-        };
-
-        parent.nextY += staticHeight;
-    }
-
-    this.removeMenuHeader = function (title) {
-
-    }
-
-    this.removeOptionItem = function () {
-    }
-
-    this.append = function (parent) {
-        parent.appendChild(menuContainer);
-        console.log(optionLookUpTable);
-    }
-
-    this.addClickHandler = function (optionItem, handlerFunc) {
-        optionLookUpTable[optionItem].container.addEventListener("click", handlerFunc, false);
-    }
-};*/

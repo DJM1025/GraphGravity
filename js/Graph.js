@@ -1,7 +1,8 @@
-//TO-DO
-//js file for global variables
+
+//TO DO'S
+//js file for global variables - DOUBT IT ACTUALLY - MAKE THEM ALL AS PART OF THE CLOSURE
 //make groups have the attributes and have them inherit? might not be possible because of text
-//make a window.onload or something of the sort so that the user can't start clicking before everything is ready
+//make a window.onload or something of the sort so that the user can't start clicking before everything is ready - ****THE LOADING BAR***
 //use closures for mouse events
 //make a mousedown event for the document, not each node
 //make a central event handler
@@ -11,15 +12,48 @@
 //make sure not to add to history if nothing really happened (i.e a select all when all are selected, or a deselect all when none are selected)...
 //add a functionality so when the user selects a node and then shift clicks another node, all nodes inclusive nodes are selected (i.e selected node2 then shift click node7 - nodes 2,3,4,5,6,7 will be selected)
 //i took out the branch connect because it seemed to do the same for creating multiple edges, but it is different because the selected nodes stay highlighted
-//fix complement - if you do it when nothing is selected the redo/undo gets messed up
+//fix complement - if you do it when nothing is selected the redo/undo gets messed up - fixed i think
+//fix the mouseover nodes, you have to do it twice to highlight edges
+//TO STOP TEXT HIGHLIGHTING JUST DO 'EVENT.PREVENTDEFAULT' FOR MOUSEMOVE - i just need to figure out where i should do this (root, Graph.plane, window? - which one?)
+//NEED TO JUST FINISH REDO FOR connect/disconnect nodes and then the clipboard is almost done
+//I imagine any events bound to the window are not good for library purposes?
+//check if you are consistent with mousedown, mousemove, and mouseup, namely should up be root or the object? -- and make sure all your mouseups remove themselves
 
-//SVG namespacesp;
+/*
+var timer = null;
+document.documentElement.onkeydown = function () {
+    if (timer === null) {
+        console.log("down");
+        timer = setInterval(function(){console.log("held")}, 1000);
+    }
+    else{
+    }
+};
+document.documentElement.onkeyup = function () {
+    if (timer !== null) {
+        console.log("release");
+        clearInterval(timer);
+        timer = null;
+    }
+};
+function () {
+    if (timer !== null) {
+        console.log("release");
+        clearInterval(timer);
+        timer = null;
+    }
+}
+*/
+
+//SVG namespaces;
 var xmlns = "http://www.w3.org/2000/svg";
 var xlink = "http://www.w3.org/1999/xlink";
 var svgXmlNs = "http://www.w3.org/2000/xmlns/";
 
 //make a global.js for root, namespaces, etc.
 var root = document.documentElement;
+//prevent text highlighting
+root.addEventListener("mousedown", function (event) { event.preventDefault(); }, false);
 
 //add drawBoundingRect method to SVGElement prototype (for debugging purposes)
 SVGElement.prototype.drawBoundingRect = function drawBoundingRect() {
@@ -44,152 +78,6 @@ SVGGElement.prototype.findMidpoint = function findMidpoint() {
     };
 };
 
-function SVGMenuDropDown (x, y, itemWidth, itemHeight, title) {
-    var count = -1;
-    var nextItemY = y;
-    var itemList = [];
-
-    var container = document.createElementNS(xmlns, "g");
-    container.setAttributeNS(null, "fill", "red");
-    container.setAttributeNS(null, "stroke", "black");
-    container.setAttributeNS(null, "stroke-width", "5");
-    container.addEventListener("mouseover", function (event) {
-        var itemRect = event.target;
-        if (!itemRect.parentNode.header) {
-            itemRect.setAttributeNS(null, "fill", "white");
-            itemRect.nextElementSibling.setAttributeNS(null, "fill", "red");
-        }
-    }, false);
-    container.addEventListener("mouseout", function (event) {
-        var itemRect = event.target;
-        if (!itemRect.parentNode.header) {
-            itemRect.setAttributeNS(null, "fill", "red");
-            itemRect.nextElementSibling.setAttributeNS(null, "fill", "white");
-        }
-    }, false);
-
-    this.append = function (parent) {
-        parent.appendChild(container);
-        this.addItem(title);
-        itemList[0].style.visibility = "visible";
-        itemList[0].header = true;
-        itemList = [];
-    }
-
-    this.getCount = function () {
-        return count;
-    };
-
-    this.addItem = function (itemText) {
-        //for loop - iterate through arguments
-        //OPTIONS TO ADD
-        //add onto end
-        //insert before
-        //insert after
-
-        var newItem = document.createElementNS(xmlns, "g");
-        newItem.style.visibility = "hidden";
-
-        var newRect = document.createElementNS(xmlns, "rect");
-        newRect.setAttributeNS(null, "x", newRect.X = x);       
-        newRect.setAttributeNS(null, "y", newRect.Y = nextItemY);
-        newRect.setAttributeNS(null, "width", newRect.Width = itemWidth);
-        newRect.setAttributeNS(null, "height", newRect.Height = itemHeight);
-        newItem.appendChild(newRect);
-        container.appendChild(newItem);
-
-        var newText = document.createElementNS(xmlns, "text");
-        newText.setAttributeNS(null, "font-family", "Arial");
-        newText.setAttributeNS(null, "font-size", "12");
-        newText.setAttributeNS(null, "fill", "white");
-        newText.setAttributeNS(null, "font-weight", "bold");
-        newText.setAttributeNS(null, "x", x + (itemWidth/2));
-        newText.setAttributeNS(null, "alignment-baseline", "middle");
-        newText.setAttributeNS(null, "y", newText.Y = (nextItemY + (itemHeight/2)));
-        newText.setAttributeNS(null, "text-anchor", "middle");
-        newText.setAttributeNS(null, "stroke-width", 0);
-        newText.setAttributeNS(null, "pointer-events", "none");
-        newText.textContent = newItem.textValue = itemText;
-        newItem.appendChild(newText);
-
-        itemList.push(newItem);
-        nextItemY += itemHeight;
-        count++;
-    };
-
-    this.removeItem = function (itemToRemove) {
-        //maybe i can just give each item and index property so I know where it's at
-        //for loop - iterate through arguments
-        
-        if (typeof itemToRemove === "string") {
-            for (var n = 0; n < count; n++) {
-                var nextItem = itemList[n];
-                if (nextItem.textValue === itemToRemove) {
-                    nextItem.parentNode.removeChild(nextItem);
-                    itemList.splice(n, 1);
-                    count--;
-                    adjust(n);
-                    break;
-                }
-            }
-        }
-        else if (typeof itemToRemove === "number") {
-            var index = itemToRemove;
-            var item = itemList[index];
-            item.parentNode.removeChild(item);
-            itemList.splice(index, 1);
-            count--;
-            adjust(index);
-        }
-
-        function adjust(index) {
-            if (index !== count) {
-                for (i = index; i < count; i++) {
-                    var itemRect = itemList[i].firstElementChild;
-                    itemRect.setAttributeNS(null, "y", itemRect.Y = (itemRect.Y - itemHeight));
-                    var itemText = itemRect.nextElementSibling;
-                    itemText.setAttributeNS(null, "y", itemText.Y = (itemText.Y - itemHeight));
-                }
-            }
-            nextItemY -= itemHeight;
-        };
-
-    };
-
-    this.expand = function () {
-        //kinda broken because if expanded, newly inserted nodes are invisible
-        for (var n = 0; n < count; n++) {
-            itemList[n].style.visibility = "visible";
-        }
-    };
-
-    this.contract = function () {
-        for (var n = 0; n < count; n++) {
-            itemList[n].style.visibility = "hidden";
-        }
-    };
-
-    this.createExpandArrow = function () {
-        //make this fucking elegant and rename the method
-        var itemRect = itemList[0].firstElementChild; //maybe make the custom x, y, width, height on the group instead of the rect
-        var expandArrow = document.createElementNS(xmlns, "path");
-        var offSetRight = itemRect.Width / 15;
-        var offSetLeft = itemRect.Width - (itemRect.Width / 7.5);
-        var offSetTopBot = itemRect.Height / 3;
-        var point1 = ((itemRect.X + itemRect.Width) - offSetRight) + "," + (itemRect.Y + (itemRect.Height / 2));
-        var point2 = (itemRect.X + offSetLeft) + "," + (itemRect.Y + offSetTopBot);
-        var point3 = (itemRect.X + offSetLeft) + "," + ((itemRect.Y + itemRect.Height) - offSetTopBot);
-        expandArrow.setAttributeNS(null, "d", "M " + point1 + " " + point2 + " " + point3 + "z");
-        expandArrow.setAttributeNS(null, "fill", "white");
-        expandArrow.setAttributeNS(null, "stroke", "black");
-        expandArrow.setAttributeNS(null, "stroke-width", "2");
-        root.appendChild(expandArrow);
-    };
-
-    this.addSubGroup = function(parentItem, dropDownToAdd){
-    }
-}
-
 //create and return a 2-dimensional array
 function create2DArray(length) {
     var twoDArray = new Array(length);
@@ -199,25 +87,33 @@ function create2DArray(length) {
     return twoDArray;
 };
 
+//check if object is empty
+function checkEmpty(obj) {
+    for (var prop in obj) {
+        return true;
+    }
+    return false;
+}
+
 window.addEventListener("keydown", function (event) {
     //if (!Graph.multipleSelect && !Graph.rangeSelect && !Graph.autoConnect && !Graph.branchConnect) { <--- prevents using multiple hotkeys at once (but maybe someone would want to branch and auto-connect....)
     //'ctrl' key - select multiple nodes at once
-    if (event.keyCode == 17) {
+    if (event.keyCode === 17) {
         //change to evt.ctrlKey
         Graph.multipleSelect = true;
     }
         //'t' key - auto connect nodes
-    else if (event.keyCode == 84) {
+    else if (event.keyCode === 84) {
         Graph.autoConnect = true;
     }
         //'r' key - branch from selected node
-    else if (event.keyCode == 82) {
+    else if (event.keyCode === 82) {
         Graph.branchConnect = true;
     }
     //}    
 }, false);
 
-window.addEventListener("keyup", function (event) {
+window.addEventListener("keyup", function (event) {//prolly should be keydown
     switch (event.keyCode) {
         case 17: //'ctrl' key
             Graph.multipleSelect = false;
@@ -230,10 +126,14 @@ window.addEventListener("keyup", function (event) {
             break;
         case 46://'delete' key
             var nodesToDelete = [];
-            var numSelectedNodes = nodeCount = Graph.numberOfSelectedNodes;
+            var numSelectedNodes = Graph.numberOfSelectedNodes;
+            var nodeCount = 0;
             for (var node in Graph.selectedNodes) {
                 var nextNode = Graph.selectedNodes[node];
-                nodesToDelete.push(nextNode);
+                nodesToDelete.push({
+                    'node': node,
+                    'edges': nextNode.edges
+                });
                 if (nodeCount === numSelectedNodes - 1) {
                     Graph.deleteNode(nextNode, true, nodesToDelete);
                 }
@@ -263,7 +163,7 @@ window.addEventListener("keyup", function (event) {
             Graph.clipboard.redo();
             break;
         case 88://'x' key
-            Graph.extrude();
+            Graph.extrude(true);
             break;
         case 73://'i' key
             Graph.complement(true);
@@ -283,11 +183,6 @@ function Graph() {
 };
 
 Graph.sortNodePair = function (node1, node2) {
-    /*return {
-        'lowNode': node1.nodeNum < node2.nodeNum ? node1 : node2,
-        'highNode': node1.nodeNum < node2.nodeNum ? node2 : node1
-    };*/
-
     if (node1.nodeNum < node2.nodeNum) {
         return {
             'lowNode': node1,
@@ -303,7 +198,6 @@ Graph.sortNodePair = function (node1, node2) {
 };
 
 Graph.fixGravityValues = function () {
-    alert();
     var correctNum = 0;
     for (var node in Graph.nodes) {
         var nextNode = Graph.nodes[node];
@@ -382,14 +276,14 @@ Graph.clipboard = (function () {
         'paste': function (extrude) {
             var offSetX = extrude ? -40 : 40;
             var offSetY = 40;
-            Graph.deselectAllNodes();
+            Graph.deselectAllNodes(false);
             for (var num in copiedItem) {
                 var nextNodeInfo = copiedItem[num];
                 //mouseout isnt trigged so it takes a mouseover/out before the edge highlight triggers
-                var newNode = Graph.createNode((nextNodeInfo.x + offSetX), (nextNodeInfo.y + offSetY));
-                Graph.selectNode(newNode);
+                var newNode = Graph.createNode((nextNodeInfo.x + offSetX), (nextNodeInfo.y + offSetY), false);
+                Graph.selectNode(newNode, false);
                 if (extrude) {
-                    Graph.createEdge(Graph.nodes[nextNodeInfo.origNum], newNode);
+                    Graph.createEdge(Graph.nodes[nextNodeInfo.origNum], newNode, false);
                 }
                 nextNodeInfo.node = newNode;
             }
@@ -398,7 +292,7 @@ Graph.clipboard = (function () {
                 var node1 = nextNodeInfo.node;
                 for (var q = 0; q < nextNodeInfo.edges.length; q++) {
                     var node2 = copiedItem[nextNodeInfo.edges[q]].node;
-                    Graph.createEdge(node1, node2);
+                    Graph.createEdge(node1, node2, false);
                 }
             }
         },
@@ -430,47 +324,100 @@ Graph.clipboard = (function () {
                         }
                         break;
                     case "Created node":
-                        var node = action.node;
-                        Graph.selectNode(Graph.nodes[node.nodeNum], false);
-                        Graph.deleteNode(Graph.selectedNodes[node.nodeNum], false);
+                        var nodeNum = action.node.nodeNum;
+                        if (!action.edgesList) {
+                            var node = Graph.nodes[nodeNum] || Graph.selectedNodes[nodeNum];
+                            if (checkEmpty(node.adjacentNodes)) {
+                                action.edgesList = {};
+                                var connectType = action.edgesList.connectType = node.selected ? "auto" : "branch";
+                                var edgesToDelete = action.edgesList.edgesToDelete = [];
+                                for (var adj in node.adjacentNodes) {
+                                    if (connectType === "auto") {
+                                        Graph.selectNode(Graph.nodes[adj], false);
+                                    }
+                                    edgesToDelete.push(adj);
+                                }
+                            }
+                            console.log(action.edgesList);
+                        }
+                        if (!action.edgesList || (action.edgesList && action.edgesList.connectType === "branch")) {
+                            Graph.selectNode(Graph.nodes[nodeNum], false);
+                        }
+                        //need to fix to select all connected for auto connect, if action.edgesList exists
+                        Graph.deleteNode(Graph.selectedNodes[nodeNum], false);
                         break;
                     case "Deleted node":
+                        var deletedNodes = action.nodes;
+                        console.log(deletedNodes[0].node, deletedNodes[0].edges);
+                        /*for (var n = 0; n < deletedNodes.length; n++) {
+                            var nextNode = deletedNodes[n];
+                            if (nextNode.nodeNum < action.numberOfNodes) {
+                                for (var i = nextNode.nodeNum; i < action.numberOfNodes; i++) {
+
+                                }
+                            }
+
+                        }*/
+
+
                         break;
-                    case "Created/Deleted edges":
+                    case "Connected/Disconnected nodes":
                         var edgesToCreate = action.edgesList.edgesToCreate;
                         var edgesToDelete = action.edgesList.edgesToDelete;
-                        var node1 = Graph.nodes[action.edgesList.node];
+                        var connectType = action.edgesList.connectType;
+                        if (connectType === "auto") {
+                            var node1 = Graph.selectedNodes[action.edgesList.node];
+                        }
+                        else {
+                            var node1 = Graph.nodes[action.edgesList.node];
+                        }
                         if (edgesToCreate.length > edgesToDelete.length) {
                             for (var n = 0; n < edgesToCreate.length; n++) {
-                                var node2 = Graph.nodes[edgesToCreate[n]];
-                                Graph.selectNode(node2, false);
+                                if (connectType === "branch") {
+                                    var node2 = Graph.selectedNodes[edgesToCreate[n]];
+                                }
+                                else {
+                                    var node2 = Graph.nodes[edgesToCreate[n]];
+                                    Graph.selectNode(node2, false);
+                                }
                                 Graph.deleteEdge(node1, node2, false);
                                 if (n < edgesToDelete.length) {
-                                    node2 = Graph.nodes[edgesToDelete[n]];
-                                    Graph.selectNode(node2, false);
+                                    if (connectType === "branch") {
+                                        node2 = Graph.selectedNodes[edgesToDelete[n]];
+                                    }
+                                    else {
+                                        node2 = Graph.nodes[edgesToDelete[n]];
+                                        Graph.selectNode(node2, false);
+                                    }
                                     Graph.createEdge(node1, node2, false);
                                 }
                             }
                         }
                         else{
                             for (var n = 0; n < edgesToDelete.length; n++) {
-                                var node2 = Graph.nodes[edgesToDelete[n]];
-                                Graph.selectNode(node2, false);
+                                if (connectType === "branch") {
+                                    var node2 = Graph.selectedNodes[edgesToDelete[n]];
+                                }
+                                else {
+                                    var node2 = Graph.nodes[edgesToDelete[n]];
+                                    Graph.selectNode(node2, false);
+                                }
                                 Graph.createEdge(node1, node2, false);
                                 if (n < edgesToCreate.length) {
-                                    node2 = Graph.nodes[edgesToCreate[n]];
-                                    Graph.selectNode(node2, false);
+                                    if (connectType === "branch") {
+                                        node2 = Graph.selectedNodes[edgesToCreate[n]];
+                                    }
+                                    else {
+                                        node2 = Graph.nodes[edgesToCreate[n]];
+                                        Graph.selectNode(node2, false);
+                                    }
                                     Graph.deleteEdge(node1, node2, false);
                                 }
                             }
                         }
-                        break;
-                    case "Deleted edge":
-                        //don't forget to basically copy create
-                        break;
-                    case "Auto connected":
-                        break;
-                    case "Branch connected":
+                        if (connectType === "auto") {
+                            Graph.deselectNode(node1, false);
+                        }
                         break;
                     case "Moved node":
                         break;
@@ -523,22 +470,41 @@ Graph.clipboard = (function () {
                         break;
                     case "Created node":
                         var node = action.node;
-                        Graph.createNode(node.X + (Graph.nodeWidth/2), node.Y + (Graph.nodeHeight/2), false);                        
+                        node = Graph.createNode(node.X + (Graph.nodeWidth / 2), node.Y + (Graph.nodeHeight / 2), false);
+                        if (action.edgesList) {
+                            var connectType = action.edgesList.connectType;
+                            if (connectType === "auto") {
+                                Graph.selectNode(node, false);
+                            }
+                            var edgesToCreate = action.edgesList.edgesToDelete;
+                            for (var n = 0; n < edgesToCreate.length; n++) {
+                                var adjNode = Graph.selectedNodes[edgesToCreate[n]];
+                                if(connectType === "auto"){
+                                    Graph.deselectNode(adjNode, false);
+                                }
+                                Graph.createEdge(node, adjNode, false);
+                            }
+                        }
                         break;
                     case "Deleted node":
                         break;
-                    case "Created/Deleted edges":
+                    case "Connected/Disconnected nodes":
                         var edgesToCreate = action.edgesList.edgesToCreate;
                         var edgesToDelete = action.edgesList.edgesToDelete;
+                        var connectType = action.edgesList.connectType;
                         var node1 = Graph.nodes[action.edgesList.node];
                         if (edgesToCreate.length > edgesToDelete.length) {
                             for (var n = 0; n < edgesToCreate.length; n++) {
                                 var node2 = Graph.selectedNodes[edgesToCreate[n]];
-                                Graph.deselectNode(node2, false);
+                                if (connectType !== "branch") {
+                                    Graph.deselectNode(node2, false);
+                                }
                                 Graph.createEdge(node1, node2, false);
                                 if (n < edgesToDelete.length) {
                                     node2 = Graph.selectedNodes[edgesToDelete[n]];
-                                    Graph.deselectNode(node2, false);
+                                    if (connectType !== "branch") {
+                                        Graph.deselectNode(node2, false);
+                                    }
                                     Graph.deleteEdge(node1, node2, false);
                                 }
                             }
@@ -555,10 +521,10 @@ Graph.clipboard = (function () {
                                 }
                             }
                         }
-                        break;
-                    case "Auto connected":
-                        break;
-                    case "Branch connected":
+                        if (connectType === "auto") {
+                            console.log("hi");
+                            Graph.selectNode(node1, false);
+                        }
                         break;
                     case "Moved node":
                         break;
@@ -585,15 +551,6 @@ Graph.clipboard = (function () {
                 //historyArray[++current]["redo"]();
             }
         },
-
-        //possibly
-        /*'addToHistory': function (actionName, undoFunc, redoFunc) {
-            var action = {
-                'actionName': actionName,
-                'undo': undoFunc,
-                'redo': redoFunc
-            };
-        },*/
 
         'addToHistory': function (action) {
             if (current === top) {
@@ -631,9 +588,8 @@ Graph.plane.background.setAttributeNS(null, "fill", "gray");
 Graph.plane.appendChild(Graph.plane.background);
 root.appendChild(Graph.plane);
 
-
 //draw selection area
-Graph.plane.background.addEventListener("mousedown", function beginSelectionArea() {
+Graph.plane.background.addEventListener("mousedown", function beginSelectionArea(event) {
     if (event.shiftKey) {
         var selectionArea = document.createElementNS(xmlns, "rect");
         selectionArea.setAttributeNS(null, "fill", "white");
@@ -649,7 +605,8 @@ Graph.plane.background.addEventListener("mousedown", function beginSelectionArea
         Graph.plane.addEventListener("mousemove", expandSelectionArea, false);
         Graph.plane.addEventListener("mouseup", finishSelectionArea, false);
 
-        function expandSelectionArea() {
+        function expandSelectionArea(event) {
+            event.preventDefault();
             if (event.pageX < selectionArea.initialPoint.x) {
                 selectionArea.setAttributeNS(null, "x", event.pageX);
                 selectionArea.setAttributeNS(null, "width", selectionArea.initialPoint.x - event.pageX);
@@ -699,32 +656,32 @@ Graph.plane.background.addEventListener("mousedown", function beginSelectionArea
 }, false);
 
 Graph.plane.background.addEventListener("mouseup", function (event) {
-    if (Graph.numberOfSelectedNodes == 0) {
+    if (Graph.numberOfSelectedNodes === 0) {
         var createdNode = Graph.createNode(event.pageX, event.pageY, true);
         if (Graph.autoConnect || Graph.branchConnect) {
-            Graph.selectNode(createdNode);
+            Graph.selectNode(createdNode, false);
         }
     }
     else {
         if (Graph.autoConnect) {
-            var createdNode = Graph.createNode(event.pageX, event.pageY);
+            var createdNode = Graph.createNode(event.pageX, event.pageY, true);
             for (var node in Graph.selectedNodes) {
                 var currentNode = Graph.selectedNodes[node];
-                Graph.createEdge(currentNode, createdNode);
-                Graph.deselectNode(currentNode);
+                Graph.createEdge(currentNode, createdNode, false);
+                Graph.deselectNode(currentNode, false);
             }
-            Graph.selectNode(createdNode);
+            Graph.selectNode(createdNode, false);
 
         }
         else if (Graph.branchConnect) {
-            var createdNode = Graph.createNode(event.pageX, event.pageY);
+            var createdNode = Graph.createNode(event.pageX, event.pageY, true);
             for (var node in Graph.selectedNodes) {
                 var currentNode = Graph.selectedNodes[node];
-                Graph.createEdge(currentNode, createdNode);
+                Graph.createEdge(currentNode, createdNode, false);
             }
         }
         else if (!Graph.multipleSelect) {
-            Graph.deselectAllNodes();
+            Graph.deselectAllNodes(true);
         }
     }
 }, false);
@@ -756,8 +713,8 @@ Graph.createNode = function (x, y, addToHistory) {
     nodeGroup.selected = false;    
     nodeGroup.nodeNum = Graph.numberOfNodes;
     nodeGroup.edges = {};
-
-    var nodeRect = document.createElementNS(xmlns, "rect");
+    
+    var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
     nodeRect.setAttributeNS(null, "rx", "2.5");
     nodeRect.setAttributeNS(null, "fill", "red");
     nodeRect.setAttributeNS(null, "stroke", "black");
@@ -768,7 +725,7 @@ Graph.createNode = function (x, y, addToHistory) {
     nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
     nodeGroup.appendChild(nodeRect);
 
-    var nodeText = document.createElementNS(xmlns, "text");
+    var nodeText = nodeGroup.text = document.createElementNS(xmlns, "text");
     nodeText.textContent = nodeGroup.nodeLabel = ++Graph.numberOfNodes;
     nodeText.setAttributeNS(null, "pointer-events", "none");
     nodeText.setAttributeNS(null, "text-anchor", "middle");
@@ -785,12 +742,12 @@ Graph.createNode = function (x, y, addToHistory) {
 
     nodeGroup.addEventListener("mouseout", function activateNodeHover() {
         nodeGroup.removeEventListener("mouseout", activateNodeHover, false);
-        nodeGroup.addEventListener("mouseover", Graph.highlightEdges, false);
-        nodeGroup.addEventListener("mouseout", Graph.highlightEdges, false);
+        /*nodeGroup.addEventListener("mouseover", Graph.highlightEdges, false);
+        nodeGroup.addEventListener("mouseout", Graph.highlightEdges, false);*/
     }, false)
 
-    nodeGroup.addEventListener("mousedown", Graph.pressHoldNode, false);
-    nodeGroup.addEventListener("mouseup", Graph.releaseNode, false);
+    nodeGroup.addEventListener("mousedown", Graph.pressHoldNode, false);//
+    nodeGroup.addEventListener("mouseup", Graph.releaseNode, false);//this needs to be taken out because i have another release happening
 
     if (addToHistory) {
         Graph.clipboard.addToHistory({
@@ -826,18 +783,7 @@ Graph.deleteNode = function (node, addToHistory, nodeList) {
         Graph.clipboard.addToHistory({
             'name': "Deleted node",
             'nodes': nodeList,
-            'undo': function () {
-                for (var n = 0; n < this.nodes.length; n++) {
-                    var nextNode = this.nodes[n];
-                    Graph.selectNode(Graph.createNode(nextNode.X + (Graph.nodeWidth / 2), nextNode.Y + (Graph.nodeHeight / 2), false), false);
-                }
-            },
-            'redo': function () {
-                for (var n = 0; n < this.nodes.length; n++) {                    
-                    var nextNode = Graph.selectedNodes[this.nodes[n].nodeNum];
-                    Graph.deleteNode(nextNode, false);
-                }
-            }
+            'numberOfNodes': Graph.numberOfNodes
         });
     }
 };
@@ -846,13 +792,13 @@ Graph.deleteNode = function (node, addToHistory, nodeList) {
 Graph.pressHoldNode = function (event) {
     var nodeGroup = event.currentTarget;
     //is there a reason i am using alreadySelected and not just selected?
-    if (nodeGroup.selected) {
+    if (nodeGroup.selected || Graph.branchConnect) {
         nodeGroup.alreadySelected = true;
     }
     else {
         nodeGroup.alreadySelected = false;
     }    
-    if (Graph.numberOfSelectedNodes == 0) {
+    if (Graph.numberOfSelectedNodes === 0) {
         Graph.selectNode(nodeGroup, true, [nodeGroup.nodeNum]);
         Graph.deselectOnRelease = false;
     }
@@ -869,43 +815,29 @@ Graph.pressHoldNode = function (event) {
 
         }
         else {
+            //is this even needed? it might already be taken care of above
             if (nodeGroup.selected) {
                 //return;
             }
-            else if (Graph.autoConnect) {//auto-connect - begin                
-                for (var node in Graph.selectedNodes) {
-                    var currentNode = Graph.selectedNodes[node];
-                    if (nodeGroup.adjacentNodes[currentNode.nodeNum]) {
-                        Graph.deleteEdge(nodeGroup, currentNode);
-                    }
-                    else {
-                        Graph.createEdge(nodeGroup, currentNode);
-                    }
-                    Graph.deselectNode(currentNode);
-                }
-                Graph.selectNode(nodeGroup);
-                Graph.deselectOnRelease = false;
-            }//auto-connect - end
-            else if (Graph.branchConnect) {//branch connect - begin                
-                for (var node in Graph.selectedNodes) {
-                    var currentNode = Graph.selectedNodes[node];
-                    if (!nodeGroup.adjacentNodes[currentNode.nodeNum]) {
-                        Graph.createEdge(nodeGroup, currentNode);
-                    }
-                    else {
-                        Graph.deleteEdge(nodeGroup, currentNode);
-                    }
-                }
-                Graph.selectNode(nodeGroup);
-                Graph.deselectOnRelease = true;
-            }//branch connect - end
-            else {
+            else {                
                 var edgesList = {
                     'node': nodeGroup.nodeNum,
+                    'connectType': (function () {
+                        if (Graph.autoConnect) {
+                            return "auto";
+                        }
+                        else if (Graph.branchConnect) {
+                            return "branch";
+                        }
+                        else {
+                            return "normal";
+                        }
+                    })(),
                     'edgesToCreate': [],
                     'edgesToDelete': []
                 };
                 var nodeCounter = Graph.numberOfSelectedNodes;
+
                 for (var node in Graph.selectedNodes) {
                     nodeCounter--;
                     var currentNode = Graph.selectedNodes[node];
@@ -927,107 +859,129 @@ Graph.pressHoldNode = function (event) {
                             Graph.deleteEdge(nodeGroup, currentNode, false);
                         }
                     }
-                    Graph.deselectNode(currentNode, false);
+                    if(!Graph.branchConnect){
+                        Graph.deselectNode(currentNode, false);
+                    }
                 }
                 Graph.selectNode(nodeGroup, false);
-                Graph.deselectOnRelease = true;
-                
+                if(Graph.autoConnect){
+                    Graph.deselectOnRelease = false;
+                }
+                else{
+                    Graph.deselectOnRelease = true;
+                }
             }
         }
     }
 
-    var initialX = nodeGroup.X;
-    var initialY = nodeGroup.Y;
-    var xOffset = event.pageX - nodeGroup.X;
-    var yOffset = event.pageY - nodeGroup.Y;
+    var initialCoords = {};
+    for (var node in Graph.selectedNodes) {
+        var nextNode = Graph.selectedNodes[node];
+        var nextText = nextNode.text;
+        initialCoords[node] = { 'x': nextNode.X, 'y': nextNode.Y };
+    }
+    var nodeRect = nodeGroup.rect;
+    var nodeText = nodeGroup.text;
+    var initialX = event.pageX;
+    var initialY = event.pageY;
+    var rectXOffset = initialX - nodeGroup.X;
+    var rectYOffset = initialY - nodeGroup.Y;
+    var textXOffset = initialX - nodeText.X;
+    var textYOffset = initialY - nodeText.Y;
+
+    function findNodeMidpoint(node) {
+        return {
+            'x': node.X + (Graph.nodeWidth / 2),
+            'y': node.Y + (Graph.nodeHeight / 2)
+        };
+    }
     //maybe on root?
-    Graph.plane.onmousemove = function (event) {
-        var nodeRect = nodeGroup.firstElementChild;
-        var nodeText = nodeRect.nextElementSibling;
+    Graph.plane.addEventListener("mousemove", moveNode, false);
+
+    //need to fix the basic move one node - it is staying selected
+    function moveNode(event) {
+        nodeRect.setAttributeNS(null, "x", nodeGroup.X = event.pageX - rectXOffset);
+        nodeRect.setAttributeNS(null, "y", nodeGroup.Y = event.pageY - rectYOffset);
+        nodeText.setAttributeNS(null, "x", nodeText.X = event.pageX - textXOffset);
+        nodeText.setAttributeNS(null, "y", nodeText.Y = event.pageY - textYOffset);
         if (nodeGroup.alreadySelected) {
-            nodeRect.setAttributeNS(null, "x", nodeGroup.X = event.pageX - xOffset);
-            nodeRect.setAttributeNS(null, "y", nodeGroup.Y = event.pageY - yOffset);
-            //nodeText.setAttributeNS(null, "x", nodeText.X = event.pageX - xOffset);
-            //nodeText.setAttributeNS(null, "y", nodeText.Y = event.pageY - yOffset);
             var changeX = nodeGroup.X - initialX;
             var changeY = nodeGroup.Y - initialY;
 
-            for (var selectedNode in Graph.selectedNodes) {
-                var currentSelectedNode = Graph.selectedNodes[selectedNode];
-
-                if (currentSelectedNode !== nodeGroup) {
-                    var currentRect = currentSelectedNode.firstElementChild;
-                    var currentText = currentRect.nextSibling;
-                    currentRect.setAttributeNS(null, "x", currentSelectedNode.X + changeX);
-                    currentRect.setAttributeNS(null, "y", currentSelectedNode.Y + changeY);
-                    //var initialX = parseFloat(currentText.getAttributeNS(null, "x"));
-                    //var initialY = parseFloat(currentText.getAttributeNS(null, "y"));
-                    //currentText.setAttributeNS(null, "x", initialX + changeX);
-                    //currentText.setAttributeNS(null, "y", initialY + changeY);
+            for (var node in Graph.selectedNodes) {
+                var nextNode = Graph.selectedNodes[node];
+                if (nextNode !== nodeGroup) {
+                    var nextRect = nextNode.rect;
+                    var nextText = nextNode.text;
+                    var coords = initialCoords[node]
+                    nextRect.setAttributeNS(null, "x", nextNode.X = coords.x + changeX + rectXOffset);
+                    nextRect.setAttributeNS(null, "y", nextNode.Y = coords.y + changeY + rectYOffset);
+                    nextText.setAttributeNS(null, "x", nextText.X = coords.x + changeX + rectXOffset + (Graph.nodeWidth / 2));
+                    nextText.setAttributeNS(null, "y", nextText.Y = coords.y + changeY + rectYOffset + (Graph.nodeHeight / 2));
+                    
                 }
+                var nextNodeMP = findNodeMidpoint(nextNode);
 
-                /*for (var adjNode in currentSelectedNode.adjacentNodes) {
-                    var currentAdjNode = currentSelectedNode.adjacentNodes[adjNode];
-                    var edgePathString;
-                    var edge;
-                    if (!currentAdjNode.selected) {
-                        var edgeContents = Graph.constructEdgeString(currentSelectedNode, currentAdjNode, true);
-                        edge = Graph.edges[edgeContents.edgeString];
-                        edgePathString = "M " + edgeContents.lowNode.midpoint.x + "," + edgeContents.lowNode.midpoint.y + " " + edgeContents.highNode.midpoint.x + "," + edgeContents.highNode.midpoint.y;
-                        edge.setAttributeNS(null, "d", edgePathString);
+                for (var adj in nextNode.adjacentNodes) {
+                    var adjNode = nextNode.adjacentNodes[adj];
+                    var adjNodeMP = findNodeMidpoint(adjNode);
+                    if (nextNode.nodeNum < adjNode.nodeNum) {
+                        var nextEdge = nextNode.edges[adj];
                     }
                     else {
-                        if (currentAdjNode.nodeNum < currentSelectedNode.nodeNum) {
-                            continue;
-                        }
-                        else {
-                            edge = Graph.selectedEdges[currentSelectedNode.nodeNum + ":" + currentAdjNode.nodeNum];
-                            edgePathString = "M " + currentSelectedNode.midpoint.x + "," + currentSelectedNode.midpoint.y + " " + currentAdjNode.midpoint.x + "," + currentAdjNode.midpoint.y;
-                            edge.setAttributeNS(null, "d", edgePathString);
-                        }
+                        var nextEdge = adjNode.edges[nextNode.nodeNum];
                     }
-                }*/
-            }
-        }
-
-        /*else {
-            nodeGroup.midpoint.x = event.pageX;
-            nodeGroup.midpoint.y = event.pageY;
-            nodeRect.setAttributeNS(null, "x", (event.pageX - (Graph.nodeWidth / 2)));
-            nodeRect.setAttributeNS(null, "y", (event.pageY - (Graph.nodeHeight / 2)));
-            nodeText.setAttributeNS(null, "x", event.pageX);
-            nodeText.setAttributeNS(null, "y", event.pageY + (parseInt(nodeRect.getAttributeNS(null, "height")) / 5));
-
-            for (var adjNode in nodeGroup.adjacentNodes) {
-                var adjacentNode = nodeGroup.adjacentNodes[adjNode];
-                if (!adjacentNode.selected) {
-                    var edgeContents = Graph.constructEdgeString(nodeGroup, adjacentNode, true);
-                    var edge = Graph.edges[edgeContents.edgeString];
-                    var edgePathString = "M " + edgeContents.lowNode.midpoint.x + "," + edgeContents.lowNode.midpoint.y + " " + edgeContents.highNode.midpoint.x + "," + edgeContents.highNode.midpoint.y;
-                    edge.setAttributeNS(null, "d", edgePathString);
+                    nextEdge.setAttributeNS(null, "d", "M " + nextNodeMP.x + " " + nextNodeMP.y + " " + adjNodeMP.x + " " + adjNodeMP.y);
                 }
             }
-        }*/
-
-        /*for (var node in Graph.nodes) {
-            Graph.nodes[node].onmouseover = null;
-            Graph.nodes[node].onmouseout = null;
-        }*/
-        //Graph.moveNode(event, nodeGroup);
-        if (!Graph.autoConnect && !nodeGroup.alreadySelected) {
-            Graph.deselectOnRelease = true;
         }
         else {
-            Graph.deselectOnRelease = false;
+            var nodeGroupMP = findNodeMidpoint(nodeGroup);
+            for (var adj in nodeGroup.adjacentNodes) {
+                var adjNode = nodeGroup.adjacentNodes[adj];
+                var adjNodeMP = findNodeMidpoint(adjNode);
+                if (nodeGroup.nodeNum < adjNode.nodeNum) {
+                    var nextEdge = nodeGroup.edges[adj];
+                }
+                else {
+                    var nextEdge = adjNode.edges[nodeGroup.nodeNum];
+                }
+                nextEdge.setAttributeNS(null, "d", "M " + nodeGroupMP.x + " " + nodeGroupMP.y + " " + adjNodeMP.x + " " + adjNodeMP.y);
+            }
         }
-    };
+    }
+
+    Graph.plane.addEventListener("mouseup", function release() {
+        var node = event.currentTarget;
+        if (Graph.deselectOnRelease) {
+            Graph.deselectNode(node, false);
+            /*for (var adj in node.adjacentNodes) {
+                var adjNode = node.adjacentNodes[adj];
+                if (adjNode.nodeNum < node.nodeNum) {
+                    adjNode.edges[node.nodeNum].removeAttributeNS(null, "stroke");
+                }
+                else {
+                    node.edges[adjNode.nodeNum].removeAttributeNS(null, "stroke");
+                }
+            }*/
+        }
+        /*for (var node in Graph.nodes) {
+            var nextNode = Graph.nodes[node];
+            nextNode.addEventListener("mouseover", Graph.highlightEdges, false);
+            nextNode.addEventListener("mouseout", Graph.highlightEdges, false);
+        }*/
+        //Graph.plane.removeEventListener("mousemove",,false);
+        Graph.deselectOnRelease = false;//move this in the above if statement - because if it false already, no need to redeclare
+        Graph.plane.removeEventListener("mousemove", moveNode, false);
+        Graph.plane.removeEventListener("mouseup", release, false);
+    }, false);
 };
 
-//mouse up on a node
+//mouse up on a node - TAKE THIS OUT BECAUSE THE METHOD ABOUT IS BEING CALLED INSTEAD
 Graph.releaseNode = function (event) {
     var node = event.currentTarget;
     if (Graph.deselectOnRelease) {
-        Graph.deselectNode(node);       
+        Graph.deselectNode(node, false);       
         for (var adj in node.adjacentNodes) {
             var adjNode = node.adjacentNodes[adj];
             if (adjNode.nodeNum < node.nodeNum) {
@@ -1045,7 +999,6 @@ Graph.releaseNode = function (event) {
     }*/
     //Graph.plane.removeEventListener("mousemove",,false);
     Graph.deselectOnRelease = false;
-    Graph.plane.onmousemove = null;
 };
 
 //select a node
@@ -1211,8 +1164,8 @@ Graph.createEdge = function (node1, node2, addToHistory, edgesList) {
     var lowNodeMP = lowNode.findMidpoint();
     var highNodeMP = highNode.findMidpoint();
     var edge = document.createElementNS(xmlns, "path");
-    edge.selected = false;
-    edge.setAttributeNS(null, "d", "M " + lowNodeMP.x + "," + lowNodeMP.y + " " + highNodeMP.x + "," + highNodeMP.y);
+    edge.selected = false; //edge.parentNode === selectedEdgesGroup?
+    edge.setAttributeNS(null, "d", "M " + (lowNodeMP.x) + " " + (lowNodeMP.y) + " " + highNodeMP.x + " " + highNodeMP.y);
     Graph.edgesGroup.appendChild(edge);
     if (node1.selected && node2.selected) {
         Graph.selectEdge(edge);
@@ -1223,7 +1176,7 @@ Graph.createEdge = function (node1, node2, addToHistory, edgesList) {
 
     if (addToHistory) {
         Graph.clipboard.addToHistory({
-            'name': "Created/Deleted edges",
+            'name': "Connected/Disconnected nodes",
             'edgesList': edgesList
         });
     }
@@ -1244,7 +1197,7 @@ Graph.deleteEdge = function (node1, node2, addToHistory, edgesList) {
 
     if (addToHistory) {
         Graph.clipboard.addToHistory({
-            'name': "Created/Deleted edges",
+            'name': "Connected/Disconnected nodes",
             'edgesList': edgesList
         });
     }
@@ -1260,11 +1213,6 @@ Graph.selectEdge = function (edge) {
 Graph.deselectEdge = function (edge) {
     edge.selected = false;
     Graph.edgesGroup.appendChild(edge);
-};
-
-//move a node
-Graph.moveNode = function (event, nodeGroup, addToHistory) {
-    //moved inline - probably shouldnt do this
 };
 
 Graph.highlightEdges = function (event) {
@@ -1311,7 +1259,7 @@ Graph.viewClipBoard = function () {
     clipBoardDoc.setAttributeNS(null, "stroke", "red");
     clipBoardDoc.setAttributeNS(null, "stroke-width", "5");
     clipBoardDoc.style.cursor = "e-resize";
-    clipBoardDoc.setAttributeNS(null, "pointer-events", "stroke");
+    //clipBoardDoc.setAttributeNS(null, "pointer-events", "stroke");
     clipBoardWindow.appendChild(clipBoardDoc);
 
     var button = document.createElementNS(xmlns, "rect");
@@ -1323,7 +1271,7 @@ Graph.viewClipBoard = function () {
     button.setAttributeNS(null, "stroke", "red");
     button.setAttributeNS(null, "stroke-width", "5");
     //button.setAttributeNS(null, "rx", "1");
-    clipBoardWindow.appendChild(button);
+    //clipBoardWindow.appendChild(button);
 
     /*var clipBoardEdge = document.createElementNS(xmlns, "rect");
     clipBoardEdge.setAttributeNS(null, "x", "50");
@@ -1338,7 +1286,7 @@ Graph.viewClipBoard = function () {
 
     root.appendChild(clipBoardWindow);
     clipBoardWindow.addEventListener("mousedown", function (event) {
-        //clipBoardWindow.drawBoundingRect();
+        clipBoardWindow.drawBoundingRect();
         var startX = event.pageX - clipBoardWindow.getCTM().e;
         var startY = event.pageY - clipBoardWindow.getCTM().f;
         root.addEventListener("mousemove", moveCBWindow, false);
@@ -1468,11 +1416,21 @@ Graph.findShortestPaths = function () {
 
 //RUN GRAVITY
 Graph.runGravity = function () {
+    if (Graph.numberOfSelectedNodes == 0) {
+        Graph.selectAllNodes();
+    }
     Graph.findShortestPaths();
     var nodes = Graph.selectedNodes;
     var returnNodeQueue = [];
     var equidistantPaths = [];
-    console.log("Nodes:", nodes);
+    var landmarks = {};
+    var vantagePoints = {};
+    for (var node in Graph.selectedNodes) {
+        var nextNode = Graph.selectedNodes[node];
+        landmarks[node] = nextNode;
+        vantagePoints[node] = nextNode;
+    }
+    //console.log("Nodes:", nodes);
     //look into where you go already have the gravity path and dont need to come back to it
     //say you are going from 1-->2 and you find 1-->3 on the way - i dont need to actually calculate that for the next src/dest combo - i have it already
     //this probably doesnt work at all because the choices will change based on the dest but just a thought that it may possible work in some situations
@@ -1481,19 +1439,19 @@ Graph.runGravity = function () {
             if (src === dest || Graph.adjacencyMatrix[src][dest] === true) {
                 continue;
             }
-            console.log("Source:", src);
-            console.log("Dest:", dest);
-            var currentNode = nodes["node" + src];
-            console.log("\tCurrent node:", currentNode.nodeNum);
+            //console.log("Source:", src);
+            //console.log("Dest:", dest);
+            var currentNode = nodes[src];
+            //console.log("\tCurrent node:", currentNode.nodeNum);
             var prevVertexes = [];
             prevVertexes[currentNode.nodeNum] = true;
-            console.log("\tPrevious vertexes:", prevVertexes);
+            //console.log("\tPrevious vertexes:", prevVertexes);
             var currentPath = "";
             var currentPathLength = 0;
             var destFound = false;
             while (!destFound) {
                 var adjNodes = currentNode.adjacentNodes;
-                console.log("\tadjacent nodes:", adjNodes);
+                //console.log("\tadjacent nodes:", adjNodes);
                 var bestGravDist = Infinity;
                 var bestGravChoice;
                 var equidistanceProblem = false;
@@ -1502,7 +1460,7 @@ Graph.runGravity = function () {
                     var adjNode = adjNodes[adjNodeNum];                    
                     //need a check for cycle - done i think - think it goes one step extra for the equidistant cases- have a check for adj to dest below
                     if (!prevVertexes[adjNode.nodeNum]) {
-                        console.log("\tPrevious vertex? -", adjNode.nodeNum, " - No");
+                        //console.log("\tPrevious vertex? -", adjNode.nodeNum, " - No");
                         var gravDist = Math.abs(dest - adjNode.nodeNum);
                         if (gravDist < bestGravDist) {
                             equidistanceProblem = false;
@@ -1517,19 +1475,19 @@ Graph.runGravity = function () {
                         }
                     }
                     else {
-                        console.log("\tPrevious vertex? -", adjNode.nodeNum, " - Yes");
+                        //console.log("\tPrevious vertex? -", adjNode.nodeNum, " - Yes");
                     }
                 }
                 if (bestGravDist === Infinity) {
-                    console.log("\tCaught in loop!");
+                    //console.log("\tCaught in loop!");
                     return false;
                     continue;
                 }
-                console.log("\tBest choice:", bestGravChoice);
+                //console.log("\tBest choice:", bestGravChoice);
                 if (equidistanceProblem) {
                     var returnNodeNum = (dest + bestGravDist);
                     
-                    console.log("\tEquidistance between:", bestGravChoice,"and", returnNodeNum);
+                    //console.log("\tEquidistance between:", bestGravChoice,"and", returnNodeNum);
                     returnNodeQueue.push({
                         'nodeNum': returnNodeNum,
                         'pathTo': (currentPath === "" ? returnNodeNum.toString() : (currentPath + "," + returnNodeNum))
@@ -1537,26 +1495,31 @@ Graph.runGravity = function () {
                 }
                 currentPath += currentPath === "" ? bestGravChoice : ("," + bestGravChoice);
                 currentPathLength++;
-                console.log("\tCurrent path:", currentPath);
-                console.log("\tCurrent path length", currentPathLength);
+                //console.log("\tCurrent path:", currentPath);
+                //console.log("\tCurrent path length", currentPathLength);
 
                 if (Graph.adjacencyMatrix[bestGravChoice][dest] === true || bestGravChoice === dest) {
-                    console.log("\tDest found!", src, "-->", dest);
+                    //console.log("\tDest found!", src, "-->", dest);
                     if (bestGravChoice !== dest) {
                         currentPath += "," + dest;
                         currentPathLength++;
                     }
                     if (Graph.shortestPathLengths[src][dest] !== currentPathLength) {
-                        console.log("Graph is not gravitational - the gravity path from", src, "to", dest, "is of length", currentPathLength, " and the shortest path length is", Graph.shortestPathLengths[src][dest]);
-                        return false;
+                        //console.log("Graph is not gravitational - the gravity path from", src, "to", dest, "is of length", currentPathLength, " and the shortest path length is", Graph.shortestPathLengths[src][dest]);
+                        //return false;
+                        //the three lines below are for calculating landmarks and vantage points -- uncomment the above to do the normal gravity check
+                        destFound = true;
+                        delete landmarks[dest];
+                        delete vantagePoints[src];
+
                     }
                     else if (returnNodeQueue.length !== 0) {
                         equidistantPaths.push(currentPath);
                         nextInQueue = returnNodeQueue.pop();
-                        currentNode = nodes["node" + nextInQueue.nodeNum];
+                        currentNode = nodes[nextInQueue.nodeNum];
                         currentPath = nextInQueue.pathTo;
-                        console.log("\tReturn to node:", currentNode.nodeNum);
-                        console.log("\tCurrent path:", currentPath);
+                        //console.log("\tReturn to node:", currentNode.nodeNum);
+                        //console.log("\tCurrent path:", currentPath);
                         prevVertexes = [];
                         prevVertexes[src] = true;
                         var currentPathNodes = currentPath.split(",");
@@ -1565,21 +1528,21 @@ Graph.runGravity = function () {
                             var nextNode = currentPathNodes[n];
                             prevVertexes[nextNode] = true;
                         }
-                        console.log("\tPrevious vertexes:", prevVertexes);
+                        //console.log("\tPrevious vertexes:", prevVertexes);
                     }
                     else {
                         destFound = true;
                         currentPathLength = 0;
-                        console.log("All gravity paths:", src, "-->", dest, "are gravitational!  Moving on...");
+                        //console.log("All gravity paths:", src, "-->", dest, "are gravitational!  Moving on...");
                     }
                 }
                 else {
-                    currentNode = nodes["node" + bestGravChoice];
-                    console.log("current node:", currentNode.nodeNum);
+                    currentNode = nodes[bestGravChoice];
+                    //console.log("current node:", currentNode.nodeNum);
                     prevVertexes[currentNode.nodeNum] = true;
-                    console.log("previous vertexes:", prevVertexes);                    
+                    //console.log("previous vertexes:", prevVertexes);                    
                 }
-                alert("Click to continue");
+                //alert("Click to continue");
             }
 
             /*if (Graph.shortestPathLengths[src][dest] !== currentPathLength) {
@@ -1588,6 +1551,27 @@ Graph.runGravity = function () {
             }*/
         }
     }
+
+    //make this separate
+    (function () {
+        for (var lm in landmarks) {
+            var nextLM = landmarks[lm].rect;
+            if (vantagePoints[lm]) {
+                nextLM.setAttributeNS(null, "stroke", "purple");
+                nextLM.setAttributeNS(null, "stroke-width", "5");
+                delete vantagePoints[lm];
+            }
+            else {
+                nextLM.setAttributeNS(null, "stroke", "red");
+                nextLM.setAttributeNS(null, "stroke-width", "5");
+            }
+        }
+        for (var vp in vantagePoints) {
+            var nextVP = vantagePoints[vp].rect;
+            nextVP.setAttributeNS(null, "stroke", "blue");
+            nextVP.setAttributeNS(null, "stroke-width", "5");
+        }
+    })();
     return true;
 };
 
@@ -1882,7 +1866,7 @@ Graph.speedCheck = function () {
     }
     var end = new Date;
     console.log("Object -", (end - start) / 1000);*/
-    var arr = [1, 2, 3];
+    /*var arr = [1, 2, 3];
     var start = new Date;
     for (var z = 0; z < 1000000; z++) {
         if (arr.indexOf(6) !== -1) {
@@ -1906,5 +1890,87 @@ Graph.speedCheck = function () {
         }
     }
     var end = new Date;
-    console.log("Object -", (end - start) / 1000);
+    console.log("Object -", (end - start) / 1000);*/
+    
+    /*var arr1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var start = new Date;
+    for (var z = 0; z < 1000000; z++) {
+        for (var q = 0; q < arr1.length; q++) {
+            var temp = arr1[q];
+        }
+    }
+    var end = new Date;
+    console.log("Slow loop:", end-start);
+
+    var arr1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var start = new Date;
+    for (var z = 0; z < 1000000; z++) {
+        for (var q = 0, qq = arr1.length; q < qq; q++) {
+            var temp = arr1[q];
+        }
+    }
+    var end = new Date;
+    console.log("Fast loop:", end - start);
+
+    var arr1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var start = new Date;
+    var qq = arr1.length;
+    for (var z = 0; z < 1000000; z++) {
+        for (var q = qq - 1; q > 0 ; q--) {
+            var temp = arr1[q];
+        }
+    }
+    var end = new Date;
+    console.log("Fast loop also:", end - start);
+
+    var arr1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var start = new Date;
+    for (var z = 0; z < 1000000; z++) {
+        var qq = arr1.length;
+        while (qq--) {
+            var temp = arr1[qq];
+        }
+    }
+    var end = new Date;
+    console.log("While loop:", end - start);*/
+
+    /*var obj = {
+        'prop1': []
+    };
+    var start = new Date;
+    var iterations = 1000000;
+    while (iterations--) {
+        if (obj.hasOwnProperty("prop1")) {
+            var temp = 1;
+        }
+    }
+    var end = new Date;
+    console.log("hasOwnProperty", end - start);
+
+    var start = new Date;
+    var iterations = 1000000;
+    while (iterations--) {
+        if (obj["prop1"]) {
+            var temp = 1;
+        }
+    }
+    var end = new Date;
+    console.log("Direct access check", end - start);*/
+
+    /*var node = Graph.nodes[0];
+    var start = new Date;
+    var iterations = 1000000;
+    while (iterations--) {
+        var temp = node.X;
+    }
+    var end = new Date;
+    console.log("prop", end - start);
+
+    var start = new Date;
+    var iterations = 1000000;
+    while (iterations--) {
+        var temp = +node.firstElementChild.getAttributeNS(null, "x");
+    }
+    var end = new Date;
+    console.log("getAttribute", end - start);*/
 };

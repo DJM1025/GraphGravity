@@ -1,76 +1,83 @@
 ﻿
-// @@@@@@@@@@@@@@@    Side Panel 
+
+var xmlns = "http://www.w3.org/2000/svg";
+var xlink = "http://www.w3.org/1999/xlink";
+var svgXmlNs = "http://www.w3.org/2000/xmlns/";
+
+var root = document.documentElement;
+
+var isTouchSupported = 'ontouchstart' in window;
+var mDownE = isTouchSupported ? 'touchstart' : 'mousedown';
+var mMoveE = isTouchSupported ? 'touchmove' : 'mousemove';
+var mUpE = isTouchSupported ? 'touchend' : 'mouseup';
 
 
-function sidePainel() {
-    var xmlns = 'http://www.w3.org/2000/svg';
-    var xlinkns = 'http://www.w3.org/1999/xlink';
-    ratioscreen.availHeight
-    screen.availWidth
-    svgPainel = document.createElement('SVG')
-    this.Canvas = document.createElementNS(xmlns, "svg");
-    this.Canvas.setAttributeNS(null, "width", (window.innerWidth));
-    this.Canvas.setAttributeNS(null, "height", (window.innerHeight - 25));
-    this.Canvas.setAttributeNS(null, "x", 0);
-    this.Canvas.setAttributeNS(null, "y", 25);
-    this.Canvas.setAttributeNS(null, "viewBox", "0 25 " + (window.innerWidth) + " " + (window.innerHeight - 25));
-    this.Canvas.defs = document.createElementNS(xmlns, "defs");
-    this.Canvas.defs.protoNode = document.createElementNS(xmlns, "g");
-    this.Canvas.defs.protoNode.setAttributeNS(null, "id", "proto");
-    this.Canvas.defs.protoNode.rect = document.createElementNS(xmlns, "rect");
-    this.Canvas.defs.protoNode.rect.setAttributeNS(null, "x", 0);
-    this.Canvas.defs.protoNode.rect.setAttributeNS(null, "y", 0);
-    this.Canvas.defs.protoNode.rect.setAttributeNS(null, "width", 28);
-    this.Canvas.defs.protoNode.rect.setAttributeNS(null, "height", 20);
-    this.Canvas.defs.protoNode.rect.setAttributeNS(null, "fill", "blue");
-    this.Canvas.defs.protoNode.rect.setAttributeNS(null, "stroke", "red");
-    this.Canvas.defs.protoNode.rect.setAttributeNS(null, "stroke-width", 1);
-    this.Canvas.defs.protoNode.appendChild(this.Canvas.defs.protoNode.rect);
-    this.Canvas.defs.protoNode.txt = document.createElementNS(xmlns, "text");
-    this.Canvas.defs.protoNode.txt.setAttributeNS(null, "x", "10");
-    this.Canvas.defs.protoNode.txt.setAttributeNS(null, "y", "15");
-    this.Canvas.defs.protoNode.txt.setAttributeNS(null, "font-size", "18");
-    this.Canvas.defs.protoNode.txt.setAttributeNS(null, "font-family", "garamond");
-    this.Canvas.defs.protoNode.txt.setAttributeNS(null, "pointer-events", "none");
-    this.Canvas.defs.protoNode.txt.tn = document.createTextNode(" ");
-    this.Canvas.defs.protoNode.txt.appendChild(this.Canvas.defs.protoNode.txt.tn);
-    this.Canvas.defs.protoNode.appendChild(this.Canvas.defs.protoNode.txt);
-    this.Canvas.defs.appendChild(this.Canvas.defs.protoNode);
-    this.Canvas.appendChild(this.Canvas.defs);
-    this.Canvas.bg = document.createElementNS(xmlns, "rect");
-    this.Canvas.bg.setAttributeNS(null, "id", "CanvasBg");
-    this.Canvas.bg.setAttributeNS(null, "x", 0);
-    this.Canvas.bg.setAttributeNS(null, "y", 0);
-    this.Canvas.bg.setAttributeNS(null, "width", innerWidth);
-    this.Canvas.bg.setAttributeNS(null, "height", innerHeight);
-    this.Canvas.bg.setAttributeNS(null, "fill", "#eed");
-    this.Canvas.bg.setAttributeNS(null, "stroke", "none");
-    this.Canvas.appendChild(this.Canvas.bg);
-    this.Canvas.Edges = document.createElementNS(xmlns, "g");
-    this.Canvas.Edges.setAttributeNS(null, "id", "Edges");
-    this.Canvas.appendChild(this.Canvas.Edges);
-    this.Canvas.Nodes = document.createElementNS(xmlns, "g");
-    this.Canvas.appendChild(this.Canvas.Nodes);
-    this.Canvas.addEventListener("mouseup", this.mup, false);
-    this.Canvas.addEventListener("mousedown", this.mdown, false);
-    document.documentElement.addEventListener("keyup", this.kup, false);
-    document.documentElement.addEventListener("keydown", this.kdown, false);
-    document.documentElement.addEventListener("keydown", this.backspace, false);
-    document.documentElement.addEventListener("keypress", this.kpress, false);
-    document.documentElement.appendChild(this.Canvas);
+function sidePanel() {
+
+
 
 
 
 }
 
+function panel() {
+            //<rect fill="black" height="50"  width="25" stroke="red" stroke-width="2" x="20" y="20" ry="10" />
+           // <rect fill="gray" height="34" width="2" stroke="gray" stroke-width="2" x="25" y="28" ry="1" />
+           // <rect fill="gray" height="34" width="2" stroke="gray" stroke-width="2" x="30" y="28" ry="1" />
+
+    //var sideClick = document.getElementById("sideClick")
+    this.g = document.createElementNS(xmlns, "g");
+    this.rect = document.createElementNS(xmlns,"rect");
+    this.rect.setAttributeNS(null, "height", "51");
+    this.rect.setAttributeNS(null, "width", "28");
+    this.rect.setAttributeNS(null, "fill", "black");
+    this.rect.setAttributeNS(null, "rx", "5");
+    this.rect.setAttributeNS(null, "stroke", "red");
+    this.rect.setAttributeNS(null, "stroke-width", "2");
+    this.rect.setAttributeNS(null, "x", (window.innerWidth - 26));
+    this.rect.setAttributeNS(null, "y", (window.innerHeight / 2 - 25));
+    this.g.appendChild(this.rect);
+    for (var i = 0; i < 3; i++) {
+        var rect = document.createElementNS(xmlns, "rect");
+        rect.setAttributeNS(null, "height", "34");
+        rect.setAttributeNS(null, "width", "2");
+        rect.setAttributeNS(null, "fill", "gray");
+        rect.setAttributeNS(null, "rx", "1");
+        rect.setAttributeNS(null, "stroke", "gray");
+        rect.setAttributeNS(null, "stroke-width", "2");
+        rect.setAttributeNS(null, "x", (window.innerWidth - 22 + (i * 7)));
+        rect.setAttributeNS(null, "y", (window.innerHeight / 2 - 16));
+        this.g.appendChild(rect);
+    }
+    this.panel = document.createElementNS(xmlns, "rect");
+    this.panel.setAttributeNS(null, "height", window.innerHeight);
+    this.panel.setAttributeNS(null, "width", "2");
+    this.panel.setAttributeNS(null, "fill", "gray");
+    this.panel.setAttributeNS(null, "rx", "2");
+    this.panel.setAttributeNS(null, "stroke", "black");
+    this.panel.setAttributeNS(null, "stroke-width", "2");
+    this.panel.setAttributeNS(null, "x", (window.innerWidth - 2));
+    this.panel.setAttributeNS(null, "y", "0");
+    //this.sideClick.setAttributeNS(null, "translate", "transform(" + +"," + +")"
+    this.g.appendChild(this.panel);
+    root.appendChild(this.g);
 
 
-function screenType(evt) {
-    screen.availHeight
-    screen.availWidth
+
+    this.rect.addEventListener(mDownE, function (evt) {
+        mX = isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX
+        mY = isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY
+
+
+    });
+
+}
+function point(x, y) {
+    this.x = x;
+    this.y = y;
 }
 
+panel()
 
 
 
-//@@@@@@@@@@@@@@@@ End Side Panel

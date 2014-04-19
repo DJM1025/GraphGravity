@@ -1,0 +1,38 @@
+﻿1. Node Object Add 
+	Color Detect {"black",r000 g000 b000, #000000, hsl 0 0% 0}
+	x,y change position
+	Label test for a-Z and 0-9 
+	url
+	pic
+2. Gravity
+	LM  
+	 	{ [Find all y/n] }
+		{ Find Current Selection y/n }
+		{ [ use label/Gravity Value delimited by ; ] }
+	VP  
+		{ [Find all y/n] }
+		{ Find Current Selection y/n }
+		{ [ use label/Gravity Value delimited by ; ] }
+
+	Gravity Nodes
+		{ [Find all y/n] }
+		{ Find Current Selection y/n }
+		{ [ use label/Gravity Value delimited by ; ] }
+
+	Gravity All
+		{ current flavoring 
+		  All
+		  selected -current
+		  selected -all}
+3. Random
+	Adjacency Matrix
+		{ Number Of nodes or random in a range
+		  Number Of edges or random in a range }
+	Visual
+		{ Max Distance or Calculated
+		  Number Of nodes or random in a range}
+	Tree 
+		{ Number Of nodes or random in a range }
+4. Create Panel 
+5. Add Graph Functionality 
+	

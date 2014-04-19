@@ -76,6 +76,7 @@ function aspectRatio() {
         helpPlace();
     }
 }
+
 function modeIndicatorPosition() {
     var mode = document.getElementById('mode');
     var rect = mode.firstChild;
@@ -94,6 +95,7 @@ function modeIndicatorPosition() {
         text.setAttributeNS(null, "y", barheight + 17);
     }
 }
+
 function init() {
     xmlns = 'http://www.w3.org/2000/svg';
     xlinkns = 'http://www.w3.org/1999/xlink';
@@ -107,7 +109,7 @@ function init() {
     Graph = new graph();
     if (window.addEventListener) {
         window.addEventListener("resize", aspectRatio, false);
-        window.addEventListener("resize", modeIndicatorPosition, false);
+       // window.addEventListener("resize", modeIndicatorPosition, false);
     }
     //var c = ["blue","yellow"]; //colors may still be sent as a parameter to addMenu()
     addMenu(0);
@@ -159,9 +161,11 @@ function graph(){
 /************************************************************************** createCanvas */
 graph.prototype.createCanvas = function(){
 	this.Canvas=document.createElementNS(xmlns,"svg");
-	this.Canvas.setAttributeNS(null,"width",window.innerWidth);
-	this.Canvas.setAttributeNS(null,"height",window.innerHeight);
-	this.Canvas.setAttributeNS(null,"viewBox","0 0 "+(window.innerWidth)+" "+(window.innerHeight));
+	this.Canvas.setAttributeNS(null,"width",(window.innerWidth));
+	this.Canvas.setAttributeNS(null, "height", (window.innerHeight -25));
+	this.Canvas.setAttributeNS(null, "x", 0);
+	this.Canvas.setAttributeNS(null, "y", 25);
+	this.Canvas.setAttributeNS(null,"viewBox","0 25 "+(window.innerWidth)+" "+(window.innerHeight - 25));
 	this.Canvas.defs=document.createElementNS(xmlns,"defs");
 	this.Canvas.defs.protoNode=document.createElementNS(xmlns,"g");
 	this.Canvas.defs.protoNode.setAttributeNS(null,"id","proto");

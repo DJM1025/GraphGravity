@@ -1,4 +1,3 @@
-
 //begin code for menus
 MenuColors=new	Array("grey","red","blue","purple");
 buttons=new Array();
@@ -207,7 +206,7 @@ function showHide(s,B){
 			rect.setAttributeNS(null, "stroke", "grey");
 			rect.setAttributeNS(null, "stroke-width", 2);
 		}
-		//setTimeout('checkBounds('+B+')',5000);
+		setTimeout('checkBounds('+B+')',500);
 	}
 	else{
 		rect.setAttributeNS(null,"height",barheight+2);
@@ -939,6 +938,7 @@ function bumpCanvasThumb(evt){
 		document.documentElement.addEventListener("mouseup", function(evt){document.documentElement.removeEventListener("mousemove", dragCanvasThumb, false); restoreCanvasUp(evt);}, false);
 	}
 }
+
 var enlargeCanvas=function(){
 
 	var canvasSlider=document.getElementById('enlargeCanvas');
@@ -1409,8 +1409,6 @@ function helpOff(){
 	document.getElementById('back').appendChild(document.getElementById('guf'));
 	helpFlag = false;
 }
-
-
 
 function helpOn(){
 	helpPlace();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
-<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init()" onresize="aspectRatio(); modeIndicatorPosition();" xml:space="preserve" width="100%" height="100%">
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init()" onresize="aspectRatio(); /*modeIndicatorPosition();*/" xml:space="preserve" width="100%" height="100%">
     <script type="text/javascript" xlink:href="js/graphApp.js" />
     <script type="text/javascript" xlink:href="js/panel.js" />
     <script type="text/javascript" xlink:href="js/global.js" />
@@ -82,5 +82,5 @@
 			<text x="575" y="17" font-size="16" pointer-events="none" text-anchor="middle">?</text>
 		</g>
 	</defs>
-	<svg id="viewer" width="100%" height="100%"/>
+	
 </svg>	

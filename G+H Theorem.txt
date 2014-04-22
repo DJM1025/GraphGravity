@@ -1,0 +1,16 @@
+ 
+Theorem:
+
+Given two flavorable graphs G where |G| = n and H where |H|=m, G + H is flavorable by adding a single edge from node n of G to node 1 of H and renumbering each node j of H from j to j+n
+
+1. G  and H are still flavored
+wlog: If i1 and i2 are both in the same original graph, G, then the flavoring of G will still give a shortest path, since the addition of new nodes clearly does not affect distances within G.
+
+2. G+H is  flavored - i.e., for any pair of nodes, Gi and Gj, in G + H the flavoring produced by modifying Gj to be G(j+n) is the shortest.
+If node Ni elem of G and node Nj elem of H, the only path from Ni to Nj includes the new edge(n,n+1) where n is in G and n+1 is H and the distance between the two nodes is 1.
+Any node from 1 to n in G is < any node n+1 to n+m in H. Since the distance between G and H is exactly 1, there is no shorter path from 1..n to n+1..n+m than through node n of G.
+Likewise, every path from H to G must go through node n+1.
+
+
+Corollary: No other edge maintains the flavoring. 
+The above theorem works because the distance between the two graphs G, H is exactly 1. Any other numbering would produce a larger distance.  If a distance was 2, then there is the possibility of 2 selections and thus an increase in path distance of at least one.

@@ -2,8 +2,19 @@ var testing = 1;
 
 /********************************************************************* Global Variables  */
 
+
+
+
 var kpressBool;/* Used as a check for if the keyboard is pressed down, only 
 used in functions Kpress and backspace */
+
+
+/********************************************************************* Touch Setup */
+var isTouchSupported = 'ontouchstart' in window;
+var mDownE = isTouchSupported ? 'touchstart' : 'mousedown';
+var mMoveE = isTouchSupported ? 'touchmove' : 'mousemove';
+var mUpE = isTouchSupported ? 'touchend' : 'mouseup';
+
 
 function aspectRatio() {
     var windowAR = window.innerWidth / window.innerHeight;
@@ -76,6 +87,7 @@ function aspectRatio() {
         helpPlace();
     }
 }
+
 function modeIndicatorPosition() {
     var mode = document.getElementById('mode');
     var rect = mode.firstChild;
@@ -94,6 +106,7 @@ function modeIndicatorPosition() {
         text.setAttributeNS(null, "y", barheight + 17);
     }
 }
+
 function init() {
     xmlns = 'http://www.w3.org/2000/svg';
     xlinkns = 'http://www.w3.org/1999/xlink';
@@ -107,7 +120,7 @@ function init() {
     Graph = new graph();
     if (window.addEventListener) {
         window.addEventListener("resize", aspectRatio, false);
-        window.addEventListener("resize", modeIndicatorPosition, false);
+       // window.addEventListener("resize", modeIndicatorPosition, false);
     }
     //var c = ["blue","yellow"]; //colors may still be sent as a parameter to addMenu()
     addMenu(0);
@@ -159,9 +172,11 @@ function graph(){
 /************************************************************************** createCanvas */
 graph.prototype.createCanvas = function(){
 	this.Canvas=document.createElementNS(xmlns,"svg");
-	this.Canvas.setAttributeNS(null,"width",window.innerWidth);
-	this.Canvas.setAttributeNS(null,"height",window.innerHeight);
-	this.Canvas.setAttributeNS(null,"viewBox","0 0 "+(window.innerWidth)+" "+(window.innerHeight));
+	this.Canvas.setAttributeNS(null,"width",(window.innerWidth));
+	this.Canvas.setAttributeNS(null, "height", (window.innerHeight -25));
+	this.Canvas.setAttributeNS(null, "x", 0);
+	this.Canvas.setAttributeNS(null, "y", 25);
+	this.Canvas.setAttributeNS(null,"viewBox","0 25 "+(window.innerWidth)+" "+(window.innerHeight - 25));
 	this.Canvas.defs=document.createElementNS(xmlns,"defs");
 	this.Canvas.defs.protoNode=document.createElementNS(xmlns,"g");
 	this.Canvas.defs.protoNode.setAttributeNS(null,"id","proto");
@@ -244,13 +259,13 @@ graph.prototype.mdown = function(evt){
 		evt.stopPropagation();
 		if(evt.shiftKey || Graph.selecting){
 			var band=document.getElementById('band');
-			band.setAttributeNS(null,"x",Graph.Canvas.Position.x(evt.clientX));
-			band.setAttributeNS(null,"y",Graph.Canvas.Position.y(evt.clientY));
+			band.setAttributeNS(null, "x", Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX));
+			band.setAttributeNS(null, "y", Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY));
 			band.setAttributeNS(null,"width",0);
 			band.setAttributeNS(null,"height",0);
 			Graph.Canvas.appendChild(band);
-			var offX=Graph.Canvas.Position.x(evt.clientX);
-			var offY=Graph.Canvas.Position.y(evt.clientY);
+			var offX = Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX)
+			var offY = Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY);
 			var rubberBandStart=function(evt){rubberBand(evt,offX,offY);}
 			var removeBand=function(){
 				document.getElementById('back').appendChild(band);
@@ -326,8 +341,8 @@ graph.prototype.mup = function(evt){
 This will create a new node object that is contained in the Graph work area. */
 graph.prototype.addNode = function(evt){
 	var node = new Object();
-	node.x=this.Canvas.Position.x(evt.clientX);
-	node.y=this.Canvas.Position.y(evt.clientY);
+	node.x = this.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX);
+	node.y = this.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY);
 	node.id='g'+this.nodenum;
 	node.label=this.labelnum.toString();
 	node.width=28;
@@ -1111,8 +1126,8 @@ function Nodes(){
 /************************************************************************ move */
 	this.move=function(evt, offX, offY){
 		for (var i in Graph.SelectedNodes){
-			var x2=Graph.Canvas.Position.x(evt.clientX) - offX[i];
-			var y2=Graph.Canvas.Position.y(evt.clientY) - offY[i];
+		    var x2 = Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX) - offX[i];
+		    var y2 = Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY) - offY[i];
 			var rect=Graph.SelectedNodes[i].firstChild;
 			rect.setAttributeNS(null,"x",x2);
 			rect.setAttributeNS(null,"y",y2);
@@ -1349,7 +1364,7 @@ function Nodes(){
 			if(!selected) Graph.Nodes.select(target.id);
 			var offX= new Object();
 			var offY= new Object();
-			for (var i in Graph.SelectedNodes){offX[i] = Graph.Canvas.Position.x(evt.clientX)-Graph.Nodes[i].x; offY[i] = Graph.Canvas.Position.y(evt.clientY)-Graph.Nodes[i].y;}
+			for (var i in Graph.SelectedNodes) { offX[i] = Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX) - Graph.Nodes[i].x; offY[i] = Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY) - Graph.Nodes[i].y; }
 			var animateMove = function(evt){Graph.Nodes.move(evt, offX, offY);}
 			var animateMoveEnd = function(evt){Graph.Canvas.removeEventListener("mousemove", animateMove, false); Graph.Canvas.removeEventListener("mouseup", animateMoveEnd, false); Graph.Nodes.up(target, selected, shiftKey, edgesCreated);}
 			Graph.Canvas.addEventListener("mousemove", animateMove, false);
@@ -1399,24 +1414,24 @@ function Nodes(){
 
 
 /**************************************************************************** rubberBand */
-function rubberBand(evt,offX,offY){
-	band=document.getElementById('band');
-	if(Graph.Canvas.Position.x(evt.clientX)>offX){
-		band.setAttributeNS(null,"width",Graph.Canvas.Position.x(evt.clientX)-offX);
-	}
-	else{
-		band.setAttributeNS(null,"x",offX-(offX-Graph.Canvas.Position.x(evt.clientX)));
-		band.setAttributeNS(null,"width",offX-Graph.Canvas.Position.x(evt.clientX));
-	}
-	if(Graph.Canvas.Position.y(evt.clientY)>offY){
-		band.setAttributeNS(null,"height",Graph.Canvas.Position.y(evt.clientY)-offY);
-	}
-	else{
-		band.setAttributeNS(null,"y",offY-(offY-Graph.Canvas.Position.y(evt.clientY)));
-		band.setAttributeNS(null,"height",offY-Graph.Canvas.Position.y(evt.clientY));
-	}
-	//Root.appendChild(band);
-} 
+function rubberBand(evt, offX, offY) {
+    band = document.getElementById('band');
+    if (Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX) > offX) {
+        band.setAttributeNS(null, "width", Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX) - offX);
+    }
+    else {
+        band.setAttributeNS(null, "x", offX - (offX - Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX)));
+        band.setAttributeNS(null, "width", offX - Graph.Canvas.Position.x(isTouchSupported ? evt.changedTouches[0].pageX : evt.clientX));
+    }
+    if (Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY) > offY) {
+        band.setAttributeNS(null, "height", Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY) - offY);
+    }
+    else {
+        band.setAttributeNS(null, "y", offY - (offY - Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY)));
+        band.setAttributeNS(null, "height", offY - Graph.Canvas.Position.y(isTouchSupported ? evt.changedTouches[0].pageY : evt.clientY));
+    }
+    //Root.appendChild(band);
+}
 
 /********************************************************************************* Edges */
 function Edges(){

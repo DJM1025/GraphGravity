@@ -1,86 +1,18 @@
-<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
-<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init()" onresize="aspectRatio(); modeIndicatorPosition();" xml:space="preserve" width="100%" height="100%">
-    <script type="text/javascript" xlink:href="js/graphApp.js" />
-    <script type="text/javascript" xlink:href="js/panel.js" />
-    <script type="text/javascript" xlink:href="js/global.js" />
-    <script type="text/javascript" xlink:href="js/force.js" />
-    <script type="text/javascript" xlink:href="js/gravity.js" />
-	  <script type="text/javascript" xlink:href="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" /> 
-	<defs>
-		<linearGradient id="AGrad"><stop offset="0" stop-color="#0af" /><stop offset="1" stop-color="#ddf" stop-opacity=".6" /></linearGradient>
-		<linearGradient id="NGrad"><stop offset="0" stop-color="#f84" /><stop offset="1" stop-color="#ea6" stop-opacity=".6" /></linearGradient>
-		<linearGradient id="MsgGrad"><stop offset="0" stop-color="#fda" /><stop offset="1" stop-color="#08f" stop-opacity=".6" /></linearGradient>
-		<linearGradient id="ExpGrad"><stop offset="0" stop-color="#6bf" stop-opacity=".9" /><stop offset="0.5" stop-color="#cef" stop-opacity=".6" /></linearGradient>
-		<linearGradient id="ButtonGradBg" x1="0%" y1="0%" x2="0%" y2="100%">
-			<stop offset="0" stop-color="#fb4"/>
-			<stop offset="1" stop-color="#fba"/>
-		</linearGradient>
-		<linearGradient id="ButtonGradTopHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-			<stop offset="0" stop-color="#fff" stop-opacity="0.4" />
-			<stop offset="1" stop-color="#fff" stop-opacity="0" />
-		</linearGradient>
-		<linearGradient id="ButtonGradBottomHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-			<stop offset="0" stop-color="#fff" stop-opacity="0" />
-			<stop offset="1" stop-color="#fff" stop-opacity="0.4" />
-		</linearGradient>
-		<g id="back"><rect id="band" x="0" y="0" width="0" height="0" opacity="0.2" fill="#3be" stroke="black" stroke-width="2" stroke-dasharray="5,3,2" /><g id="guf"><rect id="helpbox" width="700" height="25" x="600" y="1" fill="#FFFFCC" stroke="#FFFF99" stroke-width="2"/><text id="helptext" x="605" y="20">This is The Canvas: Click to add a new node, Shift Click and Drag to select multiple nodes.</text></g></g>
-		<g id="panels">
-			<g id="NPanel"><rect x="400" y="50" rx="5" ry="5" width="150" height="200" opacity="0.9" fill="url(#NGrad)" stroke="#bbb" stroke-width="2" /><g id="NPanelTitle"><rect x="401" y="51" rx="3" ry="3" width="148" height="23" opacity="0.5" fill="#3eb" stroke="none" /><text font-size="22" font-family="garamond" x="405" y="68" font-weight="bold" pointer-events="none">N</text><text font-size="16" font-family="garamond" x="424" y="68" font-weight="bold" pointer-events="none">AVIGATION</text></g><line x1="401" y1="74" x2="549" y2="74" stroke="black" stroke-width="1" /><g id="NClose"><circle cx="538" cy="62" r="7" opacity="0.9" fill="#faa" stroke="grey" stroke-width="1" /></g><g id="navView"><g id="docSize"><rect x="410" y="84" height="80" width="130" opacity="0.5" fill="#931" stroke="black" stroke-width="1" /><g id="viewSize"><rect x="410" y="84" height="40" width="60" opacity="0.5" fill="#ccf" stroke="black" stroke-width="2" stroke-dasharray="1,2,1" /></g></g><text font-size="12" font-weight="bold" font-family="garamond" x="410" y="176" pointer-events="none">zoom:</text><g id="zoomSlider"><line x1="411" y1="186" x2="539" y2="186" stroke="black" stroke-width="1" /><rect x="440" y="180" width="5" height="12" fill="grey" stroke="black" stroke-width="1" /><rect x="410" y="180" width="130" height="12" fill="#fff" stroke="none" opacity="0"/></g><g id="zoomOutEmblem"></g><g id="zoomInEmblem"></g><g id="enlargeCanvas"><line x1="411" y1="220" x2="539" y2="220" stroke="black" stroke-width="1" /><rect x="440" y="214" width="5" height="12" fill="grey" stroke="black" stroke-width="1" /><rect x="410" y="214" width="130" height="12" fill="#fff" stroke="none" opacity="0"/></g><text font-size="12" font-family="garamond" font-weight="bold" x="410" y="210" pointer-events="none">document dimensions:</text><text font-size="12" font-family="garamond" x="410" y="242" pointer-events="none">width: 1024</text><text font-size="12" font-family="garamond" x="480" y="242" pointer-events="none">height: 768</text></g></g>
-			<g id="APanel"><rect x="554" y="50" rx="5" ry="5" width="150" height="200" opacity="0.9" fill="url(#AGrad)" stroke="#bbb" stroke-width="2" /><g id="APanelTitle"><rect x="555" y="51" rx="3" ry="3" width="148" height="23" opacity="0.5" fill="#3eb" stroke="none" /><text font-size="22" font-family="garamond" x="559" y="68" font-weight="bold" pointer-events="none">A</text><text font-size="16" font-family="garamond" x="572" y="68" font-weight="bold" pointer-events="none">CTIONS</text></g><line x1="555" y1="74" x2="703" y2="74" stroke="black" stroke-width="1" /><g id="AClose"><circle cx="692" cy="62" r="7" opacity="0.9" fill="#faa" stroke="grey" stroke-width="1" /></g><rect id="picker" x="554" y="50" rx="5" ry="5" width="150" height="0" opacity="0.2" fill="yellow" stroke="none" /><g id="actionList"><text font-size="16" font-family="garamond" x="564" y="78" pointer-events="none"> </text></g></g>
-			<g id="SPanel"><rect x="50" y="50" rx="5" ry="5" width="300" height="50" opacity="0.9" fill="url(#MsgGrad)" stroke="#bbb" stroke-width="2" /><g id="SPanelTitle"><rect x="51" y="51" rx="3" ry="3" width="298" height="23" opacity="0.5" fill="#3eb" stroke="none" /><text font-size="22" font-family="garamond" x="55" y="68" font-weight="bold" pointer-events="none">S</text><text font-size="16" font-family="garamond" x="66" y="68" font-weight="bold" pointer-events="none">CALE</text></g><line x1="51" y1="74" x2="349" y2="74" stroke="black" stroke-width="1" /><g id="SClose"><circle cx="338" cy="62" r="7" opacity="0.9" fill="#faa" stroke="grey" stroke-width="1" /></g><text font-size="12" font-weight="bold" font-family="garamond" x="60" y="92" pointer-events="none">scale factor: </text><rect id="scaleInput" x="132" y="82" width="43" height="12" fill="#fff" stroke="black" stroke-width="1" /><text font-size="12" font-family="garamond" x="138" y="92" pointer-events="none">0.5</text><rect id="scaleButton" x="180" y="82" width="40" height="13" opacity=".6" fill="black" stroke="grey" stroke-width="1" /><text font-size="12" font-family="garamond" fill="#fff" font-weight="bold" x="186" y="92" pointer-events="none">scale</text><g id="scaleSlider"><line x1="226" y1="87" x2="344" y2="87" stroke="black" stroke-width="1" /><rect x="285" y="81" width="5" height="12" fill="grey" stroke="black" stroke-width="1" /><rect x="225" y="81" width="120" height="12" fill="#fff" stroke="none" opacity="0"/></g></g>
-			<g id="MsgPanel"><rect x="400" y="205" rx="5" ry="5" width="300" height="50" opacity="0.9" fill="url(#MsgGrad)" stroke="#bbb" stroke-width="2" /><g id="MsgPanelTitle"><rect x="401" y="206" rx="3" ry="3" width="298" height="23" opacity="0.5" fill="#3eb" stroke="none" /><text font-size="22" font-family="garamond" x="405" y="223" font-weight="bold" pointer-events="none">M</text><text font-size="16" font-family="garamond" x="424" y="223" font-weight="bold" pointer-events="none">ESSAGE</text></g><line x1="401" y1="229" x2="699" y2="229" stroke="black" stroke-width="1" /><g id="MsgClose"><circle cx="688" cy="217" r="7" opacity="0.9" fill="#faa" stroke="grey" stroke-width="1" /></g><g id="MsgText"><text font-size="12" font-weight="bold" font-family="garamond" x="410" y="245" pointer-events="none"> </text></g></g>
-			<g id="AboutPanel"><rect x="190" y="65" rx="5" ry="5" width="470" height="240" opacity="0.9" fill="url(#MsgGrad)" stroke="#bbb" stroke-width="2" /><g id="AboutPanelTitle"><rect x="191" y="66" rx="3" ry="3" width="468" height="23" opacity="0.5" fill="#3eb" stroke="none" /><text font-size="22" font-family="garamond" x="195" y="83" font-weight="bold" pointer-events="none">A</text><text font-size="16" font-family="garamond" x="208" y="83" font-weight="bold" pointer-events="none">BOUT</text></g><line x1="191" y1="89" x2="659" y2="89" stroke="black" stroke-width="1" /><g id="AboutClose"><circle cx="648" cy="77" r="7" opacity="0.9" fill="#faa" stroke="grey" stroke-width="1" /></g><g id="AboutText"><text font-size="12" font-weight="bold" font-family="garamond" x="200" y="105" pointer-events="none"><tspan x="200" y="105">Grapher was begun on an Andrew workstation at Carnegie Mellon in about 1987. </tspan><tspan x="200" y="120">It has seen incarnations in cT, Hypercard,  as a Java Applet, as a web app running </tspan><tspan x="200" y="135">JavaScript with VML and now as a web app running JavaScript with SVG. The </tspan><tspan x="200" y="150">primary designer of the project has been David Dailey. The current incarnation </tspan><tspan x="200" y="165">however has been written primarily by Eric Elder with considerable assistance </tspan><tspan x="200" y="180">from Reno Perri and occasional help from Dr. Dailey. It is intended to a) allow the </tspan><tspan x="200" y="195">graph theorist to be able flexibly and quickly to design small graphs and to store </tspan><tspan x="200" y="210">them in machine readable form and b) to enable the creation of web sites of </tspan><tspan x="200" y="225">differing connective topology (hence enabling our research on graph navigability </tspan><tspan x="200" y="240">by humans or by simple algorithms). This is an open source project. We invite </tspan><tspan x="200" y="255">contributions, but have little experience as yet in coordinating an open </tspan><tspan x="200" y="270">source project. Please write to me, Dr. David Dailey: david.dailey@sru.edu </tspan><tspan x="200" y="285">if you have suggestions or would like to help, or even if you are using the software </tspan><tspan x="200" y="300">and would like to let us know. We would be delighted to hear from you!</tspan></text></g></g>
-			<g id="ExportPanel"><rect x="190" y="65" rx="5" ry="5" width="165" height="170" opacity="0.9" fill="url(#ExpGrad)" stroke="#bbb" stroke-width="2" /><g id="ExportPanelTitle"><rect x="191" y="66" rx="3" ry="3" width="163" height="23" opacity="0.5" fill="#3eb" stroke="none" /><text font-size="22" font-family="garamond" x="195" y="83" font-weight="bold" pointer-events="none">E</text><text font-size="16" font-family="garamond" x="209" y="83" font-weight="bold" pointer-events="none">XPORT</text></g><line x1="191" y1="89" x2="354" y2="89" stroke="black" stroke-width="1" /><g id="ExportClose"><circle cx="343" cy="77" r="7" opacity="0.9" fill="#faa" stroke="grey" stroke-width="1" /></g><g id="ExportText"><text font-size="12" font-weight="bold" font-family="garamond" x="200" y="105" pointer-events="none">Choose a method of export</text></g>
-				<g id="exportLocalButton">
-					<rect x="200" y="115" rx="5" ry="5" width="145" height="20" fill="url(#ButtonGradBg)" stroke="none" />
-					<rect x="201" y="116" rx="3" ry="3" width="143" height="9" fill="url(#ButtonGradTopHighlight)" stroke="none" />
-					<rect x="201" y="128" rx="4" ry="4" width="143" height="6" fill="url(#ButtonGradBottomHighlight)" stroke="none" />
-					<text font-size="12" font-weight="bold" font-family="garamond" x="205" y="129" pointer-events="none">Export to Local Machine</text>
-				</g>
-				<g id="exportServerButton">
-					<rect x="200" y="145" rx="5" ry="5" width="145" height="20" fill="url(#ButtonGradBg)" stroke="none" />
-					<rect x="201" y="146" rx="3" ry="3" width="143" height="9" fill="url(#ButtonGradTopHighlight)" stroke="none" />
-					<rect x="201" y="158" rx="4" ry="4" width="143" height="6" fill="url(#ButtonGradBottomHighlight)" stroke="none" />
-					<text font-size="12" font-weight="bold" font-family="garamond" x="230" y="159" pointer-events="none">Export to Server</text>
-				</g>
-				<g id="exportClipboardButton">
-					<rect x="200" y="175" rx="5" ry="5" width="145" height="20" fill="url(#ButtonGradBg)" stroke="none" />
-					<rect x="201" y="176" rx="3" ry="3" width="143" height="9" fill="url(#ButtonGradTopHighlight)" stroke="none" />
-					<rect x="201" y="188" rx="4" ry="4" width="143" height="6" fill="url(#ButtonGradBottomHighlight)" stroke="none" />
-					<text font-size="12" font-weight="bold" font-family="garamond" x="220" y="189" pointer-events="none">Export to Clipboard</text>
-				</g>
-				<g id="makeSiteButton">
-					<rect x="200" y="205" rx="5" ry="5" width="145" height="20" fill="url(#ButtonGradBg)" stroke="none" />
-					<rect x="201" y="206" rx="3" ry="3" width="143" height="9" fill="url(#ButtonGradTopHighlight)" stroke="none" />
-					<rect x="201" y="218" rx="4" ry="4" width="143" height="6" fill="url(#ButtonGradBottomHighlight)" stroke="none" />
-					<text font-size="12" font-weight="bold" font-family="garamond" x="225" y="219" pointer-events="none">Create a Web Site</text>
-				</g>
-			</g>
-			<g id="ImportPanel"><rect x="190" y="65" rx="5" ry="5" width="165" height="140" opacity="0.9" fill="url(#ExpGrad)" stroke="#bbb" stroke-width="2" /><g id="ImportPanelTitle"><rect x="191" y="66" rx="3" ry="3" width="163" height="23" opacity="0.5" fill="#3eb" stroke="none" /><text font-size="22" font-family="garamond" x="195" y="83" font-weight="bold" pointer-events="none">I</text><text font-size="16" font-family="garamond" x="203" y="83" font-weight="bold" pointer-events="none">MPORT</text></g><line x1="191" y1="89" x2="354" y2="89" stroke="black" stroke-width="1" /><g id="ImportClose"><circle cx="343" cy="77" r="7" opacity="0.9" fill="#faa" stroke="grey" stroke-width="1" /></g><g id="ImportText"><text font-size="12" font-weight="bold" font-family="garamond" x="200" y="105" pointer-events="none">Choose a method of import</text></g>
-				<g id="importLocalButton">
-					<rect x="200" y="115" rx="5" ry="5" width="145" height="20" fill="url(#ButtonGradBg)" stroke="none" />
-					<rect x="201" y="116" rx="3" ry="3" width="143" height="9" fill="url(#ButtonGradTopHighlight)" stroke="none" />
-					<rect x="201" y="128" rx="4" ry="4" width="143" height="6" fill="url(#ButtonGradBottomHighlight)" stroke="none" />
-					<text font-size="12" font-weight="bold" font-family="garamond" x="220" y="129" pointer-events="none">Import Local File</text>
-				</g>
-				<g id="importServerButton">
-					<rect x="200" y="145" rx="5" ry="5" width="145" height="20" fill="url(#ButtonGradBg)" stroke="none" />
-					<rect x="201" y="146" rx="3" ry="3" width="143" height="9" fill="url(#ButtonGradTopHighlight)" stroke="none" />
-					<rect x="201" y="158" rx="4" ry="4" width="143" height="6" fill="url(#ButtonGradBottomHighlight)" stroke="none" />
-					<text font-size="12" font-weight="bold" font-family="garamond" x="220" y="159" pointer-events="none">Import from Server</text>
-				</g>
-				<g id="importClipboardButton">
-					<rect x="200" y="175" rx="5" ry="5" width="145" height="20" fill="url(#ButtonGradBg)" stroke="none" />
-					<rect x="201" y="176" rx="3" ry="3" width="143" height="9" fill="url(#ButtonGradTopHighlight)" stroke="none" />
-					<rect x="201" y="188" rx="4" ry="4" width="143" height="6" fill="url(#ButtonGradBottomHighlight)" stroke="none" />
-					<text font-size="12" font-weight="bold" font-family="garamond" x="212" y="189" pointer-events="none">Import from Clipboard</text>
-				</g>
-			</g>
-		</g>
-		<g id="helpFile">
-			<ellipse cx="575" cy="11" rx="10" ry="10" stroke="black" stroke-width="2" fill="yellow"/>
-			<text x="575" y="17" font-size="16" pointer-events="none" text-anchor="middle">?</text>
-		</g>
-	</defs>
-	<svg id="viewer" width="100%" height="100%"/>
-</svg>	
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" zoomAndPan="disabled">
+    <!--<rect x="0" y="0" height="75" width="100" fill="red" stroke="black" stroke-width="2" onclick="event.stopPropagation()"></rect>-->
+    <script type="text/javascript" xlink:href = "js/Graph.js"></script>
+
+ 
+    <script type="text/javascript" xlink:href = "js/SVGMenu.js"></script>
+    <script type="text/javascript" xlink:href = "js/SidePanel.js"></script>
+    <script type="text/javascript" xlink:href = "js/SVGListBox.js"></script>
+
+    <defs>
+        <g id="sideClick">
+            <rect fill="black" height="50"  width="25" stroke="red" stroke-width="2" x="20" y="20" ry="10" />
+            <rect fill="gray" height="34" width="2" stroke="gray" stroke-width="2" x="25" y="28" ry="1" />
+            <rect fill="gray" height="34" width="2" stroke="gray" stroke-width="2" x="30" y="28" ry="1" />
+        </g>
+    </defs>
+
+</svg>

@@ -1,59 +1,68 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
     <title>Graph Gravity</title>
-<style>
-    div.title {
-        background-color: #FFAC83;
-        width: 98%;
-        left:;
-        height: 20%;
-        text-align: center;
-        font-size: 500%;
-        min-width: 400px;
-        max-width: 1200px;
-        min-height: 100px;
-        max-height: 150px;
-        
-    }
-    div.content {
-        background-color: #7EDFFF;
-        width: 69%;
-        position: fixed;
-        top: 30%;
-        height: 70%;
-    }
-    div.sidecontent {
-        background-color: #A300A3;
-        width: 28.5%;
-        position: fixed;
-        top: 30%;
-        left: 70%;
-        height: 100%;
-    }
-</style>
-
 </head>
 <body>
-  <!--  <div class="title">Graph&nbsp;Gravity</div>
-    <div class="content" >hfjdklsafdsa</div>
-    <div class="sidecontent">hfjdklsafdsa</div>-->
-    <?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
-<svg id="svg"version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="100%" height="100%">
-<script>
-<![CDATA[
-    (function() 
-    var svg = document.getElementById('svg')
-    svg.append("rect")
-    svg.firstChild.x = 30;
-    svg.firstChild.y = 30;
-    svg.firstChild.hight = 30;
-    svg.firstChild.width = 30;
-    svg.firstChild.fill = "red";
-    )();
-    ]>
-</script>
-</svg>
 
+    <div id="output" ></div><br>
+    <svg id="svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="400" style="right: 0px; position: fixed;">
+
+        <defs>
+            <g id="sideClick">
+                <rect fill="black" height="50" width="26" stroke="red" stroke-width="2" x="1" y="1" ry="10" />
+                <rect fill="gray" height="34" width="1" stroke="gray" stroke-width="2" x="6" y="9" ry="1" />
+                <rect fill="gray" height="34" width="1" stroke="gray" stroke-width="2" x="11" y="9" ry="1" />
+            </g>
+        </defs>
+        <use xlink:href="#sideClick" transform="translate(0, 80)" />
+    </svg>
+
+
+
+    <script>
+        var output = document.getElementById("output");
+        //alert(screen.availHeight)
+        function extrudePanel() {
+
+        }
+        function screenSize() {
+            this.width = screen.width;
+            this.height = screen.height;
+            output.innerHTML = this.width + "  " + this.height + "  " + screen.availWidth + "  " + screen.availHeight + "  " + window.innerWidth + "  " + window.innerHeight
+
+        }
+        function Panel() {
+            var xmlns = "http://www.w3.org/2000/svg";
+            var xlink = "http://www.w3.org/1999/xlink";
+            var svgc = document.getElementById("svg");
+            
+
+
+
+            this.sideClick = document.getElementById("sideClick");
+            this.rect = document.createElementNS(xmlns, "rect");
+            this.rect.setAttributeNS(null, "x", "16");
+            this.rect.setAttributeNS(null, "height", "50");
+            this.rect.setAttributeNS(null, "width", "5");
+            this.rect.setAttributeNS(null, "fill", "black");
+            this.sideClick.setAttributeNS(null,"translate" , "transform("+ +","+ +")")
+            svgc.appendChild(this.rect);
+
+        }
+            function point(x,y){
+                this.x=x;
+                this.y=y;
+            }
+
+        function svgElement() {
+
+        }
+        Panel();
+        screenSize();
+    </script>
+
+
+    
 </body>
 </html>

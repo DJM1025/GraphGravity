@@ -29,7 +29,7 @@
 		{ Number Of nodes or random in a range
 		  Number Of edges or random in a range }
 	Visual
-		{ Max Distance or Calculated
+		{ Max Distance or Calculated do more
 		  Number Of nodes or random in a range}
 	Tree 
 		{ Number Of nodes or random in a range }

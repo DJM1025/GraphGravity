@@ -1,0 +1,235 @@
+
+<svg width="100%" height="100%"
+ xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+  onload="startup(evt)"
+>
+<script>
+<![CDATA[
+var document=null;
+var O=null;
+var rainbox; 
+var left; 
+var wide; 
+var right;
+var posy=0
+var x=0
+var Hue=180
+var Bri=1
+var Sat=1
+var C
+var RCS=new Array("rainbox","RZ","RB","RS")
+var RA=new Array()
+var svgns = 'http://www.w3.org/2000/svg';
+var xlinkns = 'http://www.w3.org/1999/xlink';
+arrow=new Array()
+function startup(evt){
+	var g = document.getElementById("submitBtn");
+	var browser = navigator.userAgent;
+	
+	if(browser.indexOf(".NET") == -1){  //Non IE browsers -> Use foreign object to create an actual HTML Button
+		var fO = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+		fO.setAttributeNS(null, 'class', 'node');
+		fO.setAttributeNS(null, 'x', '100');
+		fO.setAttributeNS(null, 'y', '100');
+		fO.setAttributeNS(null, 'height', '50%');
+		fO.setAttributeNS(null, 'width', '50%');
+		var btn = document.createElementNS('http://www.w3.org/1999/xhtml', 'input');
+		btn.setAttributeNS(null, 'type', 'button');
+		btn.setAttributeNS(null, 'value', 'Submit');
+		btn.setAttributeNS(null, 'onclick', 'updateColor()');
+		fO.appendChild(btn);
+		g.appendChild(fO);
+	}
+	else {
+		//IE code (IE does not support <foreign object>)
+		g.setAttributeNS(null, 'onclick', 'updateColor()');
+		var btn = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		btn.setAttributeNS(null, 'x', '100');
+		btn.setAttributeNS(null, 'y', '100');
+		btn.setAttributeNS(null, 'height', '50');
+		btn.setAttributeNS(null, 'width', '100');
+		btn.setAttributeNS(null,'fill','beige');
+		var txt = document.createElementNS('http://www.w3.org/2000/svg', "text");
+		txt.setAttributeNS(null, "x", '115');
+		txt.setAttributeNS(null, "y", '130');
+		txt.setAttributeNS(null,"font-size","25");
+		txt.textContent = "Submit";
+		g.appendChild(btn);
+		g.appendChild(txt);
+	}
+	
+	O=evt.target
+	document=O.ownerDocument
+	for (i=0;i<4;i++){
+		RA[i]=document.getElementById(RCS[i])
+		arrow[i]=document.getElementById("arrow"+i)
+	}
+	RR=document.getElementById("RR")
+	o1=document.getElementById("o1")
+	o2=document.getElementById("o2")
+	o3=document.getElementById("o3")
+	b2=document.getElementById("b2")
+	s1=document.getElementById("s1")
+	p1=(750 - 180)%360
+	p3=(690 - 180)%360
+}
+function HSVtoRGB(Hue,S,I){
+ // H is between 0 and 360; S is between 0 and 1; I is between 0 and 1
+ Hue=Hue%360
+ var SixP=Hue/60;
+ var main=Math.floor(SixP)
+ var secondary=SixP-main
+ //var a=(1-S)/I
+ var a=(1-S)*I
+ var b=(1-(S*secondary))*I
+ var c=(1-(S*(1-secondary)))*I
+ if   (main==0){ R=I;G=c;B=a}
+ else if (main==1){ R=b;G=I;B=a}
+ else if (main==2){ R=a;G=I;B=c}
+ else if (main==3){ R=a;G=b;B=I}
+ else if (main==4){ R=c;G=a;B=I}
+ else {    R=I;G=a;B=b}
+ var A=new Array(R,G,B)
+ var C="#"
+ for (k=0;k<3;k++){
+  var x=Math.floor(A[k]*255)
+  if (x<16) C+="0"
+  C+=x.toString(16)
+ }
+  document.getElementById("TX").firstChild.nodeValue=C
+ return C
+}
+ 
+function colorAtPoint(evt,z){
+ 
+ left=RA[z].getBBox().x
+ wide=(RA[z].getBBox().width)
+ 
+
+ x=evt.clientX - left;
+ if ((x<1)||(x>wide)) return
+ proportion=x/wide
+ 
+ if (z==0){
+  Hue=360-proportion*360
+  p1=(750-proportion*360)%360
+  p3=(690-proportion*360)%360
+  C=HSVtoRGB(Hue,Sat,Bri)
+  o3.setAttribute("stop-color",HSVtoRGB(p3,Sat,Bri))
+  o2.setAttribute("stop-color",C)
+  b2.setAttribute("stop-color",C)
+  s1.setAttribute("stop-color",C)
+  o1.setAttribute("stop-color",HSVtoRGB(p1,Sat,Bri))
+ }
+ if (z==1){
+  Hue= p1 - proportion*(p1-p3)
+  C=HSVtoRGB(Hue,Sat,Bri)
+  b2.setAttribute("stop-color",C)
+  s1.setAttribute("stop-color",C)
+ }
+ if (z==2){
+  Bri=proportion
+  C=HSVtoRGB(Hue,Sat,Bri)
+  s1.setAttribute("stop-color",C)
+ }
+ if (z==3){
+  Sat=1 - proportion
+  C=HSVtoRGB(Hue,Sat,Bri)
+  b2.setAttribute("stop-color",C)
+ }
+ 
+ RR.setAttribute("fill",C)
+ arrow[z].setAttribute("transform","translate("+(x + left - 130)+",0)")
+}
+ 
+function ready(evt,z){
+ O.setAttribute("onmousemove","colorAtPoint(evt,"+z+")")
+ O.setAttribute("onmouseup","unready()")
+ if (z==0) arrow[1].setAttribute("transform","translate("+0+",0)")
+}
+function unready(){
+ O.setAttribute("onmousemove",null)
+ for (i=0;i<4;i++){
+  RA[i].setAttribute("onmouseover",null)
+ }
+}
+function activate(evt){
+ posy=evt.target.getBBox().y
+ zoomfactor=Math.round(1+posy/25)
+ posx=x
+ arrow.setAttribute("transform","translate("+posx+",0)")
+}
+ 
+function updateColor()
+{
+	if(window.opener)
+	{
+		var row = window.opener.document.getElementById("colorPicker").value;
+		window.opener.document.getElementById(row+"_3").childNodes[0].style.backgroundColor = document.getElementById("TX").childNodes[0].nodeValue;
+		window.close();
+	}
+}
+
+]]>
+</script>
+<defs>
+<linearGradient id="Rainbow" x1="0" x2="100%" >
+<stop offset="0" stop-color="#f00"/>
+<stop offset=".167" stop-color="#f0f"/>
+<stop offset=".333" stop-color="#00f"/>
+<stop offset=".50" stop-color="#0ff"/>
+<stop offset=".667" stop-color="#0f0"/>
+<stop offset=".833" stop-color="#ff0"/>
+<stop offset="1"  stop-color="#f00"/>
+</linearGradient>
+<linearGradient id="zoom" x1="0" x2="100%" >
+<stop id="o1" offset="0" stop-color="#08f"/>
+<stop id="o2" offset=".50" stop-color="#0ff"/>
+<stop id="o3" offset="1"  stop-color="#0f8"/>
+</linearGradient>
+<linearGradient id="bri" x1="0" x2="100%" >
+<stop id="b1" offset="0" stop-color="#000"/>
+<stop id="b2" offset="1"  stop-color="#0ff"/>
+</linearGradient>
+<linearGradient id="sat" x1="0" x2="100%" >
+<stop id="s1" offset="0" stop-color="#0ff"/>
+<stop id="s2" offset="1"  stop-color="#fff"/>
+</linearGradient>
+</defs>
+ 
+
+<rect id="RR" y="0" height="100%" x="0" width="100%" fill="#0ff"/>
+<rect id="back" x="35" y="0" height="40" width="485" fill="#888"/>
+<rect id="RZ" x="50" y="20" height="15" width="150" fill="url(#zoom)"/>
+<rect id="RB" x="210" y="0" height="15" width="150" fill="url(#bri)"/>
+<rect id="RS" x="360" y="0" height="15" width="150" fill="url(#sat)"/>
+<rect id="rainbox" width="150" height="15" x="50" y="0" fill="url(#Rainbow)"/>
+<g id="arrow0" onmousedown="ready(evt,0)">
+<path fill="yellow" stroke="black" stroke-width="2" d="M 130 17 130 10 126 10 133 2 140 10 136 10 136 17 z" />
+</g>
+<g id="arrow1" onmousedown="ready(evt,1)">
+<path fill="yellow" stroke="black" stroke-width="2" d="M 130 42 130 35 126 35 133 27 140 35 136 35 136 42 z" />
+</g>
+<g id="arrow3" onmousedown="ready(evt,3)" transform="translate(230,0)">
+<path fill="yellow" stroke="black" stroke-width="2" d="M 130 17 130 10 126 10 133 2 140 10 136 10 136 17 z" />
+</g>
+<g id="arrow2" onmousedown="ready(evt,2)" transform="translate(230,0)">
+<path fill="yellow" stroke="black" stroke-width="2" d="M 130 17 130 10 126 10 133 2 140 10 136 10 136 17 z" />
+</g>
+<text visibility = "hidden" id="TX" x="400" y="100" font-size="30" fill="red">#00b2ff</text>
+
+<g id = "submitBtn"> 
+<!--
+	<foreignObject class="node" x="100" y="100" height="50%" width="50%">
+		<body xmlns="http://www.w3.org/1999/xhtml">
+		<input type = "button" value = "Submit" onclick = "updateColor()"/>
+		</body>
+	</foreignObject>
+-->
+</g>
+
+</svg>
+
+ 
+ 

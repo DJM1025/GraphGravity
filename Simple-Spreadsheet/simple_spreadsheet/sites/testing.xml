@@ -1,0 +1,16 @@
+<graph>
+<node id="g1" x="503" y="105" color="rgb(145,138,157)" label="1. Shank" object="false" home="true">
+<edge to="g2" />
+<edge to="g3" />
+</node>
+<node id="g2" x="404" y="233" color="rgb(159,188,174)" label="2. Rotten" object="false" home="false">
+<edge to="g1" />
+</node>
+<node id="g3" x="612" y="239" color="rgb(128,154,169)" label="3. Reveal" object="false" home="false">
+<edge to="g4" />
+<edge to="g1" />
+</node>
+<node id="g4" x="642" y="304" color="rgb(183,254,211)" label="4. Rampart" object="false" home="false">
+<edge to="g3" />
+</node>
+</graph>

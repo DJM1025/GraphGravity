@@ -1,0 +1,728 @@
+
+<?xml version="1.0" standalone="no"?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<script>
+var xmlns="http://www.w3.org/2000/svg";
+var xlink="http://www.w3.org/1999/xlink";
+var S = document.getElementById("svg");
+var w = window.innerWidth;             //gets the maximum width of the users page
+var h = window.innerHeight;            //gets the maximum height of the users page
+numberOfClicks = 0;         //number of rooms the user has clicked on
+nodeColors = new Array();   //holds the color that will be associated with each node
+nodeContents = new Array(); //holds the word that corresponds with each node
+numOfEdges = new Array();   //used for sortingByGravityValues to loop through connecting nodes
+objectArray = new Array();  //holds the boolean value for whther or not we have a turkey at that location
+xCords = new Array();       //array for x coordinates of the xml
+yCords = new Array();       //array for the y coordinates of the xml
+beenVisited = new Array();  //holds whether the given node has been visited or not. 0 = not visited 1 = visited
+footPrintArray = new Array();
+footPrintTimes = new Array();
+allVisited = false;               //flag for once all nodes have been visited
+homeLocation = 0;;            //location of gathering spot for collection game
+objectsPlaced = 0;
+/*Things to finish
+1. Random sorting needs implemented
+2. Vertical Lines for visual queues needs implemented
+3. Turkey Game!!!!
+*/
+//whoever has to use or edit this later on i feel bad for you because this thing is a hot mess. i don't know what i was
+//thinking when i wrote any of it.
+function readTextFile()
+{
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET","wordlist2.txt",true);
+	xmlhttp.onreadystatechange=function(){
+		if(xmlhttp.readyState ==4)
+		{
+		   fileText = xmlhttp.responseText;
+		   textArray = fileText.split("\n");
+		}
+	}
+	xmlhttp.send();
+}
+function randomWord()
+{
+	word = textArray[Math.floor(Math.random()*textArray.length)];
+	return word.charAt(0).toUpperCase() + word.slice(1);
+}
+function initalizeArray(nodes)
+{
+  nodeArray = new Array();  //creates our 2-d array to hold the value for each node and all the edges it is connected to.
+	for(i=0;i < nodes;i++)
+	{
+	     nodeArray[i] = new Array();
+		 beenVisited[i] = 0;              //sets it so all of the nodes are registered as not visited
+		 
+		 if(numChoice ==0)
+		    nodeContents[i] = ""+(i+1)+". ";
+		 else if(numChoice ==1)
+		    nodeContents[i] = ""+Math.floor(Math.random()*100)+". ";
+		 else
+		    nodeContents[i] = "";
+		 
+		 if(wordChoice ==0)
+		    nodeContents[i] += randomWord();
+		 else if(wordChoice==1)
+		    nodeContents[i] += "";
+	}
+}//end initalizeArray()
+function initalizeNodes()
+{
+   //loops through all of the nodes and gets the given id values for each
+	 //these values are stored at the first column in the 2-d array for all the nodes
+	 //everything after the first column represents an edge for that given node
+	 N = xmlDoc.getElementsByTagName("node");
+     for(var x=0; x < nodes; x++)
+	 {
+	        value = N[x].getAttribute("id"); //gets the value of the id attribute
+			nodeArray[x][0]= parseInt(value.substring(1,value.length));  //parses out the unecassary g and changes it to and Int
+			objectArray[x] = false;
+			
+			if(colorChoice ==0){
+			    nodeColors[x] = randomColor();  //gives each node it's own randomColor
+				console.log("Random Color");
+			}
+			else if(colorChoice==1){
+			    nodeColors[x] = choosenColor;
+				console.log("Choosen Color");
+			}
+			else if(colorChoice == 3){ //Colors should be that of the imported graph (based on XML)
+				nodeColors[x] = N[x].getAttribute("color");
+				console.log("Importing Colors");
+			}
+			else{
+			    nodeColors[x] = "white";
+				console.log("No Color");
+			}
+			    
+			xCords[x] = N[x].getAttribute("x");
+			yCords[x] = N[x].getAttribute("y");
+			
+	 }//end for x
+}//end initalizeNodes()
+function initalizeEdges(nodes)
+{
+   //gets the edges that each node is connected with
+	 //stores the connecting edges for that node in it's array
+   for(var x=0;x <nodes;x++)
+	 {
+	    numberOfEdges = xmlDoc.getElementsByTagName("node")[x].getElementsByTagName("edge").length; //gets the number of edges to a given node
+	    numOfEdges[x] = numberOfEdges;   //gets the number of edges each node has need for sorting
+			for(var y=0;y < numberOfEdges; y++)
+			{
+			   connectedEdge = xmlDoc.getElementsByTagName("node")[x].getElementsByTagName("edge")[y].getAttribute("to"); //gets which node the edge connects to
+				 nodeArray[x][y+1] = parseInt(connectedEdge.substring(1,connectedEdge.length)); //stores the connecting edge with just the value of the node
+			}//end for y
+	 }//end for x
+}//end initalizeEdges()
+function sortByGravityValues()
+{
+    for(var x=0; x < nodeArray.length;x++)
+    {
+    for(var z = numOfEdges[x]; z > 1; z--)
+		for(var y=1; y < z; y++)
+		{
+		    if(Math.abs(nodeArray[x][y] - nodeArray[x][0]) > Math.abs(nodeArray[x][y+1] - nodeArray[x][0]))
+		    {
+		    	temp = nodeArray[x][y];
+		    	nodeArray[x][y] = nodeArray[x][y+1];
+		    	nodeArray[x][y+1] = temp;
+		    }
+		 }//end for y
+	}//end for x
+}//end sortByGravityValues
+function sortRandomly()
+{
+
+	//I need to finish this sometime
+
+}//end sortRandomly()
+function objectSelection()
+{
+
+   if(objectChoice == 1)
+	 {
+	     for(var i =0; i < 3;i++)
+			 {
+			   chosenRoom = Math.floor((Math.random() * nodeArray.length));
+				 while(objectArray[chosenRoom] == true)
+				 {
+				    chosenRoom = Math.floor((Math.random() * nodeArray.length));
+				 }
+				 objectArray[chosenRoom] = true;
+			 }
+	 }
+}//end objectSelection()
+function parseData()
+{
+     var data = document.getElementById("input").value; //gets the input graph data 
+     parser = new DOMParser();                          //creates a DOMParser object to parse the xml that is given
+	 xmlDoc = parser.parseFromString(data,"text/xml");  //parses the xml file so so we can access it using the tree structure
+	 nodes = xmlDoc.getElementsByTagName("node").length; //gets the total number of nodes that the given graph has
+	 checkBoxData();                                    //retrieves the data from the form
+	 initalizeArray(nodes);                             //initalize's our Array based on the number of nodes
+	 initalizeNodes();                                  //initalize's all of the nodes with there given id values
+	 initalizeEdges(nodes);                             //initalize's the edges of our graph
+	 if(sortOrder == 0)             //determines how the nodes will be sorted
+	    sortByGravityValues();
+	 else
+	    sortRandomly();
+	 objectSelection();
+	 document.getElementsByName("display").innerHTML = "";
+}//end parseData()
+function checkBoxData()
+{
+	
+	if(document.display.color[0].checked) //see what color setup the user wants
+	    colorChoice = 0;
+	else if(document.display.color[1].checked)
+	{
+	    colorChoice =1;
+	    choosenColor = document.display.colorChoice.value;
+	}
+	else if(document.display.color[2].checked)
+		colorChoice = 2;
+	else 
+		colorChoice = 3;
+	
+	for(var z=0; z < 2;z++) //get the word setup the user wants
+	{
+		if(document.display.words[z].checked)
+		  wordChoice = z;
+	}
+	for(var g=0; g < 3;g++)
+	{
+	   if(document.display.values[g].checked)
+		      numChoice = g;
+	}
+	if(document.display.sort[0].checked)
+	     sortOrder = 0;
+	else
+	     sortOrder = 1;
+	
+	for(var i=0; i < 3;i++)
+	{
+	   if(document.display.object[i].checked)
+		     objectChoice = i;
+	}
+}
+function generateRooms(currentNode)
+{
+  S = document.getElementById("svg");    //used for quicker notation
+  S.setAttribute("width","100%");
+  S.setAttribute("height","100%");
+  //start = new Date().getTime()           //gets the inital start time of the user
+  //window.setTimeout(timer, 100);         //starts the timer
+  displayCurrentRoom(currentNode,0);
+}
+function checkTraversal()
+{
+         flag = true; //flag for if one of the nodes hasn't been visited
+		 var i = 0;   //loop incrementer
+		 while(i < nodes && flag)
+		 {
+		    if(beenVisited[i] == 0) //checks to see if the node hasn't been visited
+				   flag = false;
+				i++;
+		 }
+		 if(flag)//if the flag is still true that means all the nodes have been visited so alert the user
+		 {
+		    alert("You have traversed all the nodes. Now get back to the starting one!");
+		    allVisited = true;  //flag changed so we don't call this function again
+		 }
+
+}//end checkTraversal()
+function backToStart(currentNode)
+{
+   if(currentNode == 0)
+	 {
+			exportXML();
+	 }
+}//end backToStart()
+function objectPlacer(currentNode)
+{
+     if(objectArray[currentNode] == false && objectsPlaced < 3)
+     {
+     	var svgimg = document.createElementNS(xmlns,"image");
+     	    svgimg.setAttributeNS(null,"id","object");
+			svgimg.setAttributeNS(null,"height","100");
+			svgimg.setAttributeNS(null,"width","100");
+			svgimg.setAttributeNS(xlink,"href","turkey.jpg");
+			svgimg.setAttributeNS(null,"x",(w-200));
+			svgimg.setAttributeNS(null,"y",(h/2));
+			svgimg.setAttributeNS(null,"visibility","visible");
+		S.appendChild(svgimg);
+		objectsPlaced++;
+		objectArray[currentNode] = true;
+     }
+     else if(objectArray[currentNode] == true)
+     {
+     	document.getElementById("object").parentElement.removeChild(document.getElementById("object"));
+     	objectsPlaced--;
+     	objectArray[currentNode] = false;
+     }
+     else if(objectsPlaced >= 3)
+       alert("You have already placed 3 objects");
+     
+}//end objectPlacer(currentNode)
+function homePlacer(currentNode)
+{
+	homeLocation = currentNode;
+	var svgimg = document.createElementNS(xmlns,"image");
+	svgimg.setAttributeNS(null,"id","house");
+	svgimg.setAttributeNS(null,"height","100");
+	svgimg.setAttributeNS(null,"width","100");
+	svgimg.setAttributeNS(xlink,"href","house.jpg");
+	svgimg.setAttributeNS(null,"x",(w-200));
+	svgimg.setAttributeNS(null,"y",(h/3));
+	svgimg.setAttributeNS(null,"visibility","visible");
+	S.appendChild(svgimg);
+}
+function displayCurrentRoom(currentNode,mode)
+{
+    /*beenVisited[currentNode] = 1;  //sets it so the node we are on is registered as having been visited
+	
+	if(!allVisited)           //checks if all of the nodes have been visited
+	   checkTraversal();
+		 
+	if(allVisited)           //once all nodes have been visited checks if we are back to the starting node
+	   backToStart(currentNode);
+	   
+    */
+    var group4 = document.createElementNS(xmlns,"g");
+    group4.setAttributeNS(null,"id",currentNode);
+    var rect = document.createElementNS(xmlns,"rect");
+    rect.setAttributeNS(null,"width","100%");
+    rect.setAttributeNS(null,"height","100%");
+    rect.setAttributeNS(null,"fill",nodeColors[currentNode]);
+    
+    if(mode == 1)
+      group4.addEventListener("click",function(){editWords(currentNode,mode)},false);
+    else if(mode == 2)
+      group4.addEventListener("click",function(){editColors(currentNode,mode)},false);
+      
+	var text = document.createElementNS(xmlns,"text");
+	text.setAttributeNS(null,"x",(w/2 - 60));
+	text.setAttributeNS(null,"y",50);
+	text.setAttributeNS(null,"font-size","30");
+	text.setAttributeNS(null,"width",100);
+	var textNode = document.createTextNode(nodeContents[currentNode]);
+    text.appendChild(textNode);
+    
+    var group3 = document.createElementNS(xmlns,"g");
+    group3.addEventListener("click",function(){generateNodesInRoom(currentNode,0),false});
+    var traverse = document.createElementNS(xmlns,"rect");
+    traverse.setAttributeNS(null,"x",(w-490));
+	traverse.setAttributeNS(null,"y",30);
+	traverse.setAttributeNS(null,"width",100);
+	traverse.setAttributeNS(null,"height",40);
+	traverse.setAttributeNS(null,"fill",nodeColors[currentNode]);
+	
+	traverse.setAttributeNS(null,"stroke-width",2);
+
+	
+	var traverseText = document.createElementNS(xmlns,"text");
+	traverseText.setAttributeNS(null,"x",(w-480));
+	traverseText.setAttributeNS(null,"y",60);
+	traverseText.setAttributeNS(null,"font-size","25");
+	traverseText.textContent = "Traverse";
+	if(mode == 0){
+		traverse.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		traverse.setAttributeNS(null,"stroke","black");
+		traverse.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		traverse.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		traverseText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
+    
+	var group2 = document.createElementNS(xmlns,"g");
+	group2.addEventListener("click",function(){generateNodesInRoom(currentNode,1)},false);
+	var words = document.createElementNS(xmlns,"rect");
+	words.setAttributeNS(null,"x",(w-370));
+	words.setAttributeNS(null,"y",30);
+	words.setAttributeNS(null,"width",100);
+	words.setAttributeNS(null,"height",40);
+	words.setAttributeNS(null,"fill",nodeColors[currentNode]);
+	words.setAttributeNS(null,"stroke-width",2);
+	var wordsText = document.createElementNS(xmlns,"text");  //creates the text that is linked with the other node
+	wordsText.setAttributeNS(null,"x",(w-355));
+	wordsText.setAttributeNS(null,"y",60);
+	wordsText.setAttributeNS(null,"font-size","25");
+	wordsText.textContent = "Words";
+	if(mode == 1)
+	{
+		words.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		words.setAttributeNS(null,"stroke","black");
+		words.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		words.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		wordsText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
+				
+	var group = document.createElementNS(xmlns,"g");
+	group.addEventListener("click",function(){generateNodesInRoom(currentNode,2)},false);
+	var colors = document.createElementNS(xmlns,"rect");
+	colors.setAttributeNS(null,"x",(w-250));
+	colors.setAttributeNS(null,"y",30);
+	colors.setAttributeNS(null,"width",100);
+	colors.setAttributeNS(null,"height",40);
+	colors.setAttributeNS(null,"fill",nodeColors[currentNode]);
+	colors.setAttributeNS(null,"stroke-width",2);
+	var colorsText = document.createElementNS(xmlns,"text");  //creates the text that is linked with the other node
+	colorsText.setAttributeNS(null,"x",(w-235));
+	colorsText.setAttributeNS(null,"y",60);
+	colorsText.setAttributeNS(null,"font-size","25");
+	colorsText.textContent = "Colors";
+	if(mode == 2)
+	{
+		colors.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		colors.setAttributeNS(null,"stroke","black");
+		colors.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		colors.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		colorsText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
+		
+	var exportGroup = document.createElementNS(xmlns, "g");
+	exportGroup.addEventListener("click", function () {exportXML()}, false);
+	var exBtn = document.createElementNS(xmlns, "rect");
+	exBtn.setAttributeNS(null, "x", (w-130));
+	exBtn.setAttributeNS(null, "y", 30)
+	exBtn.setAttributeNS(null, "width", 100);
+	exBtn.setAttributeNS(null,"height",40);
+	exBtn.setAttributeNS(null,"fill",nodeColors[currentNode]);
+	exBtn.setAttributeNS(null,"stroke-width",2);
+	var exportTxt = document.createElementNS(xmlns, "text");
+	exportTxt.setAttributeNS(null, "x", (w-115));
+	exportTxt.setAttributeNS(null, "y", 60);
+	exportTxt.setAttributeNS(null,"font-size","25");
+	exportTxt.textContent = "Export";
+	if(mode == 3)
+	{
+		exBtn.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		exBtn.setAttributeNS(null,"stroke","black");
+		exBtn.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		exBtn.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		exportTxt.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
+	
+	if(objectArray[currentNode] == true)
+	{
+		var svgimg = document.createElementNS(xmlns,"image");
+		svgimg.setAttributeNS(null,"id","object");
+		svgimg.setAttributeNS(null,"height","100");
+		svgimg.setAttributeNS(null,"width","100");
+		svgimg.setAttributeNS(xlink,"href","turkey.jpg");
+		svgimg.setAttributeNS(null,"x",(w-200));
+		svgimg.setAttributeNS(null,"y",(h/2));
+		svgimg.setAttributeNS(null,"visibility","visible");
+		group4.appendChild(svgimg);
+	}
+	if(homeLocation == currentNode)
+	{
+		var svgimg = document.createElementNS(xmlns,"image");
+		svgimg.setAttributeNS(null,"id","house");
+		svgimg.setAttributeNS(null,"height","100");
+		svgimg.setAttributeNS(null,"width","100");
+		svgimg.setAttributeNS(xlink,"href","house.jpg");
+		svgimg.setAttributeNS(null,"x",(w-200));
+		svgimg.setAttributeNS(null,"y",(h/3));
+		svgimg.setAttributeNS(null,"visibility","visible");
+		group4.appendChild(svgimg);
+	}
+	
+	exportGroup.appendChild(exBtn);
+	exportGroup.appendChild(exportTxt);
+	group4.appendChild(rect);
+	group4.appendChild(text);
+	group3.appendChild(traverse);
+	group3.appendChild(traverseText);
+	group2.appendChild(words);
+	group2.appendChild(wordsText);
+	group.appendChild(colors);
+	group.appendChild(colorsText);
+	S.appendChild(group4);
+	S.appendChild(group3);
+	S.appendChild(group2);
+	S.appendChild(group);
+	S.appendChild(exportGroup);
+	
+	if(objectChoice == 2)
+	{
+		groupObj = document.createElementNS(xmlns,"g");
+		groupObj.addEventListener("click",function(){objectPlacer(currentNode)},false);
+	    var object = document.createElementNS(xmlns,"rect");
+	    object.setAttributeNS(null,"x",25);
+	    object.setAttributeNS(null,"y",25);
+	    object.setAttributeNS(null,"width",100);
+	    object.setAttributeNS(null,"height",40);
+	    object.setAttributeNS(null,"fill",nodeColors[currentNode]);
+	    object.setAttributeNS(null,"stroke","black");
+	    object.setAttributeNS(null,"stroke-width",2);
+	    object.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+	    object.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+	      
+		 var objectText = document.createElementNS(xmlns,"text");
+		 objectText.setAttributeNS(null,"x",40);
+		 objectText.setAttributeNS(null,"y",55);
+		 objectText.setAttributeNS(null,"font-size","25");
+		 objectText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+		 objectText.textContent = "Object"; 
+		 
+		 var homeObj = document.createElementNS(xmlns,"g");
+		 homeObj.addEventListener("click",function(){homePlacer(currentNode)},false);
+		 var home = document.createElementNS(xmlns,"rect");
+		  home.setAttributeNS(null,"x",135);
+		  home.setAttributeNS(null,"y",25);
+		  home.setAttributeNS(null,"width",100);
+		  home.setAttributeNS(null,"height",40);
+		  home.setAttributeNS(null,"fill",nodeColors[currentNode]);
+		  home.setAttributeNS(null,"stroke","black");
+		  home.setAttributeNS(null,"stroke-width",2);
+		  home.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		  home.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		  
+		var homeText = document.createElementNS(xmlns,"text");
+		homeText.setAttributeNS(null,"x", 150);
+		homeText.setAttributeNS(null,"y",55);
+		homeText.setAttributeNS(null,"font-size","22");
+		homeText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+		homeText.textContent = "Set home"; 
+		 
+		 groupObj.appendChild(object);
+		 groupObj.appendChild(objectText);
+		 homeObj.appendChild(home);
+		 homeObj.appendChild(homeText);
+		 S.appendChild(groupObj);
+		 S.appendChild(homeObj);
+	}
+
+	if(mode == 0)
+	{
+	   generateNodesInRoom(currentNode,0);
+	}
+	
+}//end displayCurrentRoom(currentNode)
+
+function generateNodesInRoom(currentNode,mode)
+{
+	 if(mode == 1 || mode == 2)
+	 {
+	    removeRoom(currentNode,mode);
+	 }
+	 var xCord = 100;  //holds the value for how far over the nodes to other rooms appear
+	 var yCord = 120;  //holds the value for how far up the page the nodes appear
+	 for(var x=1;x < nodeArray[currentNode].length;x++) //loops through to create nodes coresponding to each edge from a node
+	 {    
+	    if(yCord + 120 > h)
+		{
+			yCord = 120;
+			xCord = xCord + 200;
+		}
+	      var group = document.createElementNS(xmlns,"g"); //creates a group element so the rectangles can have text
+		  connectingNode = findIndex(nodeArray[currentNode][x]); //finds the index of the connecting node
+		  group.setAttributeNS(null,"id",connectingNode);
+		
+	      var rect = document.createElementNS(xmlns,"rect"); //createss a rectangle to represent the connecting nodes
+	      rect.setAttributeNS(null,"x",xCord);
+	      rect.setAttributeNS(null,"y",yCord);
+	      rect.setAttributeNS(null,"width",130);
+	      rect.setAttributeNS(null,"height",90);
+	      rect.setAttributeNS(null,"fill",nodeColors[connectingNode]);
+	      rect.setAttributeNS(null,"stroke","black");
+	      rect.setAttributeNS(null,"stroke-width",2);
+	      rect.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+	      rect.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+
+		function addEventHandler(currentNode,connectingNode) //has to be done to avoid the closure on the variables so we get proper values
+       {
+	          group.addEventListener("click",function () {removeRoom(connectingNode,0)},false);
+       }
+       function addEventHandler2(connectingNode)
+       {
+       	      group.addEventListener("click",function(){editWords(connectingNode,1)},false);
+       }
+       function addEventHandler3(connectingNode)
+       {
+       	      group.addEventListener("click",function(){editColors(connectingNode,2)},false);
+       }
+       if(mode == 0)
+		addEventHandler(currentNode,connectingNode); //adds the eventListener for clicking
+	   else if(mode == 1)
+	    addEventHandler2(connectingNode);
+	   else if (mode == 2)
+	    addEventHandler3(connectingNode);
+	    
+	    			
+				var text = document.createElementNS(xmlns,"text");  //creates the text that is linked with the other node
+				text.setAttributeNS(null,"x",(xCord+20));
+				text.setAttributeNS(null,"y",(yCord+55));
+				text.setAttributeNS(null,"font-size","20");
+				text.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+				text.textContent = nodeContents[connectingNode];
+			  
+			
+				group.appendChild(rect);
+				group.appendChild(text);
+	      S.appendChild(group);
+				
+				yCord = yCord + 120;
+	 }//end for x
+}//end generateNodesInRoom(currentNode)
+function removeRoom(nextNode,mode)
+{ // S is a global variable referencing the svg tag
+	while(S.lastChild) //loops through and removes all the children in the svg tag
+	{                  
+	    S.removeChild(S.lastChild); //removes the last Child in the svg tag
+	}
+	displayCurrentRoom(nextNode,mode);  //goes and displays the nextRoom the user has chosen
+}//end removeRoom
+function editWords(connectingNode,mode)
+{
+	var wordChange = prompt("Enter in your new word.","");
+	nodeContents[connectingNode] = wordChange;
+	S.getElementById(connectingNode).childNodes[1].textContent = wordChange;
+}//end editWords
+function editColors(connectingNode,mode)
+{
+	var colorChange = prompt("Enter in your new color.","");
+	nodeColors[connectingNode] = colorChange;
+	S.getElementById(connectingNode).firstChild.setAttributeNS(null,"fill",colorChange);
+}
+function beginTraversal()
+{
+     parseData(); //goes to parse all the data used to construct the graph
+     display.parentNode.removeChild(display);//removes the div
+	 generateRooms(0); //puts us into the first room
+}//end beginTraversal()
+function randomColor()
+{
+    color = "rgb("+parseInt(127+Math.random()*128)+","+parseInt(127+Math.random()*128)+","+parseInt(127+Math.random()*128)+")";
+	return color;
+}//end function randomColor()
+function exportXML()
+{
+    var s = '';
+	s += "<graph>\n";
+	for(var i = 0; i < nodes;i++)
+	{
+		s += "<node id=\"g" + nodeArray[i][0] + "\" ";
+		s += "x=\"" + xCords[i] + "\" ";
+		s += "y=\"" + yCords[i] + "\" ";
+		s += "color=\"" + nodeColors[i] + "\" ";
+		s += "label=\"" + nodeContents[i] + "\" ";
+		
+		/* CONSTRUCTOR XML INFO
+		s += "object=\"" + objectArray[i] + "\" ";
+		if(i == homeLocation)
+			s += "home=\"true\"";
+		else
+			s += "home=\"false\"";
+		*/
+		
+		s += ">\n" 
+		for(j =1; j < nodeArray[i].length;j++)
+		{
+			s += "<edge to=\"g" + nodeArray[i][j] + "\" />\n";
+		}
+		s += "</node>\n";
+	}
+	s += "</graph>";
+		
+	/* PHP FILE SAVING - NOT NEEDED FOR SPREADSHEET CURRENTLY 
+	Might be needed later for "saving" a website 
+	fileName2 = prompt("Plese enter in the name of this graph.","");
+	xmlhttp2 = new XMLHttpRequest();
+	xmlhttp2.open("POST","xmlGraph.php",true);
+	xmlhttp2.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xmlhttp2.send("xmlGraph="+s+"&fileName="+fileName2+"");
+	*/
+		
+	var xmlWindow = window.open("","","width = 700, height = 1000");
+	var heading = xmlWindow.document.createElement("h2");
+	var xmlArea = xmlWindow.document.createElement("textarea");
+	var headingText = xmlWindow.document.createTextNode("Copy and Save Grapher XML");
+	heading.appendChild(headingText);
+	xmlArea.setAttribute("rows", '35');
+	xmlArea.setAttribute("cols", '80');
+	xmlArea.value = s;
+	xmlWindow.document.body.appendChild(heading);
+	xmlWindow.document.body.appendChild(xmlArea);
+	
+}//end exportXML
+function findIndex(targetNode)
+{
+   for(var p=0;p<nodeArray.length;p++) //looks through all of the nodes and gets the index of the target one
+   {
+   	   if(nodeArray[p][0] == targetNode)
+   	       return p;                  //returns the correct index of the node we want
+   }
+}//end findIndex()
+//----------------------------------------------------------------------------------------------------------------------------
+    time = 0;
+    elapsed = '0.0';
+function timer()
+{
+    time += 100;
+    elapsed = Math.floor(time / 100) / 10;
+    if(Math.round(elapsed) == elapsed) { elapsed += '.0'; }
+    var diff = (new Date().getTime() - start) - time;
+    window.setTimeout(timer, (100 - diff));
+}
+</script>
+<title>HTML Constructor</title>
+</head>
+<body onload="readTextFile()">
+<form name="display">
+<textarea id="input" rows="30" cols="75">
+Hello please enter in your properly formatted graph data to begin a traversal.
+</textarea>
+<table border ="1">
+<tr><td colspan="2">
+<input type = "radio" name="color" value ="0">Random Colors<br>
+<input type ="radio" name="color" value ="1">Pick a Color<textarea id ="colorChoice" rows="2" cols="10"></textarea><br>
+<input type="radio" name="color" value="2">No Color<br>
+<input type = "radio" checked name="color" value ="3">Imported Colors<br>
+</td>
+<td><input type="radio" name="words" value="0">Random Words<br>
+<input type="radio" checked name="words">Blank nodes<br>
+</td>
+<td>
+<input type="radio" checked name="values">Gravity Values<br>
+<input type="radio" name="values">Random Numbers<br>
+<input type="radio" name="values">No Numbers
+</td>
+<td>
+<input type="radio" checked name="sort">Sorted by Gravity<br>
+<input type="radio" name="sort">Randomly Sorted
+</td>
+<td>
+<input type="radio" checked name="object">No Turkey Game<br>
+<input type="radio" name="object">Random Turkeys<br>
+<input type="radio" name="object">Placed Turkeys
+</td>
+</tr>
+</table>
+<input type="button" id="start" value="Start Traversal" onclick="beginTraversal()">
+</form>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" id="svg" width="1%" height="1%" viewbox="0 0 1366 768" preserveAspectRatio="none">
+
+</svg>
+
+</body>
+</html>

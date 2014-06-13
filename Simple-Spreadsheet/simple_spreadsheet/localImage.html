@@ -1,0 +1,32 @@
+<html>
+<head>
+  <title>Local File Importer</title>
+  <script type="text/javascript">
+    function doClick() {
+      var el = document.getElementById("fileElem");
+      if (el) {
+        el.click();
+      }
+    }
+    function handleFiles(files) {
+      var d = document.getElementById("fileList");
+      if (!files.length) {
+        d.innerHTML = "<p>No photo selected!</p>";
+      } else {
+		d.childNodes[1].style.visibility = "visible";
+		d.childNodes[1].src = window.URL.createObjectURL(files[files.length-1]);
+      }
+    }
+  </script>
+</head>
+<body>
+  <form>
+    <input type="file" id="fileElem" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+  </form>
+  <a href="javascript:doClick()">Browse Images</a>
+  <div id="fileList">
+	<img src = "" style = "visibility:hidden">
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,16 @@
+<graph>
+<node id="g1" x="503" y="105" color="rgb(152,219,198)" label="1. Room" object="false" home="true">
+<edge to="g2" />
+<edge to="g3" />
+</node>
+<node id="g2" x="404" y="233" color="rgb(157,153,150)" label="2. Bans" object="false" home="false">
+<edge to="g1" />
+</node>
+<node id="g3" x="612" y="239" color="rgb(164,210,196)" label="3. Slapped" object="false" home="false">
+<edge to="g4" />
+<edge to="g1" />
+</node>
+<node id="g4" x="642" y="304" color="rgb(171,237,173)" label="4. Sack" object="false" home="false">
+<edge to="g3" />
+</node>
+</graph>

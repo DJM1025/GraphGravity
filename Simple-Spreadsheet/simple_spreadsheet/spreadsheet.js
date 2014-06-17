@@ -36,7 +36,21 @@ function getNumeric(strNum)
 {
 	var returnVal
 	if(!isNaN(parseFloat(strNum)))
+	{
 		returnVal = parseFloat(strNum);
+
+		//Do Bounds Checking 
+		if(returnVal > 1300 && sys.getObj("field").value.indexOf("X") != -1)
+			returnVal = 1300;
+		else if(returnVal > 600 && sys.getObj("field").value.indexOf("Y") != -1)
+			returnVal = 600;
+		else if(returnVal < 25)
+			returnVal = 25;
+
+		if(returnVal != parseFloat(strNum))
+			alert("Invalid entry for X or Y value. Setting the value to a valid number.");
+	}
+	//NAN - Return 0 
 	else
 	{
 		alert("Non-Numeric given in field that requires numeric, using a default value instead");

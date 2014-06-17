@@ -445,6 +445,11 @@ function keypress(event) {
 	  {
 	  	sys.getObj("value").value = getNumeric(sys.getObj("value").value);
 	  }
+	  if(sys.getObj("field").value.indexOf("Gravity") != -1) //Gravity Value row edited -> Make sure Gravity rules are met
+	  {
+	  	// Gravity Values must be sequential starting at 1 and going up to N where N is the number of Nodes.  
+		var numVal = getNumeric(sys.getObj("value").value) ; 
+	  }
 	  //If Column 0 is changed, update Edge columns to new value of column 0 using str_replace()
 	  if(sys.getObj("field").value.indexOf("Node Name") != -1)
 	  {
@@ -959,6 +964,10 @@ function loadXML(code) {
 			connections += ","+edges[k].getAttribute('to');  
 		}
 		newCode += "\n["+x+","+y+","+"\""+connections+"\",\"\"],"; 	//Places the edge string into the spreadsheet
+
+		x++    //Picture stuff needs placed below 
+		x++    
+		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"]," ;  //Set Gravity Value = Label for imported graphs 
 		y++;  //Move to next row on spreadsheet 
 	}
 	newCode += "\n];";

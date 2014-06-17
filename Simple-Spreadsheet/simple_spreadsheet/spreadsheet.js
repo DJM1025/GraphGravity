@@ -35,34 +35,44 @@ window.onerror=handleErr;
 //Returns highest possible gravity value (Highest possible value == number of nodes)
 function getMaxGravity()
 {
-	if(gravityArray.length == 0)
-		return 0;
-
-	var max = 0;
+	var count = 1;
 	for(var i = 0; i < gravityArray.length; i++)
 	{
 		if(gravityArray[i])
-			if(gravityArray[i] > max)
-				max = gravityArray[i];
-	}
-	return max+1;
-}
+			count++;
+	}  
+	return count;
+} 
 
 //Determine if the entry for gravity value is valid 
 //Gravity values must range from 1 to N, where N = # of Nodes with no repeating numbers 
 function setGravity(rowNum, val) 
 {   
-	maxVal = getMaxGravity(); //Highest possible value for this cell (maxVal = Number of Nodes) 
-	alert(maxVal);
-	if(val > maxVal)
-		val = maxVal;
-	if(gravityArray.indexOf(val) == -1)
+	maxVal = getMaxGravity() //Highest possible value for this cell (maxVal = Number of Nodes) 
+	//Ensure that the value passed is numeric before continuing 
+	if(!isNaN(parseFloat(val)))
 	{
-		gravityArray[rowNum] = val;
+		val = parseFloat(val);
+		//alert(maxVal + "  Passed Val: "+val);
+		if(val > maxVal || val < 1)
+			val = maxVal;
+		//alert("Assigning Val of: "+val)
+		if(gravityArray.indexOf(val) == -1)
+		{
+			gravityArray[rowNum] = val;
+		}
+		else
+		{   /*
+			sys.cells[gravityArray.indexOf(val)][colNames.indexOf("Gravity Value")][0] = maxVal;
+			//sys.cells[gravityArray.indexOf(val)][colNames.indexOf("Gravity Value")][3] = maxVal;
+			gravityArray[gravityArray.indexOf(val)] = maxVal;
+			gravityArray[rowNum] = val; 
+			*/
+		}
 	}
-	else
+	else  //Invalid Val passed (non-numeric)
 	{
-		//Code for repeated value here 
+		gravityArray[rowNum] = maxVal;
 	}
 
 	sys.getObj("value").value = gravityArray[rowNum];

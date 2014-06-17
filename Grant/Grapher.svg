@@ -1,0 +1,7 @@
+﻿<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" zoomAndPan="disabled">
+  <!--<rect x="0" y="0" height="75" width="100" fill="red" stroke="black" stroke-width="2" onclick="event.stopPropagation()"></rect>-->
+  <script type="text/javascript" xlink:href = "Graph.js"></script>
+  <script type="text/javascript" xlink:href = "SVGMenu.js"></script>
+  <script type="text/javascript" xlink:href = "SVGListBox.js"></script>
+  <script type="text/javascript" xlink:href = "SVGMsgBox.js"></script>
+</svg>

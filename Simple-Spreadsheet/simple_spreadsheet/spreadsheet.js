@@ -22,6 +22,7 @@
 var agent = navigator.userAgent.toLowerCase();
 var colorArray = new Array();  //Holds the hex values for colors in the color column 
 var imgArray = new Array();    //Holds the location of images that are currently in the photo column 
+var gravityArray = new Array();
 var oldNodeName = "";
 if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("safari")!=-1) agent = "safari";
@@ -30,6 +31,42 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("msie")!=-1) agent = "msie";
 
 window.onerror=handleErr;
+
+//Returns highest possible gravity value (Highest possible value == number of nodes)
+function getMaxGravity()
+{
+	if(gravityArray.length == 0)
+		return 0;
+
+	var max = 0;
+	for(var i = 0; i < gravityArray.length; i++)
+	{
+		if(gravityArray[i])
+			if(gravityArray[i] > max)
+				max = gravityArray[i];
+	}
+	return max+1;
+}
+
+//Determine if the entry for gravity value is valid 
+//Gravity values must range from 1 to N, where N = # of Nodes with no repeating numbers 
+function setGravity(rowNum, val) 
+{   
+	maxVal = getMaxGravity(); //Highest possible value for this cell (maxVal = Number of Nodes) 
+	alert(maxVal);
+	if(val > maxVal)
+		val = maxVal;
+	if(gravityArray.indexOf(val) == -1)
+	{
+		gravityArray[rowNum] = val;
+	}
+	else
+	{
+		//Code for repeated value here 
+	}
+
+	sys.getObj("value").value = gravityArray[rowNum];
+}
 
 //Function returns true if the string can be converted to a number/float 
 function getNumeric(strNum)
@@ -459,10 +496,9 @@ function keypress(event) {
 	  {
 	  	sys.getObj("value").value = getNumeric(sys.getObj("value").value);
 	  }
-	  if(sys.getObj("field").value.indexOf("Gravity") != -1) //Gravity Value row edited -> Make sure Gravity rules are met
+	  if(sys.getObj("field").value.indexOf("Gravity Value") != -1) //Gravity Value row edited -> Make sure Gravity rules are met
 	  {
-	  	// Gravity Values must be sequential starting at 1 and going up to N where N is the number of Nodes.  
-		var numVal = getNumeric(sys.getObj("value").value) ; 
+		setGravity(sys.currRow, sys.getObj("value").value);
 	  }
 	  //If Column 0 is changed, update Edge columns to new value of column 0 using str_replace()
 	  if(sys.getObj("field").value.indexOf("Node Name") != -1)
@@ -1701,7 +1737,7 @@ function gotoCell(pos) {
 function editCell(row,col,keyCode) {
 	sys.active = "content";
   	if(row >= 0){
-		if(col == colNames.indexOf("Name") && sys.cells[row] && sys.cells[row][col]) //Store the original value of the node in oldNodeName variable 
+		if(col == colNames.indexOf("Node Name") && sys.cells[row] && sys.cells[row][col]) //Store the original value of the node in oldNodeName variable 
 	  		oldNodeName = sys.cells[row][col][3];
 	  	if(col != colNames.indexOf("Picture") && col != colNames.indexOf("Color") && col != colNames.indexOf("Edges"))
 	  	{

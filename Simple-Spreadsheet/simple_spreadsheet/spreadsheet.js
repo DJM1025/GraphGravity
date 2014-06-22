@@ -48,34 +48,51 @@ function getMaxGravity()
 //Gravity values must range from 1 to N, where N = # of Nodes with no repeating numbers 
 function setGravity(rowNum, val) 
 {   
-	maxVal = getMaxGravity() //Highest possible value for this cell (maxVal = Number of Nodes) 
+	var gravCol = colNames.indexOf("Gravity Value");
+	var maxVal = getMaxGravity(); //Highest possible value for this cell (maxVal = Number of Nodes) 
+	var repeatedRow;
 	//Ensure that the value passed is numeric before continuing 
 	if(!isNaN(parseFloat(val)))
 	{
 		val = parseFloat(val);
-		//alert(maxVal + "  Passed Val: "+val);
-		if(val > maxVal || val < 1)
-			val = maxVal;
-		//alert("Assigning Val of: "+val)
-		if(gravityArray.indexOf(val) == -1)
+		if(!gravityArray[rowNum])  //Gravity Value cell that was blank originally 
 		{
-			gravityArray[rowNum] = val;
+			if(val > maxVal || val < 1)
+				val = maxVal;
+
+			if(gravityArray.indexOf(val) == -1)
+			{
+				gravityArray[rowNum] = val;
+			}
+			else
+			{  
+				repeatRow = gravityArray.indexOf(val);
+				gravityArray[repeatRow] = maxVal;
+				gravityArray[rowNum] = val; 
+				sys.cells[repeatRow][colNames.indexOf("Gravity Value")][0] = maxVal.toString();
+			}
 		}
-		else
-		{   /*
-			sys.cells[gravityArray.indexOf(val)][colNames.indexOf("Gravity Value")][0] = maxVal;
-			//sys.cells[gravityArray.indexOf(val)][colNames.indexOf("Gravity Value")][3] = maxVal;
-			gravityArray[gravityArray.indexOf(val)] = maxVal;
-			gravityArray[rowNum] = val; 
-			*/
+
+		else  //Used if the user is editing a cell that already contains a gravity value (swap necessary)
+		{   
+			if(val >= maxVal || val < 1)
+				val = maxVal - 1
+			repeatRow = gravityArray.indexOf(val); 
+			var oldVal = gravityArray[rowNum] 
+			gravityArray[rowNum] = val;
+			if(repeatRow != -1)
+			{
+				gravityArray[repeatRow] = oldVal;
+				sys.cells[repeatRow][colNames.indexOf("Gravity Value")][0] = gravityArray[repeatRow].toString();
+			}
 		}
 	}
 	else  //Invalid Val passed (non-numeric)
 	{
 		gravityArray[rowNum] = maxVal;
 	}
-
-	sys.getObj("value").value = gravityArray[rowNum];
+	//Set the value in the current cell 
+	sys.getObj("value").value = gravityArray[rowNum].toString();
 }
 
 //Function returns true if the string can be converted to a number/float 
@@ -721,7 +738,7 @@ function display() {
 		  {
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='createLink("+row+")'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
-		  else {
+		  else {  //Normal Cell 
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
 		  out += "</td>";
@@ -1659,7 +1676,8 @@ function highlightCellHeader(row,col) {
   }
 }
 function showCell(row,col,calls) {
-  if (typeof calls == "undefined") calls = 0;
+  if (typeof calls == "undefined") 
+  	calls = 0;
   value = getCells(row,col,0);
   if (calls>25) { // avoid endless recursion
     value = "undefined";

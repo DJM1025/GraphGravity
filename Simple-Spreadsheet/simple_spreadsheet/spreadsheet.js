@@ -1407,37 +1407,60 @@ function scrollRight() {
 
 function removeSelectedCell() {
   if (sys.multiRange.length>0) {
-    var cRange = getMultiRange(sys.multiRange);
-	for (var row=cRange[0]; row<=cRange[2]; row++) {
-	  for (var col=cRange[1]; col<=cRange[3]; col++) {
-		if(col == colNames.indexOf("Color"))
-		{
-			document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = "";
-			colorArray[row] = "";
-		}
-		else if(col == colNames.indexOf("Picture"))
-		{
-			document.getElementById(row+"_"+col).childNodes[0].removeChild(document.getElementById(row+"_"+col).childNodes[0].childNodes[0]);
-			imgArray[row] = "";
-		}
-	    else if (isWritable(getCellsR(row,col,1))) {
-	      setCellsR(row,col,0,"");
-	      setCellsR(row,col,1,"");
-    	  if (!sys.autoRecalc) {
-		    var obj2 = resolveCell(row,col);
-		    obj2.innerHTML = "<div>&nbsp;</div>";
-		  }	
-		} 
-	  } 
-	} 
-  } else {
-    removeCell(sys.currRow,sys.currCol);
-    if (!sys.autoRecalc && isWritable(getCellsR(sys.currRow,sys.currCol,1))) {
-      var obj2 = resolveCell(sys.currRow,sys.currCol);
-      obj2.innerHTML = "<div>&nbsp;</div>";
+  	if(sys.currCol == colNames.indexOf("Gravity Value"))
+  		alert("Can not delete this value");
+	else if(sys.currCol == colNames.indexOf("Color"))
+	{
+		//alert("In color deletion");
+		document.getElementById(sys.currRow+"_"+sys.currCol).childNodes[0].style.backgroundColor = "";
+		colorArray[sys.currRow] = "";
 	}
-  }
-  if (sys.autoRecalc) display();
+	else if(sys.currCol == colNames.indexOf("Picture"))
+	{
+		//alert("In picture deletion");
+		document.getElementById(sys.currRow+"_"+sys.currCol).childNodes[0].removeChild(document.getElementById(sys.currRow+"_"+sys.currCol).childNodes[0].childNodes[0]);
+		imgArray[sys.currRow] = "";
+	}
+	else {
+	    var cRange = getMultiRange(sys.multiRange);
+		for (var row=cRange[0]; row<=cRange[2]; row++) {
+		  for (var col=cRange[1]; col<=cRange[3]; col++) {
+		    if (isWritable(getCellsR(row,col,1))) {
+		      setCellsR(row,col,0,"");
+		      setCellsR(row,col,1,"");
+	    	  if (!sys.autoRecalc) {
+			    var obj2 = resolveCell(row,col);
+			    obj2.innerHTML = "<div>&nbsp;</div>";
+			  }	
+			} 
+		  } 
+		} 
+	}
+  } else {
+  		if(sys.currCol == colNames.indexOf("Gravity Value"))
+  			alert("Can not delete this value");
+		else if(sys.currCol == colNames.indexOf("Color"))
+		{
+			//alert("In color deletion");
+			document.getElementById(sys.currRow+"_"+sys.currCol).childNodes[0].style.backgroundColor = "";
+			colorArray[sys.currRow] = "";
+		}
+		else if(sys.currCol == colNames.indexOf("Picture"))
+		{
+			//alert("In picture deletion");
+			document.getElementById(sys.currRow+"_"+sys.currCol).childNodes[0].removeChild(document.getElementById(sys.currRow+"_"+sys.currCol).childNodes[0].childNodes[0]);
+			imgArray[sys.currRow] = "";
+		}
+		else {
+		    removeCell(sys.currRow,sys.currCol);
+		    if (!sys.autoRecalc && isWritable(getCellsR(sys.currRow,sys.currCol,1))) {
+		      var obj2 = resolveCell(sys.currRow,sys.currCol);
+		      obj2.innerHTML = "<div>&nbsp;</div>";
+			}
+		}
+    }
+  if (sys.autoRecalc) 
+  	display();
 }
 function cutcopy(mode,color) {
   if (!sys.isWriteable) return;

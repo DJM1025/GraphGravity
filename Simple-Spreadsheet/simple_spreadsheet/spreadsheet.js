@@ -37,10 +37,8 @@ function getMaxGravity()
 {
 	var count = 1;
 	for(var i = 0; i < gravityArray.length; i++)
-	{
 		if(gravityArray[i])
 			count++;
-	}  
 	return count;
 } 
 
@@ -52,44 +50,51 @@ function setGravity(rowNum, val)
 	var maxVal = getMaxGravity(); //Highest possible value for this cell (maxVal = Number of Nodes) 
 	var repeatedRow;
 	//Ensure that the value passed is numeric before continuing 
-	if(!isNaN(parseFloat(val)))
+	if(isNaN(parseFloat(val)))
 	{
-		val = parseFloat(val);
-		if(!gravityArray[rowNum])  //Gravity Value cell that was blank originally 
-		{
-			if(val > maxVal || val < 1)
-				val = maxVal;
-
-			if(gravityArray.indexOf(val) == -1)
-			{
-				gravityArray[rowNum] = val;
-			}
-			else
-			{  
-				repeatRow = gravityArray.indexOf(val);
-				gravityArray[repeatRow] = maxVal;
-				gravityArray[rowNum] = val; 
-				sys.cells[repeatRow][colNames.indexOf("Gravity Value")][0] = maxVal.toString();
-			}
+		if(gravityArray[rowNum])
+			val = gravityArray[rowNum];
+		else 
+			val = maxVal;
+		alert("Invalid gravity value, non-numeric. Setting gravity = "+val);
+	}
+	//val = val.trim(); 
+	val = parseFloat(val);
+	if(!gravityArray[rowNum])  //Gravity Value cell that was blank originally 
+	{
+		if(val > maxVal || val < 1){
+			val = maxVal;
+			alert("Invalid gravity value, setting gravity = "+val);
 		}
 
-		else  //Used if the user is editing a cell that already contains a gravity value (swap necessary)
-		{   
-			if(val >= maxVal || val < 1)
-				val = maxVal - 1
-			repeatRow = gravityArray.indexOf(val); 
-			var oldVal = gravityArray[rowNum] 
+		if(gravityArray.indexOf(val) == -1 || gravityArray[gravityArray.indexOf(val)].length != val.length)
 			gravityArray[rowNum] = val;
-			if(repeatRow != -1)
-			{
-				gravityArray[repeatRow] = oldVal;
-				sys.cells[repeatRow][colNames.indexOf("Gravity Value")][0] = gravityArray[repeatRow].toString();
-			}
+		else
+		{  
+			repeatRow = gravityArray.indexOf(val);
+			gravityArray[repeatRow] = maxVal;
+			gravityArray[rowNum] = val; 
+			sys.cells[repeatRow][colNames.indexOf("Gravity Value")][0] = maxVal.toString();
 		}
 	}
-	else  //Invalid Val passed (non-numeric)
-	{
-		gravityArray[rowNum] = maxVal;
+
+	else  //Used if the user is editing a cell that already contains a gravity value (swap necessary)
+	{   
+		if(val >= maxVal || val < 1){
+			val = maxVal - 1
+			alert("Invalid gravity value, setting gravity = "+val);
+		}
+		for(var i = 0 ; i < gravityArray.length; i++)
+			if(gravityArray[i] == val) 
+				repeatRow = i; 
+				
+		var oldVal = gravityArray[rowNum] 
+		gravityArray[rowNum] = val;
+		if(repeatRow != -1)
+		{
+			gravityArray[repeatRow] = oldVal;
+			sys.cells[repeatRow][colNames.indexOf("Gravity Value")][0] = gravityArray[repeatRow].toString();
+		}
 	}
 	//Set the value in the current cell 
 	sys.getObj("value").value = gravityArray[rowNum].toString();
@@ -143,9 +148,9 @@ function createLink(r)
 		return false;
 		
 	//If the edges column is blank for this node, initialize the data structure for it and set its initial value to a blank string 
-	if(!sys.cells[r][5]){
-		sys.cells[r][5] = new Array();
-		sys.cells[r][5][3] = "";
+	if(!sys.cells[r][colNames.indexOf("Edges")]){
+		sys.cells[r][colNames.indexOf("Edges")] = new Array();
+		sys.cells[r][colNames.indexOf("Edges")][3] = "";
 	}
 	
 	var posLink = new Array(); //Array containing all possible links for the node passed (r = row) 
@@ -153,16 +158,17 @@ function createLink(r)
 	//A valid link is a node which is not the same node that is passed (r) 
 	for(var i=0; i < sys.cells.length; i++)
 		if(sys.cells[i]) 
-			if(sys.cells[i][0])  
+			if(sys.cells[i][colNames.indexOf("Node Name")])  
 				if(i != r)
-					posLink[posLink.length] = sys.cells[i][0][3];
+					posLink[posLink.length] = sys.cells[i][colNames.indexOf("Node Name")][3];
 					
 	/*if(posLink.length == 0)
 		return false;*/   //Broke working version - look at later
+		
 	//Now for these links construct a pop-up to select links to add/delete for the current page 
 	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=350');
 	var htmlStr = ""; //String to be passed as innerHTML as w later
-	var linkArray = sys.cells[r][5][3].split(",");  //Place the links into an array 
+	var linkArray = sys.cells[r][colNames.indexOf("Edges")][3].split(",");  //Place the links into an array 
 
 	for(var i=0; i < posLink.length; i++)  //Create a check-box for each possible node 
 	{
@@ -176,47 +182,61 @@ function createLink(r)
 	w.document.body.innerHTML = htmlStr;  //Load the HTML into the pop-up window 
 	w.document.getElementById("submitter").onclick = function() {  //Onclick function for the submit button 
 		var selectedStr = ""; //String of comma delimited string of selected links
-		for(var i=0; i < posLink.length; i++)
-			if(w.document.getElementById(posLink[i]).checked) 
-			{
+		for(var i=0; i < posLink.length; i++) {
+			if(w.document.getElementById(posLink[i]).checked)
 				selectedStr += ","+posLink[i]; 
-				//Following code creates a reverse version of this link (A -> B and B -> A)
-				//Start by determing which row the link refers to 
-				for(var j=0; j<sys.cells.length; j++)
-				{
-					if(sys.cells[j]) 
-						if(sys.cells[j][0]) 
-							if(sys.cells[j][0][3] == posLink[i]) //This is the node we are looking for 
-							{
-								if(!sys.cells[j][5])  //Column 5 hasn't been initialized yet in this row. Initialize it with the link to Row r
+			//Following code creates a reverse version of this link (A -> B and B -> A)
+			//Start by determining which row the link refers to 
+			for(var j=0; j<sys.cells.length; j++)
+			{
+				if(sys.cells[j]) 
+					if(sys.cells[j][0]) 
+						if(sys.cells[j][colNames.indexOf("Node Name")][3] == posLink[i]) //This is the node we are looking for 
+						{
+							if(w.document.getElementById(posLink[i]).checked) {
+								//alert(posLink[i]+" is an edge");
+								if(!sys.cells[j][colNames.indexOf("Edges")])  //Column 5 hasn't been initialized yet in this row. Initialize it with the link to Row r
 								{
-									sys.cells[j][5] = new Array();
-									sys.cells[j][5][0] = sys.cells[r][0][3];
-									sys.cells[j][5][3] = sys.cells[r][0][3];
+									sys.cells[j][colNames.indexOf("Edges")] = new Array();
+									sys.cells[j][colNames.indexOf("Edges")][0] = sys.cells[r][colNames.indexOf("Node Name")][3];
+									sys.cells[j][colNames.indexOf("Edges")][3] = sys.cells[r][colNames.indexOf("Node Name")][3];
 								}
-								else  //This row's 5th column (edge column) has been initialized already - probe it's content 
+								else  //This row's 5th column (edge column) has been initialized already - probe its contents
 								{
-									var links = sys.cells[j][5][3].split(",");  //Create an edges array 
+									var links = sys.cells[j][colNames.indexOf("Edges")][3].split(",");  //Create an edges array 
 									//alert(sys.cells[j][5][3]+" Dup Test: "+!isLinked(posLink[i], links));
-									if(!isLinked(sys.cells[r][0][3], links)) //Determine if Row r is already an edge for the node being added to Row r
+									if(!isLinked(sys.cells[r][colNames.indexOf("Node Name")][3], links)) //Determine if Row r is already an edge for the node being added to Row r
 									{
 										//Following If-Else determines structure of string to be placed into cell 
 										if(links.length > 0)  //Cell is not empty, concat this link to the end (',') is the delimeter 
 										{
-											sys.cells[j][5][0] += ","+sys.cells[r][0][3];
-											sys.cells[j][5][3] += ","+sys.cells[r][0][3];
+											sys.cells[j][colNames.indexOf("Edges")][0] += ","+sys.cells[r][colNames.indexOf("Node Name")][3];
+											sys.cells[j][colNames.indexOf("Edges")][3] += ","+sys.cells[r][colNames.indexOf("Node Name")][3];
 										}
 										else //Cell is empty, just place the link in the cell 
 										{
-											sys.cells[j][5][0] = sys.cells[r][0][3];
-											sys.cells[j][5][3] = sys.cells[r][0][3];
+											sys.cells[j][colNames.indexOf("Edges")][0] = sys.cells[r][colNames.indexOf("Node Name")][3];
+											sys.cells[j][colNames.indexOf("Edges")][3] = sys.cells[r][colNames.indexOf("Node Name")][3];
 										}
 									}//End If 
 								}//End else
-							}//End If for checking if this is the node to link to (sys.cells[j][0][3]==posLink[i]) 
-				}//End for through all cell rows 
-			}//End for through all Input Boxes 
-		sys.cells[r][5][0] = selectedStr.substr(1, selectedStr.length); //Update the node (character 1 is an unnecessary ',')
+							}//End checked if 
+							else {
+								if(sys.cells[j][colNames.indexOf("Edges")]){
+									var links = sys.cells[j][colNames.indexOf("Edges")][3].split(","); 
+									if(isLinked(sys.cells[r][colNames.indexOf("Node Name")][3], links)){
+										sys.cells[j][colNames.indexOf("Edges")][0] = sys.cells[j][colNames.indexOf("Edges")][0].replace(sys.cells[r][colNames.indexOf("Node Name")][3],"");
+										sys.cells[j][colNames.indexOf("Edges")][0] = sys.cells[j][colNames.indexOf("Edges")][0].replace(",,",",");
+									}
+								}
+							}//End not checked else 
+						}//End If for checking if this is the node to link to (sys.cells[j][0][3]==posLink[i]) 
+			}//End for through all cell rows 
+		}//End for through all Input Boxes 
+		if(selectedStr == "") 
+			sys.cells[r][colNames.indexOf("Edges")][0] = "";
+		else 
+			sys.cells[r][colNames.indexOf("Edges")][0] = selectedStr.substr(1, selectedStr.length); //Update the node (character 1 is an unnecessary ',')
 		display();  //Update the screen 
 		w.close();  //Close pop-up 
 	}	
@@ -240,7 +260,7 @@ function handleFiles(files) {
     if (!files.length) {
 		imgArray[row] = "";
     } else {
-		document.getElementById(row+"_6").childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+window.URL.createObjectURL(files[files.length-1])+"'>"
+		document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+window.URL.createObjectURL(files[files.length-1])+"'>"
 	}
 }
 	
@@ -249,8 +269,8 @@ function updateArrays(){
 	{
 		if(imgArray[i] == "TBD")
 		{
-			if(document.getElementById(i+"_6").childNodes[0].childNodes[0] != "&nbsp;"){
-				imgArray[i] = document.getElementById(i+"_6").childNodes[0].childNodes[0].src;
+			if(document.getElementById(i+"_"+colNames.indexOf("Picture")).childNodes[0].childNodes[0] != "&nbsp;"){
+				imgArray[i] = document.getElementById(i+"_"+colNames.indexOf("Picture")).childNodes[0].childNodes[0].src;
 			}
 			else
 				imgArray[i] = "";  //No photo was placed in the cell, clear the array
@@ -261,7 +281,7 @@ function updateArrays(){
 	{
 		if(colorArray[j] == "TBD")
 		{
-			colorArray[j] = document.getElementById(j+"_3").childNodes[0].style.backgroundColor;
+			colorArray[j] = document.getElementById(j+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
 		}
 	}
 }
@@ -378,10 +398,10 @@ function displayImage(r, path)
 	img.width = 50;
 	img.height = 50;
 	//Only display one photo per Picture Cell. Remove any photo already in this photo cell if there is already a photo
-	if(document.getElementById(row+"_6").childNodes[0].childNodes){
-		document.getElementById(row+"_6").childNodes[0].removeChild(document.getElementById(row+"_6").childNodes[0].childNodes[0]);
+	if(document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].childNodes){
+		document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].removeChild(document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].childNodes[0]);
 	}
-	document.getElementById(row+"_6").childNodes[0].appendChild(img);
+	document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].appendChild(img);
 	imgArray[row] = imgSource;  
 }
 function trans(key) {
@@ -520,30 +540,28 @@ function keypress(event) {
 	if (keyCode==13) { //Code 13 = Enter key -> The user pressed the enter key and is done editing the current cell 
 	  //The Column is the X or Y column - ensure that the data saved into this column is a numeric number (to ensure good Grapher XML)
 	  if(sys.getObj("field").value.indexOf("X") != -1 || sys.getObj("field").value.indexOf("Y") != -1)
-	  {
 	  	sys.getObj("value").value = getNumeric(sys.getObj("value").value);
-	  }
+		
 	  if(sys.getObj("field").value.indexOf("Gravity Value") != -1) //Gravity Value row edited -> Make sure Gravity rules are met
-	  {
 		setGravity(sys.currRow, sys.getObj("value").value);
-	  }
+		
 	  //If Column 0 is changed, update Edge columns to new value of column 0 using str_replace()
 	  if(sys.getObj("field").value.indexOf("Node Name") != -1)
 	  {
 	  	for(var i=0; i<sys.cells.length; i++) //For every currently active row in the spreadsheet 
 	  	{	
-	  		if(sys.cells[i])  //Ensures cells[i] and cells[i][5] exist 
-				if(sys.cells[i][5])
+	  		if(sys.cells[i])  //Ensures cells[i] and cells[i][Edges] exist 
+				if(sys.cells[i][colNames.indexOf("Edges")])
 				{
-					var edges = sys.cells[i][5][3];
+					var edges = sys.cells[i][colNames.indexOf("Edges")][3];
 					edges = edges.split(",");
 					for(var j=0; j<edges.length; j++)
 					{
-						if(edges[j] == oldNodeName)
+						if(edges[j] == oldNodeName && oldNodeName != "")
 							edges[j] = sys.getObj("value").value;
 					}
 					edges = edges.join();
-					sys.cells[i][5][0] = edges;
+					sys.cells[i][colNames.indexOf("Edges")][0] = edges;
 				}
 	  	}
 	  }
@@ -988,9 +1006,9 @@ function cancelLoad() {
 
 //Loads Grapher-XML code into the spreadsheet 
 function loadXML(code) {
-	//XML CODE HANDLING HERE
+	//The following code reads in the data from Grapher formatted XML 
 	var newCode = "dbCells = [";
-	var x = 0; 
+	//var x = 0; //Was used for column placement, replaced by colNames.indexOf()
 	var y = 0; 
 	//Clear both tracker arrays
 	colorArray = new Array();
@@ -1012,24 +1030,22 @@ function loadXML(code) {
 	//Cycle through the nodes, collecting all information 
 	for(var i=0; i<nodes.length; i++) 
 	{
+		newCode += "\n["+colNames.indexOf("Node Name")+","+y+","+"\""+nodes[i].getAttribute('id')+"\",\"\"],";   //Store the id as: [x,y,"id",""],  --Which is the required DB format 
+		newCode += "\n["+colNames.indexOf("X")+","+y+","+"\""+nodes[i].getAttribute('x')+"\",\"\"],";	//Continue using format as listed above in comment
+		newCode += "\n["+colNames.indexOf("Y")+","+y+","+"\""+nodes[i].getAttribute('y')+"\",\"\"],";
+		colorArray[i] = nodes[i].getAttribute('color');
+		newCode += "\n["+colNames.indexOf("label")+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
+		newCode += "\n["+colNames.indexOf("Gravity Value")+","+y+","+"\""+nodes[i].getAttribute('gravity')+"\",\"\"]," ;  //Set Gravity Value
+		gravityArray[y]=nodes[i].getAttribute('gravity'); //?Work? Maybe call setGravity()?
+		
+		//Get Picture info 
 		var pic = nodes[i].getElementsByTagName("img");
 		if(pic[0])
 		{
 			var source = pic[0].getAttribute('src');
 			displayImage(i, source);
-		}
-		x = 0;
-		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('id')+"\",\"\"],";   //Store the id as: [x,y,"id",""],  --Which is the required DB format 
-		x++;
-		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('x')+"\",\"\"],";	//Continue using format as listed above in comment
-		x++;
-		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('y')+"\",\"\"],";
-		x++;
-		//newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('color')+"\",\"\"],";
-		colorArray[i] = nodes[i].getAttribute('color');
-		x++;
-		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
-		x++;
+		} //No newCode += required 
+		
 		//Gather up all edges for this node
 		var edges = nodes[i].getElementsByTagName("edge");
 		var connections = "";  //Stores the string of all the edges
@@ -1040,11 +1056,8 @@ function loadXML(code) {
 		{
 			connections += ","+edges[k].getAttribute('to');  
 		}
-		newCode += "\n["+x+","+y+","+"\""+connections+"\",\"\"],"; 	//Places the edge string into the spreadsheet
-
-		x++    //Picture stuff needs placed below 
-		x++    
-		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"]," ;  //Set Gravity Value = Label for imported graphs 
+		newCode += "\n["+colNames.indexOf("Edges")+","+y+","+"\""+connections+"\",\"\"],"; 	//Places the edge string into the spreadsheet
+		
 		y++;  //Move to next row on spreadsheet 
 	}
 	newCode += "\n];";
@@ -1134,26 +1147,61 @@ function cellsToGrapher()
 {
 	updateArrays();  //Update so that any "TBD" array values will be set to their actual value before exporting 
 	var color;
+	var gVal; 
 	//sys.cells[rows][cols][3 = info inside cells]
 	var out = "<graph> \n"
 	for (var i =0; i < sys.cells.length; i++) {
-		out += "<node id=\""+sys.cells[i][0][3]+"\"";  //gets the id
-		out += " x=\""+sys.cells[i][1][3]+"\"";        //gets the x-coordinate for the node
-		out += " y=\""+sys.cells[i][2][3]+"\"";        //gets the y-coordinate for the node
-		color = document.getElementById(i+"_"+3).childNodes[0].style.backgroundColor;
+		if(sys.cells[i][colNames.indexOf("Node Name")])
+			out += "<node id=\""+sys.cells[i][colNames.indexOf("Node Name")][3]+"\"";  //gets the id
+		else
+			out += "<node id=\"\"";
+		if(sys.cells[i][colNames.indexOf("X")])
+			out += " x=\""+sys.cells[i][colNames.indexOf("X")][3]+"\"";        //gets the x-coordinate for the node
+		else {	
+			out += " x=\"50\"";
+			sys.cells[i][colNames.indexOf("X")] = new Array();
+			sys.cells[i][colNames.indexOf("X")][0] = "50";
+		}
+		if(sys.cells[i][colNames.indexOf("Y")])
+			out += " y=\""+sys.cells[i][colNames.indexOf("Y")][3]+"\"";        //gets the y-coordinate for the node
+		else {
+			out += "  y=\"50\"";
+			sys.cells[i][colNames.indexOf("Y")] = new Array();
+			sys.cells[i][colNames.indexOf("Y")][0] = "50";
+		}
+		color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
 		color = rgbToHex(color);
 		out += " color =\"#"+color+"\"";
-		out += " label=\""+sys.cells[i][4][3]+"\"> \n"; //gets the label for the node
-		if(imgArray[i]) out += "<img src = \"" + imgArray[i] + "\" />\n" ;
-		//Grab edges for this node
-		tempString = sys.cells[i][5][3]; //get the comma delimted string of edges for the graph
-		edges = tempString.split(","); //split the string for each edge that is needed
-		for(var j =0; j < edges.length;j++){ //loop through and generate each edge connection for the nodes
-			out += "<edge to=\""+edges[j]+"\" /> \n";
+		if(sys.cells[i][colNames.indexOf("Label")])
+			out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node
+		else
+			out += " label=\"\"";
+		//Gather the gravity value for this node (or assign one) 
+		if(gravityArray[i])
+			out += " gravity=\""+gravityArray[i]+"\" ";
+		else{
+			setGravity(i,getMaxGravity());
+			out += " gravity=\""+gravityArray[i]+"\" ";
+			sys.cells[i][colNames.indexOf("Gravity Value")] = new Array();
+			sys.cells[i][colNames.indexOf("Gravity Value")][0] = gravityArray[i].toString();
+		}
+		out += "> \n"; //End of <node > 
+		if(imgArray[i]) 
+			out += "<img src = \"" + imgArray[i] + "\" />\n" ;  //Gets the Image for this node 
+		else
+			out += "<img src = \"\" />\n" ;  //Or send an empty image tag 
+		//Grab edges for this node (if they exist) 
+		if(sys.cells[i][colNames.indexOf("Edges")]){
+			tempString = sys.cells[i][colNames.indexOf("Edges")][3]; //get the comma delimited string of edges for the graph
+			edges = tempString.split(","); //split the string for each edge that is needed
+			for(var j =0; j < edges.length;j++){ //loop through and generate each edge connection for the nodes
+				out += "<edge to=\""+edges[j]+"\" /> \n";
+			}
 		}
 		out += "</node> \n";
 	}
 	out += "</graph>";
+	display();
 	return out;
 }
 
@@ -1309,21 +1357,24 @@ function deleteRow() {
   var row1 = sys.currRow;
   if (sys.multiRange.length>0) {
     var cRange = getMultiRange(sys.multiRange);
-	row0 = cRange[0];
-	row1 = cRange[2];
+	row0 = cRange[0]; //1st row to be removed
+	row1 = cRange[2]; //Last row to be removed 
   }
-  for (var row=row0; row<=row1; row++) {
+  //Removal code is below. "Shifts" rows below deleted rows up 
+  for (var row=row0; row<=row1; row++) { //First row to be removed to last row to be removed
     var rowCount = sys.cells.length;
-    for (var i=row0; i<rowCount; i++) {
+    for (var i=row0; i<rowCount; i++) {  //First row to be removed to last row in SS
       if (sys.cells[i]) {
 		if (!sys.cells[i+1]) 
 			sys.cells[i+1] = new Array();
-		var colCount=Math.max(sys.cells[i].length,sys.cells[i+1].length);
-        for (var i2=0; i2<colCount; i2++) {
-	      if (!sys.cells[i+1][i2] && sys.cells[i][i2]) 
-	      	sys.cells[i][i2] = "";
-	      if (!sys.cells[i+1][i2] && !sys.cells[i][i2]) 
-	      	continue;
+		var colCount=Math.max(sys.cells[i].length,sys.cells[i+1].length); //# of columns to be processed 
+        for (var i2=0; i2<colCount; i2++) {    //For every column 
+	      if (!sys.cells[i+1][i2] && sys.cells[i][i2])  //This column in the next row is undefined 
+		  {
+	      	sys.cells[i][i2] = ""; 	//Empty current cell 
+	      	continue; 				//Go to next iteration 
+		  }
+		  //Code if the column in next row has a value, swap the value of the next row into the current row and empty the next row 
 		  sys.cells[i][i2] = sys.cells[i+1][i2];
 		  sys.cells[i+1][i2] = "";
   		} //End for 

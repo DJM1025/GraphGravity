@@ -208,7 +208,7 @@ function createLink(r)
 									if(!isLinked(sys.cells[r][colNames.indexOf("Node Name")][3], links)) //Determine if Row r is already an edge for the node being added to Row r
 									{
 										//Following If-Else determines structure of string to be placed into cell 
-										if(links.length > 0)  //Cell is not empty, concat this link to the end (',') is the delimeter 
+										if(links[0] != "")  //Cell is not empty, concat this link to the end (',') is the delimeter 
 										{
 											sys.cells[j][colNames.indexOf("Edges")][0] += ","+sys.cells[r][colNames.indexOf("Node Name")][3];
 											sys.cells[j][colNames.indexOf("Edges")][3] += ","+sys.cells[r][colNames.indexOf("Node Name")][3];
@@ -225,11 +225,18 @@ function createLink(r)
 								if(sys.cells[j][colNames.indexOf("Edges")]){
 									var links = sys.cells[j][colNames.indexOf("Edges")][3].split(","); 
 									if(isLinked(sys.cells[r][colNames.indexOf("Node Name")][3], links)){
-										sys.cells[j][colNames.indexOf("Edges")][0] = sys.cells[j][colNames.indexOf("Edges")][0].replace(sys.cells[r][colNames.indexOf("Node Name")][3],"");
-										sys.cells[j][colNames.indexOf("Edges")][0] = sys.cells[j][colNames.indexOf("Edges")][0].replace(",,",",");
+										for(var z = 0 ; z < links.length ; z++)
+											if(sys.cells[r][colNames.indexOf("Node Name")][3] == links[z]){
+												links.splice(z,1);
+												break;
+											}
+										var newLinks = "";
+										links = links.join(",");
+										sys.cells[j][colNames.indexOf("Edges")][0] = links;
+										//sys.cells[j][colNames.indexOf("Edges")][3] = links;
 									}
 								}
-							}//End not checked else 
+							}//End not checked else (Disconnect)  
 						}//End If for checking if this is the node to link to (sys.cells[j][0][3]==posLink[i]) 
 			}//End for through all cell rows 
 		}//End for through all Input Boxes 

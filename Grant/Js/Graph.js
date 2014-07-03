@@ -711,8 +711,11 @@ window.addEventListener("load", function loadGraph() {
         //nodeGroup.midpoint = { x: x, y: y };
         nodeGroup.adjacentNodes = {};
         nodeGroup.selected = false;
-        nodeGroup.nodeNum = nodeGroup.gravityValue = Graph.numberOfNodes++;
+        nodeGroup.nodeNum = nodeGroup.gravityValue = Graph.numberOfNodes++; //changed to pre-increment because it was starting at 0 instead of 1
         nodeGroup.edges = {};
+		nodeGroup.color = "red";
+		nodeGroup.image = "empty";
+		nodeGroup.edgesList = new Array();
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
@@ -749,6 +752,55 @@ window.addEventListener("load", function loadGraph() {
         nodeGroup.addEventListener("mousedown", Graph.pressHoldNode, false);
         return nodeGroup;
     }
+	//overloaded function for import creation
+	Graph.createImportedNode = function( node) {
+		Graph.numberOfNodes++;
+		var nodeGroup = document.createElementNS(xmlns, "g");
+        //nodeGroup.midpoint = { x: x, y: y };
+        nodeGroup.adjacentNodes = {};
+        nodeGroup.selected = false;
+        nodeGroup.nodeNum = nodeGroup.gravityValue = node.gravityValue;
+        nodeGroup.edges = {};
+		nodeGroup.color = node.color;
+		nodeGroup.image = node.image;
+		nodeGroup.edgesList = node.edges;
+
+        var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
+        nodeRect.setAttributeNS(null, "rx", "2.5");
+        nodeRect.setAttributeNS(null, "fill", "red");
+        nodeRect.setAttributeNS(null, "stroke", "black");
+        nodeRect.setAttributeNS(null, "stroke-width", "2.5");
+        nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X - (Graph.nodeWidth / 2)));
+        nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y - (Graph.nodeHeight / 2)));
+        nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
+        nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
+        nodeGroup.appendChild(nodeRect);
+
+        var nodeText = nodeGroup.text = document.createElementNS(xmlns, "text");
+        nodeText.textContent = nodeGroup.nodeLabel = node.label;
+        nodeText.setAttributeNS(null, "pointer-events", "none");
+        nodeText.setAttributeNS(null, "text-anchor", "middle");
+        nodeText.setAttributeNS(null, "alignment-baseline", "middle");
+        nodeText.setAttributeNS(null, "fill", "white");
+        nodeText.setAttributeNS(null, "font-family", "Arial");
+        nodeText.setAttributeNS(null, "font-size", "12");
+        nodeText.setAttributeNS(null, "font-weight", "bold");
+        nodeText.setAttributeNS(null, "x", nodeText.X = node.X);
+        nodeText.setAttributeNS(null, "y", nodeText.Y = node.Y);
+        nodeGroup.appendChild(nodeText);
+
+        Graph.nodes[nodeGroup.nodeNum] = Graph.nodesGroup.appendChild(nodeGroup);
+
+        nodeGroup.addEventListener("mouseout", function activateNodeHover() {
+            nodeGroup.removeEventListener("mouseout", activateNodeHover, false);
+            /*nodeGroup.addEventListener("mouseover", Graph.highlightEdges, false);
+            nodeGroup.addEventListener("mouseout", Graph.highlightEdges, false);*/
+        }, false)
+
+        nodeGroup.addEventListener("mousedown", Graph.pressHoldNode, false);
+        return nodeGroup;
+	
+	};
 
     //delete a node
     Graph.deleteNode = function (node, addToHistory, nodeList) {
@@ -1084,6 +1136,9 @@ window.addEventListener("load", function loadGraph() {
         if (node1.selected && node2.selected) {
             Graph.selectEdge(edge);
         }
+		node1.edgesList.push(node2.nodeNum);
+		node2.edgesList.push(node1.nodeNum);
+		
         lowNode.edges[highNode.nodeNum] = edge;
         node1.adjacentNodes[node2.nodeNum] = node2;
         node2.adjacentNodes[node1.nodeNum] = node1;
@@ -1095,6 +1150,48 @@ window.addEventListener("load", function loadGraph() {
             });
         }
     };
+	
+	Graph.connectNodes = function(addToHistory, edgesList) {
+		
+		for(var x = 0; x < Graph.numberOfNodes;x++)
+		{
+			for(var y = 0; y < Graph.nodes[x].edgesList.length;y++)
+			{
+				var node1 = Graph.nodes[x];
+				var node2 = Graph.nodes[Graph.nodes[x].edgesList[y]];
+				if(node2.nodeNum > x)
+				{
+					var pair = Graph.sortNodePair(node1,node2);
+					var lowNode = pair.lowNode;
+					var highNode = pair.highNode;
+	
+					var lowNodeMP = lowNode.findMidpoint();
+					var highNodeMP = highNode.findMidpoint();
+					var edge = document.createElementNS(xmlns, "path");
+					edge.selected = false; //edge.parentNode === selectedEdgesGroup?
+					edge.setAttributeNS(null, "d", "M " + (lowNodeMP.x) + " " + (lowNodeMP.y) + " " + highNodeMP.x + " " + highNodeMP.y);
+					Graph.edgesGroup.appendChild(edge);
+				
+					if (node1.selected && node2.selected) {
+						Graph.selectEdge(edge);
+					}
+		
+					lowNode.edges[highNode.nodeNum] = edge;
+					node1.adjacentNodes[node2.nodeNum] = node2;
+					node2.adjacentNodes[node1.nodeNum] = node1;
+
+					if (addToHistory) {
+					Graph.clipboard.addToHistory({
+						'name': "Connected/Disconnected nodes",
+						'edgesList': edgesList
+						});
+					}
+				}//end if
+				
+			}//end for y
+		}//end for x
+	
+	};
 
     //delete an edge between two nodes
     Graph.deleteEdge = function (node1, node2, addToHistory, edgesList) {
@@ -1231,8 +1328,37 @@ window.addEventListener("load", function loadGraph() {
 
     //scale -
     Graph.scale = function () {
-        alert("Scale in progress");
+		alert("inside scale");
+        Graph.createScaleSlider();
     }
+	
+	//createScaleSlider
+	Graph.createScaleSlider = function () {
+		
+		sliderGroup = document.createElementNS(xmlns,"g");
+		sliderGroup.setAttributeNS(null,"id","scaleSlider");
+		var sliderRect = document.createElementNS(xmlns,"rect");
+		sliderRect.setAttributeNS(null,"height","40");
+		sliderRect.setAttributeNS(null,"width","140");
+		sliderRect.setAttributeNS(null,"x","120");
+		sliderRect.setAttributeNS(null,"y","100");
+		sliderRect.setAttributeNS(null,"rx","5");
+		sliderRect.setAttributeNS(null,"ry","5");
+		sliderRect.setAttributeNS(null,"fill","blue");
+		sliderRect.setAttributeNS(null,"stroke-width","2");
+		sliderRect.setAttributeNS(null,"stroke","orange");
+		
+		sliderRect.addEventListener("onmousedown", function () { alert("work!!!")} ,false);
+		
+		sliderGroup.appendChild(sliderRect);
+		parentSVG.appendChild(sliderGroup); //adds the slider on top of the Graph.plane so it is in front
+		
+	}//end createScaleSlider
+	
+	Graph.moveScaleSlider = function (event){
+		alert("inside moveScaleSlider");
+	}
+
 
     //complement - removes original edges, and creates new edges between it and nodes it was not originally adjacent to
     Graph.complement = function (addToHistory) {

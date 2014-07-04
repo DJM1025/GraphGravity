@@ -1041,7 +1041,7 @@ function loadXML(code) {
 		newCode += "\n["+colNames.indexOf("X")+","+y+","+"\""+nodes[i].getAttribute('x')+"\",\"\"],";	//Continue using format as listed above in comment
 		newCode += "\n["+colNames.indexOf("Y")+","+y+","+"\""+nodes[i].getAttribute('y')+"\",\"\"],";
 		colorArray[i] = nodes[i].getAttribute('color');
-		newCode += "\n["+colNames.indexOf("label")+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
+		newCode += "\n["+colNames.indexOf("Label")+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
 		newCode += "\n["+colNames.indexOf("Gravity Value")+","+y+","+"\""+nodes[i].getAttribute('gravity')+"\",\"\"]," ;  //Set Gravity Value
 		gravityArray[y]=nodes[i].getAttribute('gravity'); //?Work? Maybe call setGravity()?
 		
@@ -1359,6 +1359,19 @@ function insertRow() {
   } } }
   display();
 }
+
+//Empty the contents of the cell passed
+function emptyCell(r,c)
+{
+
+}
+
+//Swap the contents of the first cell (r1,c1) with the contents of the second cell (r2,c2)
+function swap(r1,c1,r2,c2)
+{
+
+}
+
 function deleteRow() {
   var row0 = sys.currRow;
   var row1 = sys.currRow;

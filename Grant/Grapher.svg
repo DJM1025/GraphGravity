@@ -4,4 +4,5 @@
   <script type="text/javascript" xlink:href = "SVGMenu.js"></script>
   <script type="text/javascript" xlink:href = "SVGListBox.js"></script>
   <script type="text/javascript" xlink:href = "SVGMsgBox.js"></script>
+  <script type="text/javascript" xlink:href = "graphLoader.js"></script>
 </svg>

@@ -476,13 +476,13 @@ window.addEventListener("load", function loadMenu() {
         //FILE - IMPORT
         menu.bindAction(["File", "Import", "Local"], function () { temp("Import -> Local"); });
         menu.bindAction(["File", "Import", "Server"], function () { temp("Import -> Server"); });
-        menu.bindAction(["File", "Import", "Clipboard"], function () { temp("Import -> Clipboard"); });
+        menu.bindAction(["File", "Import", "Clipboard"], function () { importClipboard(); });
         menu.bindAction(["File", "Import", "Website"], function () { temp("Import -> Website"); });
 
         //FILE - EXPORT
         menu.bindAction(["File", "Export", "Local"], function () { temp("Export -> Local"); });
         menu.bindAction(["File", "Export", "Server"], function () { temp("Export -> Server"); });
-        menu.bindAction(["File", "Export", "Clipboard"], function () { temp("Export -> Clipboard"); });
+        menu.bindAction(["File", "Export", "Clipboard"], function () { exportClipboard(); });
         menu.bindAction(["File", "Export", "Website"], function () { temp("Export -> Website"); });
 
         //EDIT

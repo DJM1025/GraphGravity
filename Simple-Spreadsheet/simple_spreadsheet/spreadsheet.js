@@ -123,7 +123,7 @@ function getNumeric(strNum)
 	else
 	{
 		alert("Non-Numeric given in field that requires numeric, using a default value instead");
-		returnVal = 0; 
+		returnVal = 50; 
 	}
 	return returnVal;
 }
@@ -1042,7 +1042,7 @@ function loadXML(code) {
 		newCode += "\n["+colNames.indexOf("Y")+","+y+","+"\""+nodes[i].getAttribute('y')+"\",\"\"],";
 		colorArray[i] = nodes[i].getAttribute('color');
 		newCode += "\n["+colNames.indexOf("Label")+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
-		newCode += "\n["+colNames.indexOf("Gravity Value")+","+y+","+"\""+nodes[i].getAttribute('gravity')+"\",\"\"]," ;  //Set Gravity Value
+		newCode += "\n["+colNames.indexOf("Gravity Value")+","+y+","+"\""+nodes[i].getAttribute('gravityValue')+"\",\"\"]," ;  //Set Gravity Value
 		gravityArray[y]=nodes[i].getAttribute('gravity'); //?Work? Maybe call setGravity()?
 		
 		//Get Picture info 
@@ -1188,7 +1188,7 @@ function cellsToGrapher()
 			out += " gravity=\""+gravityArray[i]+"\" ";
 		else{
 			setGravity(i,getMaxGravity());
-			out += " gravity=\""+gravityArray[i]+"\" ";
+			out += " gravityValue=\""+gravityArray[i]+"\" ";
 			sys.cells[i][colNames.indexOf("Gravity Value")] = new Array();
 			sys.cells[i][colNames.indexOf("Gravity Value")][0] = gravityArray[i].toString();
 		}

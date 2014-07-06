@@ -1049,8 +1049,11 @@ function loadXML(code) {
 		var pic = nodes[i].getElementsByTagName("img");
 		if(pic[0])
 		{
-			var source = pic[0].getAttribute('src');
-			displayImage(i, source);
+			if(pic[0].getAttribute('src') != "empty") 
+			{
+				var source = pic[0].getAttribute('src');
+				displayImage(i, source);
+			}
 		} //No newCode += required 
 		
 		//Gather up all edges for this node
@@ -1158,54 +1161,57 @@ function cellsToGrapher()
 	//sys.cells[rows][cols][3 = info inside cells]
 	var out = "<graph> \n"
 	for (var i =0; i < sys.cells.length; i++) {
-		if(sys.cells[i][colNames.indexOf("Node Name")])
-			out += "<node id=\""+sys.cells[i][colNames.indexOf("Node Name")][3]+"\"";  //gets the id
-		else
-			out += "<node id=\"\"";
-		if(sys.cells[i][colNames.indexOf("X")])
-			out += " x=\""+sys.cells[i][colNames.indexOf("X")][3]+"\"";        //gets the x-coordinate for the node
-		else {	
-			out += " x=\"50\"";
-			sys.cells[i][colNames.indexOf("X")] = new Array();
-			sys.cells[i][colNames.indexOf("X")][0] = "50";
-		}
-		if(sys.cells[i][colNames.indexOf("Y")])
-			out += " y=\""+sys.cells[i][colNames.indexOf("Y")][3]+"\"";        //gets the y-coordinate for the node
-		else {
-			out += "  y=\"50\"";
-			sys.cells[i][colNames.indexOf("Y")] = new Array();
-			sys.cells[i][colNames.indexOf("Y")][0] = "50";
-		}
-		color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
-		color = rgbToHex(color);
-		out += " color =\"#"+color+"\"";
-		if(sys.cells[i][colNames.indexOf("Label")])
-			out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node
-		else
-			out += " label=\"\"";
-		//Gather the gravity value for this node (or assign one) 
-		if(gravityArray[i])
-			out += " gravity=\""+gravityArray[i]+"\" ";
-		else{
-			setGravity(i,getMaxGravity());
-			out += " gravityValue=\""+gravityArray[i]+"\" ";
-			sys.cells[i][colNames.indexOf("Gravity Value")] = new Array();
-			sys.cells[i][colNames.indexOf("Gravity Value")][0] = gravityArray[i].toString();
-		}
-		out += "> \n"; //End of <node > 
-		if(imgArray[i]) 
-			out += "<img src = \"" + imgArray[i] + "\" />\n" ;  //Gets the Image for this node 
-		else
-			out += "<img src = \"\" />\n" ;  //Or send an empty image tag 
-		//Grab edges for this node (if they exist) 
-		if(sys.cells[i][colNames.indexOf("Edges")]){
-			tempString = sys.cells[i][colNames.indexOf("Edges")][3]; //get the comma delimited string of edges for the graph
-			edges = tempString.split(","); //split the string for each edge that is needed
-			for(var j =0; j < edges.length;j++){ //loop through and generate each edge connection for the nodes
-				out += "<edge to=\""+edges[j]+"\" /> \n";
+		if(sys.cells[i])
+		{
+			if(sys.cells[i][colNames.indexOf("Node Name")])
+				out += "<node id=\""+sys.cells[i][colNames.indexOf("Node Name")][3]+"\"";  //gets the id
+			else
+				out += "<node id=\"\"";
+			if(sys.cells[i][colNames.indexOf("X")])
+				out += " x=\""+sys.cells[i][colNames.indexOf("X")][3]+"\"";        //gets the x-coordinate for the node
+			else {	
+				out += " x=\"50\"";
+				sys.cells[i][colNames.indexOf("X")] = new Array();
+				sys.cells[i][colNames.indexOf("X")][0] = "50";
 			}
+			if(sys.cells[i][colNames.indexOf("Y")])
+				out += " y=\""+sys.cells[i][colNames.indexOf("Y")][3]+"\"";        //gets the y-coordinate for the node
+			else {
+				out += "  y=\"50\"";
+				sys.cells[i][colNames.indexOf("Y")] = new Array();
+				sys.cells[i][colNames.indexOf("Y")][0] = "50";
+			}
+			color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
+			color = rgbToHex(color);
+			out += " color =\"#"+color+"\"";
+			if(sys.cells[i][colNames.indexOf("Label")])
+				out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node
+			else
+				out += " label=\"\"";
+			//Gather the gravity value for this node (or assign one) 
+			if(gravityArray[i])
+				out += " gravity=\""+gravityArray[i]+"\" ";
+			else{
+				setGravity(i,getMaxGravity());
+				out += " gravityValue=\""+gravityArray[i]+"\" ";
+				sys.cells[i][colNames.indexOf("Gravity Value")] = new Array();
+				sys.cells[i][colNames.indexOf("Gravity Value")][0] = gravityArray[i].toString();
+			}
+			out += "> \n"; //End of <node > 
+			if(imgArray[i]) 
+				out += "<img src = \"" + imgArray[i] + "\" />\n" ;  //Gets the Image for this node 
+			else
+				out += "<img src = \"\" />\n" ;  //Or send an empty image tag 
+			//Grab edges for this node (if they exist) 
+			if(sys.cells[i][colNames.indexOf("Edges")]){
+				tempString = sys.cells[i][colNames.indexOf("Edges")][3]; //get the comma delimited string of edges for the graph
+				edges = tempString.split(","); //split the string for each edge that is needed
+				for(var j =0; j < edges.length;j++){ //loop through and generate each edge connection for the nodes
+					out += "<edge to=\""+edges[j]+"\" /> \n";
+				}
+			}
+			out += "</node> \n";
 		}
-		out += "</node> \n";
 	}
 	out += "</graph>";
 	display();
@@ -1361,9 +1367,13 @@ function insertRow() {
 }
 
 //Empty the contents of the cell passed
-function emptyCell(r,c)
+function clearArrays(r)
 {
-
+	updateArrays();
+	delete gravityArray[r];
+	imgArray[r] = "";
+	colorArray[r] = "";
+	alert("Call to clearArrays()");
 }
 
 //Swap the contents of the first cell (r1,c1) with the contents of the second cell (r2,c2)
@@ -1382,6 +1392,7 @@ function deleteRow() {
   }
   //Removal code is below. "Shifts" rows below deleted rows up 
   for (var row=row0; row<=row1; row++) { //First row to be removed to last row to be removed
+	clearArrays(row);
     var rowCount = sys.cells.length;
     for (var i=row0; i<rowCount; i++) {  //First row to be removed to last row in SS
       if (sys.cells[i]) {

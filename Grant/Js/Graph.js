@@ -711,7 +711,8 @@ window.addEventListener("load", function loadGraph() {
         //nodeGroup.midpoint = { x: x, y: y };
         nodeGroup.adjacentNodes = {};
         nodeGroup.selected = false;
-        nodeGroup.nodeNum = nodeGroup.gravityValue = Graph.numberOfNodes++; //changed to pre-increment because it was starting at 0 instead of 1
+        nodeGroup.nodeNum = Graph.numberOfNodes++;
+		nodeGroup.gravityValue = Graph.numberOfNodes;
         nodeGroup.edges = {};
 		nodeGroup.color = "red";
 		nodeGroup.image = "empty";
@@ -754,12 +755,12 @@ window.addEventListener("load", function loadGraph() {
     }
 	//overloaded function for import creation
 	Graph.createImportedNode = function( node) {
-		Graph.numberOfNodes++;
 		var nodeGroup = document.createElementNS(xmlns, "g");
         //nodeGroup.midpoint = { x: x, y: y };
         nodeGroup.adjacentNodes = {};
         nodeGroup.selected = false;
-        nodeGroup.nodeNum = nodeGroup.gravityValue = node.gravityValue;
+        nodeGroup.nodeNum = Graph.numberOfNodes++;
+		nodeGroup.gravityValue = node.gravityValue;
         nodeGroup.edges = {};
 		nodeGroup.color = node.color;
 		nodeGroup.image = node.image;
@@ -767,7 +768,7 @@ window.addEventListener("load", function loadGraph() {
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
-        nodeRect.setAttributeNS(null, "fill", "red");
+        nodeRect.setAttributeNS(null, "fill", node.color);
         nodeRect.setAttributeNS(null, "stroke", "black");
         nodeRect.setAttributeNS(null, "stroke-width", "2.5");
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X - (Graph.nodeWidth / 2)));
@@ -1004,7 +1005,7 @@ window.addEventListener("load", function loadGraph() {
             });
         }
 
-        Graph.changeNodeColor(node, "red", "white");
+        Graph.changeNodeColor(node, node.color, "white");
         delete Graph.selectedNodes[node.nodeNum];
         Graph.nodes[node.nodeNum] = node;
         Graph.nodesGroup.appendChild(node);

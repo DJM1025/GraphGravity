@@ -784,11 +784,11 @@ function display() {
   out += "</table></div>";
   out += "<div class='footer' id='footer' onmouseover='sys.getObj(\"status\").innerHTML=\"\";'>&nbsp;";
   if (sys.isWriteable) {
-    out += trans("Insert")+": ";
+    /*out += trans("Insert")+": ";
     out += "<a href='#' onclick='insertRow(); return false;'>"+trans("Row")+"</a> - ";
-    //out += "<a href='#' onclick='insertColumn(); return false;'>"+trans("Column")+"</a> - ";
-    out += trans("Delete")+": ";
-    out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire row ?")+"\")) deleteRow(); return false;'>"+trans("Row")+"</a> - ";
+    //out += "<a href='#' onclick='insertColumn(); return false;'>"+trans("Column")+"</a> - ";*/
+    //out += trans("Delete")+": ";
+    out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire row ?")+"\")) deleteRow(); return false;'>"+trans("Delete Current Node")+"</a> - ";
     //out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire column ?")+"\")) deleteColumn(); return false;'>"+trans("Column")+"</a> - ";
   } /*
   out += trans("Sort")+": ";
@@ -796,10 +796,11 @@ function display() {
   out += "<a href='#' onclick='sort(0); return false;'>"+trans("desc.")+"</a> - ";*/
 
   if (sys.isWriteable) {
+    /*
     out += "<a href='#' onclick='cutcopy(\"cut\",\"#FFDDDD\"); return false;' title='Alt-x' accesskey='x'>"+trans("Cut")+"</a> - ";
     out += "<a href='#' onclick='cutcopy(\"copy\",\"#DDDDFF\"); return false;' title='Alt-c' accesskey='c'>"+trans("Copy")+"</a> - ";
-    out += "<a href='#' onclick='paste(); return false;' title='Alt-v' accesskey='v'>"+trans("Paste")+"</a> - ";
-    out += "<a href='#' onclick='if (confirm(\""+trans("Really empty cell(s) ?")+"\")) removeSelectedCell(); return false;' title='Alt-e' accesskey='e'>"+trans("Empty")+"</a> - ";
+    out += "<a href='#' onclick='paste(); return false;' title='Alt-v' accesskey='v'>"+trans("Paste")+"</a> - ";*/
+    out += "<a href='#' onclick='if (confirm(\""+trans("Really empty cell(s) ?")+"\")) removeSelectedCell(); return false;' title='Alt-e' accesskey='e'>"+trans("Empty Cell")+"</a> - ";
   }/*
   out += trans("Export")+": ";
   out += "<a href='#' onclick='save(\"js\"); return false;'>"+trans("JS")+"</a> - ";
@@ -1369,11 +1370,23 @@ function insertRow() {
 //Empty the contents of the cell passed
 function clearArrays(r)
 {
+	//alert("Call to clearArrays()");
 	updateArrays();
-	delete gravityArray[r];
 	imgArray[r] = "";
 	colorArray[r] = "";
-	alert("Call to clearArrays()");
+	var gravVal = gravityArray[r];
+	delete gravityArray[r];
+	for (var i = 1; i <= (getMaxGravity() - gravVal); i++){
+		for(var j = 0; j < gravityArray.length; j++){
+			if(gravityArray[j]){
+				if(gravityArray[j] - gravVal == i)
+				{
+					gravityArray[j]--;
+					sys.cells[j][colNames.indexOf("Gravity Value")][0] = gravityArray[j].toString();
+				}//End If 
+			}//End If 
+		}//End For 
+	}//End For
 }
 
 //Swap the contents of the first cell (r1,c1) with the contents of the second cell (r2,c2)

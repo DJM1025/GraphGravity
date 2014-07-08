@@ -1183,7 +1183,7 @@ function cellsToGrapher()
 				sys.cells[i][colNames.indexOf("Y")][0] = "50";
 			}
 			color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
-			color = rgbToHex(color);
+			//color = rgbToHex(color);
 			out += " color =\"#"+color+"\"";
 			if(sys.cells[i][colNames.indexOf("Label")])
 				out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node

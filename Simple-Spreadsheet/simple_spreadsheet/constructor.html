@@ -1,4 +1,4 @@
-
+﻿
 <?xml version="1.0" standalone="no"?>
 <html>
 <head>
@@ -12,6 +12,7 @@ var h = window.innerHeight;            //gets the maximum height of the users pa
 numberOfClicks = 0;         //number of rooms the user has clicked on
 nodeColors = new Array();   //holds the color that will be associated with each node
 nodeContents = new Array(); //holds the word that corresponds with each node
+nodeImages - new Array();   //holds the image's that corresponds to each node
 numOfEdges = new Array();   //used for sortingByGravityValues to loop through connecting nodes
 objectArray = new Array();  //holds the boolean value for whther or not we have a turkey at that location
 xCords = new Array();       //array for x coordinates of the xml
@@ -79,6 +80,7 @@ function initalizeNodes()
 	        value = N[x].getAttribute("id"); //gets the value of the id attribute
 			nodeArray[x][0]= parseInt(value.substring(1,value.length));  //parses out the unecassary g and changes it to and Int
 			objectArray[x] = false;
+            nodeImage[x] = xmlDoc.getElementsByTagName("img").getAttribute("src");
 			
 			if(colorChoice ==0){
 			    nodeColors[x] = randomColor();  //gives each node it's own randomColor
@@ -433,6 +435,16 @@ function displayCurrentRoom(currentNode,mode)
 		svgimg.setAttributeNS(null,"visibility","visible");
 		group4.appendChild(svgimg);
 	}
+	
+	var loadedImage = document.createElementNS(xmlns,"image");
+	loadedImage.setAttributeNS(null,"height","100");
+	loadedImage.setAttributeNS(null,"width","100");
+	loadedImage.setAttributeNS(null,"x", w-200);
+	loadedImage.setAttributeNS(null,"y", h-200);
+	loadedImage.setAttributeNS(xlink,"href",nodeImages[currentNode]);
+	loadedImage.setAttributeNS(null,"visibility","visible");
+	group4.appendChild(loadedImage);
+	
 	if(homeLocation == currentNode)
 	{
 		var svgimg = document.createElementNS(xmlns,"image");
@@ -636,6 +648,8 @@ function exportXML()
 		*/
 		
 		s += ">\n" 
+		s += "<img src=\"" + nodeImages[i] + "\" ";
+		s += "/>
 		for(j =1; j < nodeArray[i].length;j++)
 		{
 			s += "<edge to=\"g" + nodeArray[i][j] + "\" />\n";

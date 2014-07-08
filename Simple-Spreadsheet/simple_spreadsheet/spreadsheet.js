@@ -290,6 +290,7 @@ function updateArrays(){
 		{
 			colorArray[j] = document.getElementById(j+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
 		}
+		//alert(colorArray[j]);
 	}
 }
 
@@ -1147,10 +1148,10 @@ function rgbToHex(rgbColor) {
 }
 
 function toHex(n) {
- n = parseInt(n,10);
- if (isNaN(n)) return "00";
- n = Math.max(0,Math.min(n,255));
- return "0123456789ABCDEF".charAt((n-n%16)/16) + "0123456789ABCDEF".charAt(n%16);
+	n = parseInt(n,10);
+	if (isNaN(n)) return "00";
+	n = Math.max(0,Math.min(n,255));
+	return "0123456789ABCDEF".charAt((n-n%16)/16) + "0123456789ABCDEF".charAt(n%16);
 }
 
 //Save Grapher code and any changes made to send back to the user
@@ -1185,6 +1186,7 @@ function cellsToGrapher()
 			color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
 			//color = rgbToHex(color);
 			out += " color =\"#"+color+"\"";
+			
 			if(sys.cells[i][colNames.indexOf("Label")])
 				out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node
 			else

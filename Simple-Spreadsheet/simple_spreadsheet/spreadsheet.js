@@ -1045,7 +1045,7 @@ function loadXML(code) {
 		colorArray[i] = nodes[i].getAttribute('color');
 		newCode += "\n["+colNames.indexOf("Label")+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
 		newCode += "\n["+colNames.indexOf("Gravity Value")+","+y+","+"\""+nodes[i].getAttribute('gravityValue')+"\",\"\"]," ;  //Set Gravity Value
-		gravityArray[y]=nodes[i].getAttribute('gravity'); //?Work? Maybe call setGravity()?
+		gravityArray[y]=nodes[i].getAttribute('gravityValue').toString(); 
 		
 		//Get Picture info 
 		var pic = nodes[i].getElementsByTagName("img");
@@ -1184,8 +1184,10 @@ function cellsToGrapher()
 				sys.cells[i][colNames.indexOf("Y")][0] = "50";
 			}
 			color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
-			//color = rgbToHex(color);
-			out += " color =\"#"+color+"\"";
+			if(color.indexOf("rgb") != -1)
+				out += " color =\""+color+"\"";
+			else 
+				out += " color =\"#"+color+"\"";
 			
 			if(sys.cells[i][colNames.indexOf("Label")])
 				out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node
@@ -1193,7 +1195,7 @@ function cellsToGrapher()
 				out += " label=\"\"";
 			//Gather the gravity value for this node (or assign one) 
 			if(gravityArray[i])
-				out += " gravity=\""+gravityArray[i]+"\" ";
+				out += " gravityValue=\""+gravityArray[i]+"\" ";
 			else{
 				setGravity(i,getMaxGravity());
 				out += " gravityValue=\""+gravityArray[i]+"\" ";

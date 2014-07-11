@@ -141,11 +141,33 @@ function isLinked(link, allLinks)
 	return false;
 }
 
+//Used to remove references to a Node that is being deleted 
+function removeLinks(name)
+{
+	//Cycle through every node and remove any references to the Node-Name passed to this function 
+	for(var i = 0; i < sys.cells.length; i++)
+	{
+		if(sys.cells[i])
+			if(sys.cells[i][colNames.indexOf("Edges")]){
+				var links = sys.cells[i][colNames.indexOf("Edges")][3].split(",");
+				if(links.indexOf(name)){
+					links.splice(links.indexOf(name),1);
+					links = links.join(',');
+					sys.cells[i][colNames.indexOf("Edges")][0] = links;
+				}
+			}
+	}
+}
+
 //Used to edit the Edges column (add and delete links) 
 function createLink(r) 
 {
+	//If there is only 1 node (or 0) do not continue processing 
+	if(sys.cells.length <= 1)
+		return false;   //Exit function
+		
 	if(!sys.cells[r]) 
-		return false;
+		return false;   //Exit function 
 		
 	//If the edges column is blank for this node, initialize the data structure for it and set its initial value to a blank string 
 	if(!sys.cells[r][colNames.indexOf("Edges")]){
@@ -161,9 +183,6 @@ function createLink(r)
 			if(sys.cells[i][colNames.indexOf("Node Name")])  
 				if(i != r)
 					posLink[posLink.length] = sys.cells[i][colNames.indexOf("Node Name")][3];
-					
-	/*if(posLink.length == 0)
-		return false;*/   //Broke working version - look at later
 		
 	//Now for these links construct a pop-up to select links to add/delete for the current page 
 	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=350');
@@ -1185,9 +1204,9 @@ function cellsToGrapher()
 			}
 			color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
 			if(color.indexOf("rgb") != -1)
-				out += " color =\""+color+"\"";
+				out += " color =\""+color+"\"";  //Color is in RGB format - do not add a leading '#' 
 			else 
-				out += " color =\"#"+color+"\"";
+				out += " color =\"#"+color+"\""; //Add preceding '#' 
 			
 			if(sys.cells[i][colNames.indexOf("Label")])
 				out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node
@@ -1374,10 +1393,35 @@ function insertRow() {
 //Empty the contents of the cell passed
 function clearArrays(r)
 {
-	//alert("Call to clearArrays()");
 	updateArrays();
-	imgArray[r] = "";
-	colorArray[r] = "";
+	
+	//UPDATE EDGES 
+	removeLinks(document.getElementById(r+"_"+colNames.indexOf("Node Name")).childNodes[0].childNodes[0]);
+	 
+	//Handle removal of images when a node is destroyed 
+	if(imgArray[r])
+	{
+		if(imgArray[r+1]){
+			imgArray[r] = imgArray[r+1];
+			imgArray[r+1] = "";
+		}
+		else	
+			imgArray[r] = "";
+	}
+	
+	//Handle removal of color cells when a node is destroyed 
+	if(colorArray[r])
+	{
+	    //Swap with cell below, if possible (otherwise just empty the color)
+		if(colorArray[r+1]) {
+			colorArray[r] = colorArray[r+1];
+			colorArray[r+1] = "";
+		}
+		else
+			colorArray[r] = "";
+	}//End of clearing/swapping color values
+	
+	//Update ALL gravity values when a node is deleted 
 	var gravVal = gravityArray[r];
 	delete gravityArray[r];
 	for (var i = 1; i <= (getMaxGravity() - gravVal); i++){
@@ -1390,13 +1434,7 @@ function clearArrays(r)
 				}//End If 
 			}//End If 
 		}//End For 
-	}//End For
-}
-
-//Swap the contents of the first cell (r1,c1) with the contents of the second cell (r2,c2)
-function swap(r1,c1,r2,c2)
-{
-
+	}//End For (End of updating gravity values) 
 }
 
 function deleteRow() {
@@ -1431,6 +1469,7 @@ function deleteRow() {
   }//End for 
   display();
 }
+
 function insertColumn() {
   for (var i=0; i<sys.cells.length; i++) {
     if (sys.cells[i]) {

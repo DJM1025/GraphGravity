@@ -150,7 +150,8 @@ function removeLinks(name)
 		if(sys.cells[i])
 			if(sys.cells[i][colNames.indexOf("Edges")]){
 				var links = sys.cells[i][colNames.indexOf("Edges")][3].split(",");
-				if(links.indexOf(name)){
+				if(links.indexOf(name) != -1){
+					//alert("Removing link to "+name+" from this page");
 					links.splice(links.indexOf(name),1);
 					links = links.join(',');
 					sys.cells[i][colNames.indexOf("Edges")][0] = links;
@@ -1203,10 +1204,10 @@ function cellsToGrapher()
 				sys.cells[i][colNames.indexOf("Y")][0] = "50";
 			}
 			color = document.getElementById(i+"_"+colNames.indexOf("Color")).childNodes[0].style.backgroundColor;
-			if(color.indexOf("rgb") != -1)
+			//if(color.indexOf("rgb") != -1)
 				out += " color =\""+color+"\"";  //Color is in RGB format - do not add a leading '#' 
-			else 
-				out += " color =\"#"+color+"\""; //Add preceding '#' 
+			//else 
+				//out += " color =\"#"+color+"\""; //Add preceding '#' 
 			
 			if(sys.cells[i][colNames.indexOf("Label")])
 				out += " label=\""+sys.cells[i][colNames.indexOf("Label")][3]+"\""; //gets the label for the node
@@ -1390,37 +1391,8 @@ function insertRow() {
   display();
 }
 
-//Empty the contents of the cell passed
-function clearArrays(r)
+function updateGravity(r)
 {
-	updateArrays();
-	
-	//UPDATE EDGES 
-	removeLinks(document.getElementById(r+"_"+colNames.indexOf("Node Name")).childNodes[0].childNodes[0]);
-	 
-	//Handle removal of images when a node is destroyed 
-	if(imgArray[r])
-	{
-		if(imgArray[r+1]){
-			imgArray[r] = imgArray[r+1];
-			imgArray[r+1] = "";
-		}
-		else	
-			imgArray[r] = "";
-	}
-	
-	//Handle removal of color cells when a node is destroyed 
-	if(colorArray[r])
-	{
-	    //Swap with cell below, if possible (otherwise just empty the color)
-		if(colorArray[r+1]) {
-			colorArray[r] = colorArray[r+1];
-			colorArray[r+1] = "";
-		}
-		else
-			colorArray[r] = "";
-	}//End of clearing/swapping color values
-	
 	//Update ALL gravity values when a node is deleted 
 	var gravVal = gravityArray[r];
 	delete gravityArray[r];
@@ -1437,6 +1409,42 @@ function clearArrays(r)
 	}//End For (End of updating gravity values) 
 }
 
+function removeSpCols(startR, endR) 
+{
+	for(var i = startR; i <= endR; i++)
+	{
+		//UPDATE EDGES 
+		removeLinks(document.getElementById(i+"_"+colNames.indexOf("Node Name")).childNodes[0].innerHTML);
+		updateGravity(i);
+		for(var j = i; j <= sys.cells.length; j++)
+		{
+			if(sys.cells[j+1]){
+				shiftArrays(j,j+1);
+			}
+		}
+	}
+}
+
+function shiftArrays(row1, row2)
+{
+	//Handle removal of images when a node is destroyed 
+	if(imgArray[row2]){
+		imgArray[row1] = imgArray[row2];
+		imgArray[row2] = "";
+	}
+	else	
+		imgArray[row1] = "";
+	
+	//Swap with cell below, if possible (otherwise just empty the color)
+	if(colorArray[row2]) {
+		colorArray[row1] = colorArray[row2];
+		colorArray[row2] = "";
+	}
+	else
+		colorArray[row1] = "";
+	//End of clearing/swapping color values
+}
+
 function deleteRow() {
   var row0 = sys.currRow;
   var row1 = sys.currRow;
@@ -1445,9 +1453,11 @@ function deleteRow() {
 	row0 = cRange[0]; //1st row to be removed
 	row1 = cRange[2]; //Last row to be removed 
   }
+  removeSpCols(row0,row1);
+
   //Removal code is below. "Shifts" rows below deleted rows up 
   for (var row=row0; row<=row1; row++) { //First row to be removed to last row to be removed
-	clearArrays(row);
+	//clearArrays(row);
     var rowCount = sys.cells.length;
     for (var i=row0; i<rowCount; i++) {  //First row to be removed to last row in SS
       if (sys.cells[i]) {

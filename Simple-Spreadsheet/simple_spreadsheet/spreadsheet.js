@@ -670,9 +670,9 @@ function display() {
 	if (sys.closeMethod) out += "<a href='#' onclick='if (confirm(\"Really close ?\")) sys.closeMethod(); return false;' accesskey='q'>"+trans("Close")+"</a> - ";
   }
   if (sys.isWriteable) {
-    out += "<a href='#' onclick='if (confirm(\""+trans("Really close without saving changes ?")+"\")) load(sys.initData); return false;' accesskey='n'>"+trans("New")+"</a> - ";
-    out += "<a href='#' onclick='loadCode(); return false;' accesskey='l'>"+trans("Load")+"</a> - ";
-    if (sys.saveMethod) out += "<a href='#' onclick='sys.saveMethod(); return false;' accesskey='s'>"+trans("Save")+"</a> - ";
+    out += "<a href='#' onclick='if (confirm(\""+trans("Really close without saving changes ?")+"\")) window.location = \"spreadsheet_offline.html\"; //load(sys.initData); //return false;' accesskey='n'>"+trans("New")+"</a> - ";
+    out += "<a href='#' onclick='loadCode(); return false;' accesskey='l'>"+trans("Import XML")+"</a> - ";
+    if (sys.saveMethod) out += "<a href='#' onclick='sys.saveMethod(); return false;' accesskey='s'>"+trans("Export XML")+"</a> - ";
   }
   out += "<a href='#' onclick='print(); return false;' accesskey='p'>"+trans("Print")+"</a> - ";
   if (sys.allowPaging) {
@@ -1394,19 +1394,22 @@ function insertRow() {
 function updateGravity(r)
 {
 	//Update ALL gravity values when a node is deleted 
-	var gravVal = gravityArray[r];
-	delete gravityArray[r];
-	for (var i = 1; i <= (getMaxGravity() - gravVal); i++){
-		for(var j = 0; j < gravityArray.length; j++){
+	var gravVal = gravityArray[r];  
+	delete gravityArray[r]; 
+	for (var i = 1; i <= (getMaxGravity() - gravVal); i++){  //i = Gravity Value 
+		for(var j = 0; j < gravityArray.length; j++){  //j = Node #
 			if(gravityArray[j]){
-				if(gravityArray[j] - gravVal == i)
+				if(gravityArray[j] - gravVal == i)  
 				{
+					//alert("Placing gravity value of "+ gravityArray[j] + "in row "+j);
+					//alert("Sys.cells in Gravity col = "+sys.cells[j][colNames.indexOf("Gravity Value")][0])
 					gravityArray[j]--;
 					sys.cells[j][colNames.indexOf("Gravity Value")][0] = gravityArray[j].toString();
 				}//End If 
 			}//End If 
 		}//End For 
 	}//End For (End of updating gravity values) 
+	gravityArray.splice(r,1);  //Now re-size gravityArray 
 }
 
 function removeSpCols(startR, endR) 
@@ -1432,8 +1435,9 @@ function shiftArrays(row1, row2)
 		imgArray[row1] = imgArray[row2];
 		imgArray[row2] = "";
 	}
-	else	
-		imgArray[row1] = "";
+	else
+		imgArray.splice(row1, 1);
+		//imgArray[row1] = "";
 	
 	//Swap with cell below, if possible (otherwise just empty the color)
 	if(colorArray[row2]) {
@@ -1441,7 +1445,8 @@ function shiftArrays(row1, row2)
 		colorArray[row2] = "";
 	}
 	else
-		colorArray[row1] = "";
+		colorArray.splice(row1, 1);
+		//colorArray[row1] = "";
 	//End of clearing/swapping color values
 }
 

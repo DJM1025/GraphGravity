@@ -63,15 +63,16 @@ var out = "";
 out += trans("Simple Spreadsheet code / CSV data / Tab separated values (copy/paste from Excel):");
 out += '<br><textarea id="code" wrap="off"></textarea><br>';
 
-out += '<table class="default_table" style="width:60%;">';
+out += '<table class="default_table" style="width:20%;">';
 out += '<tr><td colspan="3"><input type="button" value="'+trans("Load")+'" onclick="load(sys.getObj(\'code\').value);" style="width:100%;"></td>';
 out += '<td><input type="button" value="'+trans("Cancel")+'" onclick="cancelLoad();"></td></tr>';
 out += '<tr><td>&nbsp;</td></tr>';
-out += '<tr><td>'+trans("Url")+':</td>';
+/*out += '<tr><td>'+trans("Url")+':</td>';
 out += '<td style="width:100%;"><input type="Text" id="code_url" value="" style="width:100%;"></td>';
 out += '<td><input type="button" value="'+trans("Load")+'" onclick="sys.loadSheetFromUrl(sys.getObj(\'code_url\').value);"></td>';
 out += '<td style="white-space:nowrap;">('+trans("Only Javascript-like syntax")+')</td>';
-out += '</tr></table>';
+out += '</tr></table>';*/
+out += '</table>';
 document.write(out);
 
 </script>

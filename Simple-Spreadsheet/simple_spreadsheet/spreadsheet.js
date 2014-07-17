@@ -287,7 +287,30 @@ function handleFiles(files) {
     if (!files.length) {
 		imgArray[row] = "";
     } else {
-		document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+window.URL.createObjectURL(files[files.length-1])+"'>"
+		var fr = new FileReader();
+		var validFlag = true;
+		fr.onload = function(e) {
+			var raw = fr.result;
+			if(raw.indexOf("image") != -1)
+				raw = raw.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, "");  //Remove data info from beginning of encoded string 
+			else {
+				raw = "";
+				validFlag = false;
+				alert("Invalid File Supplied - Not a Photo");
+			}
+			var xmlhttp=new XMLHttpRequest();
+			xmlhttp.open("POST", "./photoUpload.php", true);
+			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			xmlhttp.send("blob="+raw);
+			xmlhttp.onreadystatechange = function() {
+				if(xmlhttp.readyState == 4){
+					if(validFlag)
+						document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+xmlhttp.responseText+"'>"
+				}
+			}
+		}
+		fr.readAsDataURL(files[files.length-1]); 
+		//document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+window.URL.createObjectURL(files[files.length-1])+"'>"
 	}
 }
 	

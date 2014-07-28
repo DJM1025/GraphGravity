@@ -19,6 +19,7 @@
 	*  MA  02111-1307, USA.                                                    *
 	\**************************************************************************/
 // Translations implemented by Sophie Lee.
+//SRU Gravity Project work (2014) performed by Zachary Petrusch
 var agent = navigator.userAgent.toLowerCase();
 var colorArray = new Array();  //Holds the hex values for colors in the color column 
 var imgArray = new Array();    //Holds the location of images that are currently in the photo column 
@@ -31,6 +32,11 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("msie")!=-1) agent = "msie";
 
 window.onerror=handleErr;
+
+function exportToGrapher(){
+	var w = window.open("http://cs.sru.edu/~gravity/newGrapher/Grant/Grapher.html"); 
+	setTimeout(function () {w.importClipboard(cellsToGrapher());}, 500);
+}
 
 //Returns highest possible gravity value (Highest possible value == number of nodes)
 function getMaxGravity()
@@ -290,7 +296,7 @@ function handleFiles(files) {
 		var fr = new FileReader();
 		var validFlag = true;
 		fr.onload = function(e) {
-			var raw = fr.result;
+			var raw = fr.result;  //String containing the Base 64 contents of the image file 
 			if(raw.indexOf("image") != -1)
 				raw = raw.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, "");  //Remove data info from beginning of encoded string 
 			else {
@@ -298,19 +304,19 @@ function handleFiles(files) {
 				validFlag = false;
 				alert("Invalid File Supplied - Not a Photo");
 			}
+			//Create an AJAX request to a PHP script which converts the string back to an image and saves it on the server 
 			var xmlhttp=new XMLHttpRequest();
-			xmlhttp.open("POST", "./photoUpload.php", true);
+			xmlhttp.open("POST", "./photoUpload.php", true);  //Use POST due to size restraints on GET
 			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			xmlhttp.send("blob="+raw);
 			xmlhttp.onreadystatechange = function() {
-				if(xmlhttp.readyState == 4){
+				if(xmlhttp.readyState == 4){  
 					if(validFlag)
 						document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+xmlhttp.responseText+"'>"
 				}
 			}
 		}
-		fr.readAsDataURL(files[files.length-1]); 
-		//document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+window.URL.createObjectURL(files[files.length-1])+"'>"
+		fr.readAsDataURL(files[files.length-1]); //Read the file contents 
 	}
 }
 	
@@ -693,11 +699,12 @@ function display() {
 	if (sys.closeMethod) out += "<a href='#' onclick='if (confirm(\"Really close ?\")) sys.closeMethod(); return false;' accesskey='q'>"+trans("Close")+"</a> - ";
   }
   if (sys.isWriteable) {
-    out += "<a href='#' onclick='if (confirm(\""+trans("Really close without saving changes ?")+"\")) window.location = \"spreadsheet_offline.html\"; //load(sys.initData); //return false;' accesskey='n'>"+trans("New")+"</a> - ";
-    out += "<a href='#' onclick='loadCode(); return false;' accesskey='l'>"+trans("Import XML")+"</a> - ";
-    if (sys.saveMethod) out += "<a href='#' onclick='sys.saveMethod(); return false;' accesskey='s'>"+trans("Export XML")+"</a> - ";
+    out += "<a href='#' onclick='if (confirm(\""+"Really open a new spreadsheet? All current data will be lost."+"\")) window.location = \"spreadsheet_offline.html\"; //load(sys.initData); //return false;' accesskey='n'>"+trans("New")+"</a> - ";
+    out += "<a href='#' onclick='loadCode(); return false;' accesskey='l'>"+"Import XML"+"</a> - ";
+    if (sys.saveMethod) out += "<a href='#' onclick='sys.saveMethod(); return false;' accesskey='s'>"+"Export XML"+"</a> - ";
+	out += "<a href='#' onclick='exportToGrapher(); return false;' accesskey='l'>"+"Open in Grapher"+"</a> - ";
   }
-  out += "<a href='#' onclick='print(); return false;' accesskey='p'>"+trans("Print")+"</a> - ";
+  //out += "<a href='#' onclick='print(); return false;' accesskey='p'>"+trans("Print")+"</a> - ";
   if (sys.allowPaging) {
     if (sys.col0-sys.cols>=0 || sys.row0-sys.rows>=0) {
       out += "<a href='#' onclick='sys.row0=0; sys.col0=0; sys.currCol=0; sys.currRow=0; scroll(); display(); return false;'>"+trans("Home")+"</a> - ";
@@ -719,11 +726,13 @@ function display() {
   out += "<iframe src='about:blank' id='multiline'></iframe>";
   out += "<input type='text' value='' title='"+trans("Formula")+"' id='value' style='width:67%;' disabled onmouseover='previewValue();' onkeyup='previewValue();'> ";
   out += "<input type='text' title='"+trans("Style")+"' value='' id='styling' style='width:33%;' disabled onmouseover='previewValue();' onkeyup='previewValue();'> ";
-  out += "<td nowrap>";
+  out += "<td nowrap>"; 
   if (sys.isWriteable) {
     out += "&nbsp; <input type='button' value='"+trans("Save")+"' id='save' onclick='saveCell();' disabled>&nbsp;";
     out += "<input type='button' value='"+trans("X")+"' id='cancel' onclick='cancelCell();' disabled> - ";
-  } else out += "&nbsp; ";
+  } else out += "&nbsp; "; 
+  sys.view = "values" 
+  /*  
   if (sys.view=="values") {
     if (sys.isWriteable && agent=="msie") {
       out += "<a href='#' onclick='sys.autoRecalc=!sys.autoRecalc; display(); return false;' accesskey='m'>"+(sys.autoRecalc?trans("Auto")+"-"+trans("Refresh"):trans("Manual"))+"</a>";
@@ -735,7 +744,7 @@ function display() {
     out += "<a href='#' onclick='sys.view=\"styles\"; display(); return false;'>"+trans("Formulas")+"</a> - ";
   } else {
     out += "<a href='#' onclick='sys.view=\"values\"; display(); return false;'>"+trans("Styles")+"</a> - ";
-  }
+  } */
   out += "<a href='#' onclick='sys.view=\"values\"; display(); return false;' accesskey='1'></a>";
   out += "<a href='#' onclick='sys.view=\"formulas\"; display(); return false;' accesskey='2'></a>";
   out += "<a href='#' onclick='sys.view=\"styles\"; display(); return false;' accesskey='3'></a>";
@@ -832,7 +841,7 @@ function display() {
     out += "<a href='#' onclick='insertRow(); return false;'>"+trans("Row")+"</a> - ";
     //out += "<a href='#' onclick='insertColumn(); return false;'>"+trans("Column")+"</a> - ";*/
     //out += trans("Delete")+": ";
-    out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire row ?")+"\")) deleteRow(); return false;'>"+trans("Delete Current Node")+"</a> - ";
+    out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire row ?")+"\")) deleteRow(); return false;'>"+"Delete Current Node"+"</a> - ";
     //out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire column ?")+"\")) deleteColumn(); return false;'>"+trans("Column")+"</a> - ";
   } /*
   out += trans("Sort")+": ";
@@ -844,7 +853,7 @@ function display() {
     out += "<a href='#' onclick='cutcopy(\"cut\",\"#FFDDDD\"); return false;' title='Alt-x' accesskey='x'>"+trans("Cut")+"</a> - ";
     out += "<a href='#' onclick='cutcopy(\"copy\",\"#DDDDFF\"); return false;' title='Alt-c' accesskey='c'>"+trans("Copy")+"</a> - ";
     out += "<a href='#' onclick='paste(); return false;' title='Alt-v' accesskey='v'>"+trans("Paste")+"</a> - ";*/
-    out += "<a href='#' onclick='if (confirm(\""+trans("Really empty cell(s) ?")+"\")) removeSelectedCell(); return false;' title='Alt-e' accesskey='e'>"+trans("Empty Cell")+"</a> - ";
+    out += "<a href='#' onclick='if (confirm(\""+trans("Really empty cell(s) ?")+"\")) removeSelectedCell(); return false;' title='Alt-e' accesskey='e'>"+"Empty Cell"+"</a> ";
   }/*
   out += trans("Export")+": ";
   out += "<a href='#' onclick='save(\"js\"); return false;'>"+trans("JS")+"</a> - ";
@@ -1419,19 +1428,16 @@ function updateGravity(r)
 	//Update ALL gravity values when a node is deleted 
 	var gravVal = gravityArray[r];  
 	delete gravityArray[r]; 
-	for (var i = 1; i <= (getMaxGravity() - gravVal); i++){  //i = Gravity Value 
-		for(var j = 0; j < gravityArray.length; j++){  //j = Node #
-			if(gravityArray[j]){
-				if(gravityArray[j] - gravVal == i)  
-				{
-					//alert("Placing gravity value of "+ gravityArray[j] + "in row "+j);
-					//alert("Sys.cells in Gravity col = "+sys.cells[j][colNames.indexOf("Gravity Value")][0])
-					gravityArray[j]--;
-					sys.cells[j][colNames.indexOf("Gravity Value")][0] = gravityArray[j].toString();
-				}//End If 
+	for(var j = 0; j < gravityArray.length; j++){  //j = Node #
+		if(gravityArray[j]){
+			if(gravityArray[j] > gravVal) 
+			{
+				gravityArray[j]--;
+				//alert("Decrementing gravity value in row "+j+" with "+gravityArray[j]);
+				sys.cells[j][colNames.indexOf("Gravity Value")][0] = gravityArray[j].toString();
 			}//End If 
-		}//End For 
-	}//End For (End of updating gravity values) 
+		}//End If 
+	}//End For 
 	gravityArray.splice(r,1);  //Now re-size gravityArray 
 }
 
@@ -1453,37 +1459,36 @@ function removeSpCols(startR, endR)
 
 function shiftArrays(row1, row2)
 {
-	//Handle removal of images when a node is destroyed 
+	//Handle removal/swapping of images when a node is destroyed 
 	if(imgArray[row2]){
 		imgArray[row1] = imgArray[row2];
 		imgArray[row2] = "";
 	}
 	else
 		imgArray.splice(row1, 1);
-		//imgArray[row1] = "";
 	
-	//Swap with cell below, if possible (otherwise just empty the color)
+	//Handle removal/swapping of color when a node is destroyed 
 	if(colorArray[row2]) {
 		colorArray[row1] = colorArray[row2];
 		colorArray[row2] = "";
 	}
 	else
 		colorArray.splice(row1, 1);
-		//colorArray[row1] = "";
-	//End of clearing/swapping color values
 }
 
 function deleteRow() {
   var row0 = sys.currRow;
   var row1 = sys.currRow;
+  /* 
+  *** TODO: REMOVED UNTIL MULTI-ROW DELETION WORKS - Currently deleting more than 1 node results in a gravity value being skipped ***
   if (sys.multiRange.length>0) {
     var cRange = getMultiRange(sys.multiRange);
 	row0 = cRange[0]; //1st row to be removed
 	row1 = cRange[2]; //Last row to be removed 
-  }
-  removeSpCols(row0,row1);
+  } */
 
   //Removal code is below. "Shifts" rows below deleted rows up 
+  removeSpCols(row0,row1);  //Function that properly removes special column data (colors and images) - also updates gravity values 
   for (var row=row0; row<=row1; row++) { //First row to be removed to last row to be removed
 	//clearArrays(row);
     var rowCount = sys.cells.length;

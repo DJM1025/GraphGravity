@@ -64,8 +64,8 @@ out += trans("Simple Spreadsheet code / CSV data / Tab separated values (copy/pa
 out += '<br><textarea id="code" wrap="off"></textarea><br>';
 
 out += '<table class="default_table" style="width:20%;">';
-out += '<tr><td colspan="3"><input type="button" value="'+trans("Load")+'" onclick="load(sys.getObj(\'code\').value);" style="width:100%;"></td>';
-out += '<td><input type="button" value="'+trans("Cancel")+'" onclick="cancelLoad();"></td></tr>';
+out += '<tr><td colspan="3"><input type="button" value="'+trans("Load")+'" onclick="load(sys.getObj(\'code\').value);" style="width:100%;cursor:pointer"></td>';
+out += '<td><input type="button" value="'+trans("Cancel")+'" onclick="cancelLoad();" style="cursor:pointer"></td></tr>';
 out += '<tr><td>&nbsp;</td></tr>';
 /*out += '<tr><td>'+trans("Url")+':</td>';
 out += '<td style="width:100%;"><input type="Text" id="code_url" value="" style="width:100%;"></td>';

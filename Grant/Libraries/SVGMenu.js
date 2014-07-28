@@ -505,7 +505,7 @@ window.addEventListener("load", function loadMenu() {
         //VIEW
         menu.bindAction(["View", "Panel"], function () { temp("View -> Panel"); });
         menu.bindAction(["View", "History"], function () { temp("View -> History"); });
-        menu.bindAction(["View", "Spreadsheet"], function () { temp("View -> Spreadsheet"); });
+        menu.bindAction(["View", "Spreadsheet"], function () { exportToSpreadsheet(); });
         menu.bindAction(["View", "Help"], function () { temp("View -> Help"); });
 
         //GRAPH

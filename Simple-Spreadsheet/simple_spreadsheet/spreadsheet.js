@@ -25,6 +25,7 @@ var colorArray = new Array();  //Holds the hex values for colors in the color co
 var imgArray = new Array();    //Holds the location of images that are currently in the photo column 
 var gravityArray = new Array();
 var oldNodeName = "";
+var currentColorRow;
 if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("safari")!=-1) agent = "safari";
   else if (agent.indexOf("opera")!=-1) agent = "opera";
@@ -36,6 +37,13 @@ window.onerror=handleErr;
 function exportToGrapher(){
 	var w = window.open("http://cs.sru.edu/~gravity/newGrapher/Grant/Grapher.html"); 
 	setTimeout(function () {w.importClipboard(cellsToGrapher());}, 500);
+}
+
+window.addEventListener("message", receiveMessage, false);
+
+function receiveMessage(event)
+{
+    document.getElementById(currentColorRow+"_3").childNodes[0].style.backgroundColor = event.data;
 }
 
 //Returns highest possible gravity value (Highest possible value == number of nodes)
@@ -293,6 +301,11 @@ function handleFiles(files) {
     if (!files.length) {
 		imgArray[row] = "";
     } else {
+    	//document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+window.URL.createObjectURL(files[files.length-1])+"'>"
+    	document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='./photos/"+files[files.length-1].name+"'>"
+		//alert(files[files.length-1].name);
+		//Below code is for UPLOADING a picture to the server
+		/*
 		var fr = new FileReader();
 		var validFlag = true;
 		fr.onload = function(e) {
@@ -304,7 +317,6 @@ function handleFiles(files) {
 				validFlag = false;
 				alert("Invalid File Supplied - Not a Photo");
 			}
-			//Create an AJAX request to a PHP script which converts the string back to an image and saves it on the server 
 			var xmlhttp=new XMLHttpRequest();
 			xmlhttp.open("POST", "./photoUpload.php", true);  //Use POST due to size restraints on GET
 			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -315,8 +327,8 @@ function handleFiles(files) {
 						document.getElementById(row+"_"+colNames.indexOf("Picture")).childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+xmlhttp.responseText+"'>"
 				}
 			}
-		}
-		fr.readAsDataURL(files[files.length-1]); //Read the file contents 
+		}*/
+		//fr.readAsDataURL(files[files.length-1]); //Read the file contents 
 	}
 }
 	
@@ -411,14 +423,16 @@ sys = new function() {
 function colorHUD(row)
 {
 	colorArray[row] = "TBD";
-	document.getElementById("colorPicker").value = row;
-	var w = window.open ("color.svg", '_blank', 'toolbar=0,location=0,menubar=0,width=600,height=250');
+	currentColorRow = row;
+	//document.getElementById("colorPicker").value = row;
+	var w = window.open("color.svg", '_blank', 'toolbar=0,location=0,menubar=0,width=600,height=250');
 }
 
 function photoHUD(row, col)
 {
 	updateArrays();  //Update image array (removes any TBDs that need removed - IE user exited photo window without selecting a photo)
 	imgArray[row] = "TBD";
+	/*
 	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=150');
 	w.document.body.innerHTML = "<form id='type'>\n";
 	w.document.body.innerHTML += "<input type='radio' id='local' checked name='photoType' value='local'>Local Photo<br>\n";
@@ -433,12 +447,18 @@ function photoHUD(row, col)
 		}
 		else 
 		{
+			//alert("Photos must be placed in the folder /photos in the Spreadsheet directory in able to work properly.")
 			w.close();
 			var el = document.getElementById("fileElem");
 			if (el) {
 				el.click();
 			}
 		}
+	}*/
+	//alert("Photos must be placed in the folder /photos in the Spreadsheet directory in able to work properly.")
+	var el = document.getElementById("fileElem");
+	if (el) {
+		el.click();
 	}
 }
 

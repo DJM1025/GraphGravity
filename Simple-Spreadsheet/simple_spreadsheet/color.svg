@@ -163,12 +163,8 @@ function activate(evt){
  
 function updateColor()
 {
-	if(window.opener)
-	{
-		var row = window.opener.document.getElementById("colorPicker").value;
-		window.opener.document.getElementById(row+"_3").childNodes[0].style.backgroundColor = document.getElementById("TX").childNodes[0].nodeValue;
-		window.close();
-	}
+	window.opener.postMessage(document.getElementById("TX").childNodes[0].nodeValue, "*")
+	window.close();
 }
 
 ]]>

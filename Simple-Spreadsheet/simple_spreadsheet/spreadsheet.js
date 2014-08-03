@@ -36,7 +36,9 @@ window.onerror=handleErr;
 
 function exportToGrapher(){
 	var w = window.open("http://cs.sru.edu/~gravity/newGrapher/Grant/Grapher.html"); 
-	setTimeout(function () {w.importClipboard(cellsToGrapher());}, 500);
+	setTimeout(function () {w.importClipboard(cellsToGrapher());}, 500); 
+	/*var w = window.open("../../Grant/Grapher.html"); 
+	setTimeout(function () {w.importClipboard(cellsToGrapher());}, 500);*/
 }
 
 window.addEventListener("message", receiveMessage, false);
@@ -447,7 +449,6 @@ function photoHUD(row, col)
 		}
 		else 
 		{
-			//alert("Photos must be placed in the folder /photos in the Spreadsheet directory in able to work properly.")
 			w.close();
 			var el = document.getElementById("fileElem");
 			if (el) {
@@ -455,10 +456,15 @@ function photoHUD(row, col)
 			}
 		}
 	}*/
-	//alert("Photos must be placed in the folder /photos in the Spreadsheet directory in able to work properly.")
-	var el = document.getElementById("fileElem");
-	if (el) {
-		el.click();
+	//alert("Photos must be placed in the /photos folder in the Spreadsheet directory in order to work properly.")
+	//alert(document.domain)  //Domain = null for locally ran programs 
+	if(document.domain)  //Being ran off a server, use PHP to display a photo selection window 
+		window.open("http://cs.sru.edu/~gravity/Spreadsheet%20Editor/simple_spreadsheet/photos.php?row="+row+"&col="+col, '_blank', 'toolbar=0,location=0,menubar=0,width=1000, height=600');
+	else {  //Being ran locally, open user's file system for photo selection 
+		var el = document.getElementById("fileElem");
+		if (el) {
+			el.click();
+		}
 	}
 }
 

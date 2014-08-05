@@ -480,7 +480,7 @@ window.addEventListener("load", function loadMenu() {
         menu.bindAction(["File", "Import", "Website"], function () { temp("Import -> Website"); });
 
         //FILE - EXPORT
-        menu.bindAction(["File", "Export", "Local"], function () { temp("Export -> Local"); });
+        menu.bindAction(["File", "Export", "Local"], function () { exportToFile(); });
         menu.bindAction(["File", "Export", "Server"], function () { temp("Export -> Server"); });
         menu.bindAction(["File", "Export", "Clipboard"], function () { exportClipboard(); });
         menu.bindAction(["File", "Export", "Website"], function () { temp("Export -> Website"); });

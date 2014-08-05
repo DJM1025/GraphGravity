@@ -1,6 +1,6 @@
 //This file contains everything that will be used for importing and exporting Graphs!!!
 
-function exportToSpreadsheet()
+function getXML()
 {
 	Graph.deselectAllNodes(); //to make sure they are all in the proper group
 	var s = "<graph>\n";
@@ -31,42 +31,25 @@ function exportToSpreadsheet()
 		s+= "</node>\n";
 	}
 	s += "</graph>";
-	
+	return s;
+}
+
+function exportToFile() 
+{
+	var s = getXML(); 
+	download("Grapher Output.txt", s);
+}
+
+function exportToSpreadsheet()
+{
+	var s = getXML();
 	var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/spreadsheet_offline.html");
 	setTimeout(function () {w.loadXML(s);}, 100);
 }
 
 function exportClipboard()
 {
-	Graph.deselectAllNodes(); //to make sure they are all in the proper group
-	var s = "<graph>\n";
-	for(var i=0; i < Graph.numberOfNodes;i++)
-	{
-		s += "<node id=\"g";
-		s += Graph.nodes[i].nodeNum+"\"";
-		s += " gravityValue=\"";
-		s += Graph.nodes[i].gravityValue+"\"";
-		s += " x=\"";
-		s += Graph.nodes[i].X+"\"";
-		s += " y=\"";
-		s += Graph.nodes[i].Y+"\"";
-		s += " label=\"";
-		s += Graph.nodes[i].textContent+"\"";
-		s += " color=\"";
-		s += Graph.nodes[i].color+"\"";
-		s += ">\n";
-		s += "<img src=\"";
-		s += Graph.nodes[i].image+"\"";
-		s += " />\n";
-		for(var j=0; j <Graph.nodes[i].edgesList.length; j++)//get all of the edges from the node.
-		{
-			s += "<edge to=\"g";
-			s += Graph.nodes[i].edgesList[j];
-			s += "\" />\n";
-		}
-		s+= "</node>\n";
-	}
-	s += "</graph>";
+	var s = getXML();
 	window.prompt("Copy to clipboard: Ctrl+C, Enter", s);
 }
 

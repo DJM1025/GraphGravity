@@ -474,7 +474,7 @@ window.addEventListener("load", function loadMenu() {
         }
 
         //FILE - IMPORT
-        menu.bindAction(["File", "Import", "Local"], function () { temp("Import -> Local"); });
+        menu.bindAction(["File", "Import", "Local"], function () { temp("Import -> Local"); }); //loadFile() goes here
         menu.bindAction(["File", "Import", "Server"], function () { temp("Import -> Server"); });
         menu.bindAction(["File", "Import", "Clipboard"], function () { importClipboard(); });
         menu.bindAction(["File", "Import", "Website"], function () { temp("Import -> Website"); });

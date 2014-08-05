@@ -21,4 +21,20 @@ function download(filename, data){
 	}
 }
 
-//TODO - loadFromFile() - return the XML
+function readFile(ev){
+	var fr = new FileReader();
+	fr.onload = function(e) {
+		//alert(fr.result);
+		loadXML(fr.result);
+	}
+	fr.readAsText(ev.target.files[0]);
+}
+
+function loadFile() {
+	var input = window.document.createElement('input');
+	input.type = 'file';
+	document.body.appendChild(input)
+	input.addEventListener('change', readFile);
+	input.click();
+	document.body.removeChild(input);
+}

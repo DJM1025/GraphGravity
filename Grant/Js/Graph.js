@@ -717,6 +717,8 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.color = "red";
 		nodeGroup.image = "empty";
 		nodeGroup.edgesList = new Array();
+		var nodeTextSize = nodeLabel || Graph.numberOfNodes;
+		nodeTextSize = "" + nodeTextSize + "";
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
@@ -726,7 +728,9 @@ window.addEventListener("load", function loadGraph() {
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (x - (Graph.nodeWidth / 2)));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (y - (Graph.nodeHeight / 2)));
         nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
-        nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
+        //nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
+		nodeRect.setAttributeNS(null, "width", nodeTextSize.length * 25);
+		alert(nodeTextSize.length);
         nodeGroup.appendChild(nodeRect);
 
         var nodeText = nodeGroup.text = document.createElementNS(xmlns, "text");
@@ -734,7 +738,7 @@ window.addEventListener("load", function loadGraph() {
         nodeText.setAttributeNS(null, "pointer-events", "none");
         nodeText.setAttributeNS(null, "text-anchor", "middle");
         nodeText.setAttributeNS(null, "alignment-baseline", "middle");
-        nodeText.setAttributeNS(null, "fill", "white");
+        nodeText.setAttributeNS(null, "fill", "black");
         nodeText.setAttributeNS(null, "font-family", "Arial");
         nodeText.setAttributeNS(null, "font-size", "12");
         nodeText.setAttributeNS(null, "font-weight", "bold");
@@ -765,6 +769,8 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.color = node.color;
 		nodeGroup.image = node.image;
 		nodeGroup.edgesList = node.edges;
+		var nodeTextSize = node.label
+		nodeTextSize = "" + nodeTextSize + "";
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
@@ -774,7 +780,8 @@ window.addEventListener("load", function loadGraph() {
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X - (Graph.nodeWidth / 2)));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y - (Graph.nodeHeight / 2)));
         nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
-        nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
+        //nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
+		nodeRect.setAttributeNS(null, "width", nodeTextSize.length * 5 + 20);
         nodeGroup.appendChild(nodeRect);
 
         var nodeText = nodeGroup.text = document.createElementNS(xmlns, "text");
@@ -782,7 +789,7 @@ window.addEventListener("load", function loadGraph() {
         nodeText.setAttributeNS(null, "pointer-events", "none");
         nodeText.setAttributeNS(null, "text-anchor", "middle");
         nodeText.setAttributeNS(null, "alignment-baseline", "middle");
-        nodeText.setAttributeNS(null, "fill", "white");
+        nodeText.setAttributeNS(null, "fill", "black");
         nodeText.setAttributeNS(null, "font-family", "Arial");
         nodeText.setAttributeNS(null, "font-size", "12");
         nodeText.setAttributeNS(null, "font-weight", "bold");
@@ -1005,7 +1012,7 @@ window.addEventListener("load", function loadGraph() {
             });
         }
 
-        Graph.changeNodeColor(node, node.color, "white");
+        Graph.changeNodeColor(node, node.color, "black");
         delete Graph.selectedNodes[node.nodeNum];
         Graph.nodes[node.nodeNum] = node;
         Graph.nodesGroup.appendChild(node);

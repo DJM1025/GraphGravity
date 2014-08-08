@@ -735,7 +735,7 @@ function display() {
   if (sys.isWriteable) {
     out += "<a href='#' onclick='if (confirm(\""+"Really open a new spreadsheet? All current data will be lost."+"\")) window.location = \"spreadsheet_offline.html\"; //load(sys.initData); //return false;' accesskey='n'>"+trans("New")+"</a> - ";
     out += "<a href='#' onclick='saveAsFile(); return false;' accesskey='l'>"+"Save to File"+"</a> - ";
-    out += "<a href='#' onclick='loadFile(); return false;' accesskey='l'>"+"Load from File"+"</a> - ";
+    out += "<a href='#' onclick='loadFile(window); return false;' accesskey='l'>"+"Load from File"+"</a> - ";
     out += "<a href='#' onclick='loadCode(); return false;' accesskey='l'>"+"Load from XML"+"</a> - ";
     if (sys.saveMethod) out += "<a href='#' onclick='sys.saveMethod(); return false;' accesskey='s'>"+"View XML"+"</a> - ";
 	out += "<a href='#' onclick='exportToGrapher(); return false;' accesskey='l'>"+"Open in Grapher"+"</a> - ";

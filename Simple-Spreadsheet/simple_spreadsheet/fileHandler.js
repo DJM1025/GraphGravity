@@ -24,13 +24,16 @@ function download(filename, data){
 function readFile(ev){
 	var fr = new FileReader();
 	fr.onload = function(e) {
-		loadXML(fr.result);  //This needs un-coupled 
-		//TODO: Make this work with Grapher 
+		win.postMessage(fr.result, "*");
+		//loadXML(fr.result);  //This needs un-coupled 
+		//TODO: Make this work with Grapher (importClipboard())
+
 	}
 	fr.readAsText(ev.target.files[0]);
 }
 
-function loadFile() {
+function loadFile(windowObject) {
+	win = windowObject 
 	var input = window.document.createElement('input');
 	input.type = 'file';
 	document.body.appendChild(input)

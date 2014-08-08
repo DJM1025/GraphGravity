@@ -39,15 +39,21 @@ function saveAsFile(){
 }
 
 function exportToGrapher(){
-	var w = window.open("http://cs.sru.edu/~gravity/newGrapher/Grant/Grapher.html"); 
-	setTimeout(function () {w.importClipboard(cellsToGrapher());}, 500); 
+	if(document.domain)
+		var w = window.open("http://cs.sru.edu/~gravity/newGrapher/Grant/Grapher.html"); 
+	else
+		var w = window.open("../../Grant/grapher.html");
+	setTimeout(function () { w.postMessage(cellsToGrapher(), "*"); }, 500); //Give page some time to properly load before sending the data
 }
 
 window.addEventListener("message", receiveMessage, false);
 
 function receiveMessage(event)
 {
-    document.getElementById(currentColorRow+"_3").childNodes[0].style.backgroundColor = event.data;
+    if(event.data.indexOf("<") != -1)  //This means the message is XML from Grapher/Constructor  
+    	loadXML(event.data);
+    else 							   //The message is from the color selector window
+  	  document.getElementById(currentColorRow+"_3").childNodes[0].style.backgroundColor = event.data;
 }
 
 //Returns highest possible gravity value (Highest possible value == number of nodes)

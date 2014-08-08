@@ -43,8 +43,12 @@ function exportToFile()
 function exportToSpreadsheet()
 {
 	var s = getXML();
-	var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/spreadsheet_offline.html");
-	setTimeout(function () {w.loadXML(s);}, 100);
+	if(document.domain)
+		var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/spreadsheet_offline.html");
+	else
+		var w = window.open("../Simple-Spreadsheet/simple_spreadsheet/spreadsheet_offline.html")
+	//setTimeout(function () {w.loadXML(s);}, 100);
+	setTimeout(function () { w.postMessage(s, "*"); }, 500);
 }
 
 function exportClipboard()

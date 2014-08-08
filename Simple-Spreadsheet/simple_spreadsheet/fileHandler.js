@@ -24,8 +24,8 @@ function download(filename, data){
 function readFile(ev){
 	var fr = new FileReader();
 	fr.onload = function(e) {
-		//alert(fr.result);
-		loadXML(fr.result);
+		loadXML(fr.result);  //This needs un-coupled 
+		//TODO: Make this work with Grapher 
 	}
 	fr.readAsText(ev.target.files[0]);
 }

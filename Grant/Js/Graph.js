@@ -15,16 +15,30 @@
 //fix complement - if you do it when nothing is selected the redo/undo gets messed up - fixed i think
 //fix the mouseover nodes, you have to do it twice to highlight edges
 //TO STOP TEXT HIGHLIGHTING JUST DO 'EVENT.PREVENTDEFAULT' FOR MOUSEMOVE - i just need to figure out where i should do this (root, Graph.plane, window? - which one?)
-//NEED TO JUST FINISH REDO FOR connect/disconnect nodes and then the clipboard is almost done
 //I imagine any events bound to the window are not good for library purposes?
 //check if you are consistent with mousedown, mousemove, and mouseup, namely should up be root or the object? -- and make sure all your mouseups remove themselves
 //mousemoves all on the root?
-//remove 'addToHistory' aspect of all methods and redo the clipboard
 //add enter key and esc functionality - ok/accept on top most window and close top most window respectively
 //add your own 'tabIndex' to nodes
 // all worst cases to asure of no bugs - example: user clicks run gravity when there are no nodes created
 //prolly should replace all 'click' with 'mouseup'...
 //i need to have resize capability - not ON resize but after they mouseup and the window size has changed
+//make all the svg libraries into a namespace like jquery or sumthing
+//need to have the permutations cached until a new graph is made
+//fix all the addToHistory garbage (add/remove in function call params etc.)
+//make sure the method is actually doing something if you are adding to history... i.e delete key mash when only the first of the 5 key hits does something
+//fix the reptition between clipboard and menu (there's a lot of double liners that could be functions)
+//need resize capability for EVERYTHING - nodes/menus/etc.
+//right now the keydowns on the import window are affecting the graph (select all, paste, etc) - need added/removed based on what windows are opened/closed
+//look into doing minimized windows and such
+//or, speaking of above, just remove child and append it again when they reopen the window
+//change all mousemoves and mouseups to root ****
+//for selection area - the mouseup when you let go triggers the deselect all nodes if you let go of shift...... fix
+//definitely css file for styling the graph and windows/etc
+//remove stupid findNodeMidpoint function from move node function - i have a method added to the SVGG prototype
+//thinking select and deselect shouldnt be recorded in history
+//optimize the move if possible
+//give everything an id for easier debugging
 
 /*
 var timer = null;
@@ -61,7 +75,7 @@ window.addEventListener("load", function loadGraph() {
     var root = document.documentElement;
     var parentSVG = document.getElementById("parentSVG");
     //prevent text highlighting
-    root.addEventListener("mousedown", function (event) { event.preventDefault(); }, false);
+    root.addEventListener("mousedown", function (event) { event.preventDefault(); }, false); //only remove when the import window is open
 
     //add drawBoundingRect method to SVGElement prototype (for debugging purposes)
     SVGElement.prototype.drawBoundingRect = function drawBoundingRect() {
@@ -77,8 +91,16 @@ window.addEventListener("load", function loadGraph() {
         this.parentNode.appendChild(boundingRect);
     };
 
+    SVGTextElement.prototype.centerVertically = function centerVertically() {
+        /*var elementBounds = this.getBoundingClientRect();
+        var parentBounds = this.parentNode.getBoundingClientRect();
+        console.log(elementBounds, parentBounds);
+        var elementY = parentBounds.top + ((parentBounds.height - elementBounds.height) / 2);
+        this.setAttributeNS(null, "y", elementY);*/
+    }
+
     //add findMidPoint method to the SVGGElement prototype
-    SVGGElement.prototype.findMidpoint = function findMidpoint() {
+    SVGElement.prototype.findMidpoint = function findMidpoint() {
         var bounds = this.getBoundingClientRect();
         return {
             x: bounds.left + (bounds.width / 2),
@@ -121,7 +143,8 @@ window.addEventListener("load", function loadGraph() {
         //}    
     }, false);
 
-    window.addEventListener("keyup", function (event) {//prolly should be keydown
+    window.addEventListener("keyup", function (event) {//prolly should be keydown - well the functions calls should prolly be moved to keydown
+        //make a default case to call reset? and break the others?
         switch (event.keyCode) {
             case 17: //'ctrl' key
                 Graph.multipleSelect = false;
@@ -132,42 +155,60 @@ window.addEventListener("load", function loadGraph() {
             case 82: //'r' key
                 Graph.branchConnect = false;
                 break;
-            case 46://'delete' key
+            case 46://'delete' key                
+                Graph.clipboard.addToHistory("Deleted nodes");
                 for (var node in Graph.selectedNodes) {
-                    var nextNode = Graph.selectedNodes[node];;
+                    var nextNode = Graph.selectedNodes[node];
                     Graph.deleteNode(nextNode);
                 }
                 Graph.fixGravityValues();
+                Graph.scaleWindow.reset();
                 break;
             case 65://'a' key
+                Graph.clipboard.addToHistory("Selected all nodes");
                 Graph.selectAllNodes();
+                Graph.scaleWindow.reset();
                 break;
             case 68://'d' key
+                Graph.clipboard.addToHistory("Deselected all nodes");
                 Graph.deselectAllNodes();
+                Graph.scaleWindow.reset();
                 break;
             case 67://'c' key
                 Graph.clipboard.copy();
                 break;
             case 86://'v' key
+                Graph.clipboard.addToHistory("Pasted subgraph");
                 Graph.clipboard.paste();
+                Graph.scaleWindow.reset();
                 break;
             case 90://'z' key
                 Graph.clipboard.undo();
+                Graph.scaleWindow.reset();
                 break;
             case 89://'y' key
                 Graph.clipboard.redo();
+                Graph.scaleWindow.reset();
                 break;
             case 88://'x' key
+                Graph.clipboard.addToHistory("Extruded subgraph");
                 Graph.extrude();
+                Graph.scaleWindow.reset();
                 break;
             case 73://'i' key
+                Graph.clipboard.addToHistory("Complemented subgraph");
                 Graph.complement();
+                Graph.scaleWindow.reset();
                 break;
             case 70://'f' key
+                Graph.clipboard.addToHistory("Inverted subgraph");
                 Graph.invert();
+                Graph.scaleWindow.reset();
                 break;
             case 69://'e' key
+                Graph.clipboard.addToHistory("Expanded subgraph");
                 Graph.expand();
+                Graph.scaleWindow.reset();
                 break;
         }
     }, false);
@@ -243,6 +284,50 @@ window.addEventListener("load", function loadGraph() {
         var current = -1;
         var top = -1;
 
+        function captureGraphState() {
+            var nodeInfoArray = []
+            for (var n = 0; n < Graph.numberOfNodes; n++) {
+                var nextNode = Graph.selectedNodes[n] || Graph.nodes[n];
+                nodeInfoArray.push({
+                    'x': nextNode.X + (Graph.nodeWidth / 2),
+                    'y': nextNode.Y + (Graph.nodeHeight / 2),
+                    'nodeNum': nextNode.nodeNum,
+                    'nodeLabel': nextNode.nodeLabel,
+                    'gravityValue': nextNode.gravityValue,
+                    'edges': (function (edgeArr) {
+                        for (var edge in nextNode.edges) {
+                            edgeArr.push(edge);
+                        }
+                        return edgeArr;
+                    })([]),
+                    'selected': nextNode.selected
+                });
+            }
+            return nodeInfoArray;
+        };
+
+        function redrawGraph(info) {
+            var num = Graph.numberOfNodes;
+            for (var i = 0; i < num; i++) {
+                Graph.deleteNode(Graph.nodes[i] || Graph.selectedNodes[i]);
+            }
+
+            for (var n = 0; n < info.length; n++) {
+                var nextInfo = info[n];
+                Graph.createNode(nextInfo.x, nextInfo.y, nextInfo.gravityValue, nextInfo.nodeLabel);
+            }
+            for (var m = 0; m < info.length; m++) {
+                var nextInfo = info[m];
+                var nextNode = Graph.nodes[nextInfo.nodeNum];
+                for (var i = 0; i < nextInfo.edges.length; i++) {
+                    Graph.createEdge(nextNode, Graph.nodes[nextInfo.edges[i]]);
+                }
+                if (nextInfo.selected) {
+                    Graph.selectNode(nextNode);
+                }
+            }
+        };
+
         return {
             'copy': function (extrude) {
                 if (Graph.numberOfSelectedNodes !== 0) {
@@ -252,7 +337,7 @@ window.addEventListener("load", function loadGraph() {
                         var nodeInfo = {
                             'node': null,
                             'origNum': nextNode.nodeNum,
-                            'x': nextNode.X,
+                            'x': nextNode.X, //might want to add offset here too instead of just doing a trolly 40 point offset below to make up for it
                             'y': nextNode.Y,
                             'edges': (function (array) {
                                 for (var edge in nextNode.edges) {
@@ -263,7 +348,7 @@ window.addEventListener("load", function loadGraph() {
                                 }
                                 return array;
                             })([])
-                        };                        
+                        };
                         copiedItem[node] = nodeInfo;
                     }
                 }
@@ -272,14 +357,14 @@ window.addEventListener("load", function loadGraph() {
             'paste': function (extrude) {
                 var offSetX = extrude ? -40 : 40;
                 var offSetY = 40;
-                Graph.deselectAllNodes(false);
+                Graph.deselectAllNodes();
                 for (var num in copiedItem) {
                     var nextNodeInfo = copiedItem[num];
                     //mouseout isnt trigged so it takes a mouseover/out before the edge highlight triggers
-                    var newNode = Graph.createNode((nextNodeInfo.x + offSetX), (nextNodeInfo.y + offSetY), false);
-                    Graph.selectNode(newNode, false);
+                    var newNode = Graph.createNode((nextNodeInfo.x + offSetX), (nextNodeInfo.y + offSetY));
+                    Graph.selectNode(newNode);
                     if (extrude) {
-                        Graph.createEdge(Graph.nodes[nextNodeInfo.origNum], newNode, false);
+                        Graph.createEdge(Graph.nodes[nextNodeInfo.origNum], newNode);
                     }
                     nextNodeInfo.node = newNode;
                 }
@@ -288,266 +373,39 @@ window.addEventListener("load", function loadGraph() {
                     var node1 = nextNodeInfo.node;
                     for (var q = 0; q < nextNodeInfo.edges.length; q++) {
                         var node2 = copiedItem[nextNodeInfo.edges[q]].node;
-                        Graph.createEdge(node1, node2, false);
+                        Graph.createEdge(node1, node2);
                     }
+                }
+                if (extrude) {
+                    //dont want to completely clear, just remove the last added by the extrude
+                    copiedItem = {};
                 }
             },
 
             'undo': function () {
                 if (current !== -1) {
                     var action = historyArray[current--];
-                    switch (action.name) {
-                        case "Selected node":
-                            var nodes = action.nodes;
-                            for (var n = 0; n < nodes.length; n++) {
-                                Graph.deselectNode(Graph.selectedNodes[nodes[n]], false);
-                            }
-                            break;
-                        case "Deselected node":
-                            Graph.selectNode(Graph.nodes[action.node], false);
-                            break;
-                        case "Selected all nodes":
-                            var nodes = action.nodes;
-                            for (var n = 0; n < nodes.length; n++) {
-                                Graph.deselectNode(Graph.selectedNodes[nodes[n]], false)
-                            }
-                            break;
-                        case "Deselected all nodes":
-                            var nodes = action.nodes;
-                            for (var n = 0; n < nodes.length; n++) {
-                                Graph.selectNode(Graph.nodes[nodes[n]], false)
-                            }
-                            break;
-                        case "Created node":
-                            var nodeNum = action.node.nodeNum;
-                            if (!action.edgesList) {
-                                var node = Graph.nodes[nodeNum] || Graph.selectedNodes[nodeNum];
-                                if (checkEmpty(node.adjacentNodes)) {
-                                    action.edgesList = {};
-                                    var connectType = action.edgesList.connectType = node.selected ? "auto" : "branch";
-                                    var edgesToDelete = action.edgesList.edgesToDelete = [];
-                                    for (var adj in node.adjacentNodes) {
-                                        if (connectType === "auto") {
-                                            Graph.selectNode(Graph.nodes[adj], false);
-                                        }
-                                        edgesToDelete.push(adj);
-                                    }
-                                }
-                                console.log(action.edgesList);
-                            }
-                            if (!action.edgesList || (action.edgesList && action.edgesList.connectType === "branch")) {
-                                Graph.selectNode(Graph.nodes[nodeNum], false);
-                            }
-                            //need to fix to select all connected for auto connect, if action.edgesList exists
-                            Graph.deleteNode(Graph.selectedNodes[nodeNum], false);
-                            break;
-                        case "Deleted node":
-                            var deletedNodes = action.nodes;
-                            console.log(deletedNodes[0].node, deletedNodes[0].edges);
-                            /*for (var n = 0; n < deletedNodes.length; n++) {
-                                var nextNode = deletedNodes[n];
-                                if (nextNode.nodeNum < action.numberOfNodes) {
-                                    for (var i = nextNode.nodeNum; i < action.numberOfNodes; i++) {
-    
-                                    }
-                                }
-    
-                            }*/
-
-
-                            break;
-                        case "Connected/Disconnected nodes":
-                            var edgesToCreate = action.edgesList.edgesToCreate;
-                            var edgesToDelete = action.edgesList.edgesToDelete;
-                            var connectType = action.edgesList.connectType;
-                            if (connectType === "auto") {
-                                var node1 = Graph.selectedNodes[action.edgesList.node];
-                            }
-                            else {
-                                var node1 = Graph.nodes[action.edgesList.node];
-                            }
-                            if (edgesToCreate.length > edgesToDelete.length) {
-                                for (var n = 0; n < edgesToCreate.length; n++) {
-                                    if (connectType === "branch") {
-                                        var node2 = Graph.selectedNodes[edgesToCreate[n]];
-                                    }
-                                    else {
-                                        var node2 = Graph.nodes[edgesToCreate[n]];
-                                        Graph.selectNode(node2, false);
-                                    }
-                                    Graph.deleteEdge(node1, node2, false);
-                                    if (n < edgesToDelete.length) {
-                                        if (connectType === "branch") {
-                                            node2 = Graph.selectedNodes[edgesToDelete[n]];
-                                        }
-                                        else {
-                                            node2 = Graph.nodes[edgesToDelete[n]];
-                                            Graph.selectNode(node2, false);
-                                        }
-                                        Graph.createEdge(node1, node2, false);
-                                    }
-                                }
-                            }
-                            else {
-                                for (var n = 0; n < edgesToDelete.length; n++) {
-                                    if (connectType === "branch") {
-                                        var node2 = Graph.selectedNodes[edgesToDelete[n]];
-                                    }
-                                    else {
-                                        var node2 = Graph.nodes[edgesToDelete[n]];
-                                        Graph.selectNode(node2, false);
-                                    }
-                                    Graph.createEdge(node1, node2, false);
-                                    if (n < edgesToCreate.length) {
-                                        if (connectType === "branch") {
-                                            node2 = Graph.selectedNodes[edgesToCreate[n]];
-                                        }
-                                        else {
-                                            node2 = Graph.nodes[edgesToCreate[n]];
-                                            Graph.selectNode(node2, false);
-                                        }
-                                        Graph.deleteEdge(node1, node2, false);
-                                    }
-                                }
-                            }
-                            if (connectType === "auto") {
-                                Graph.deselectNode(node1, false);
-                            }
-                            break;
-                        case "Moved node":
-                            break;
-                        case "Pasted":
-                            //delete all selected and reselect what was selected before?
-                            break;
-                        case "Extruded nodes":
-                            //delete all selected and reselect what was selected before?
-                            break;
-                        case "Complemented nodes":
-                            Graph.complement(false);
-                            if (action.deselectOnUndo) {
-                                Graph.deselectAllNodes(false);
-                            }
-                            break;
-                        case "Expanded":
-                            var nodes = action.nodes;
-                            for (var node in nodes) {
-                                Graph.deselectNode(Graph.selectedNodes[node], false);
-                            }
-                            break;
-                        case "Inverted":
-                            Graph.invert(false)
-                            break;
-                        case "Dominated":
-                            break;
+                    if (!action.afterInfo) {
+                        action.afterInfo = captureGraphState();
                     }
-                    //historyArray[current--]["undo"]();
+                    redrawGraph(action.beforeInfo);
                 }
             },
 
             'redo': function () {
                 if (current !== top) {
                     var action = historyArray[++current];
-                    switch (action.name) {
-                        case "Selected node":
-                            var nodes = action.nodes;
-                            for (var n = 0; n < nodes.length; n++) {
-                                Graph.selectNode(Graph.nodes[nodes[n]], false);
-                            }
-                            break;
-                        case "Deselected node":
-                            Graph.deselectNode(Graph.selectedNodes[action.node], false);
-                            break;
-                        case "Selected all nodes":
-                            Graph.selectAllNodes(false);
-                            break;
-                        case "Deselected all nodes":
-                            Graph.deselectAllNodes(false);
-                            break;
-                        case "Created node":
-                            var node = action.node;
-                            node = Graph.createNode(node.X + (Graph.nodeWidth / 2), node.Y + (Graph.nodeHeight / 2), false);
-                            if (action.edgesList) {
-                                var connectType = action.edgesList.connectType;
-                                if (connectType === "auto") {
-                                    Graph.selectNode(node, false);
-                                }
-                                var edgesToCreate = action.edgesList.edgesToDelete;
-                                for (var n = 0; n < edgesToCreate.length; n++) {
-                                    var adjNode = Graph.selectedNodes[edgesToCreate[n]];
-                                    if (connectType === "auto") {
-                                        Graph.deselectNode(adjNode, false);
-                                    }
-                                    Graph.createEdge(node, adjNode, false);
-                                }
-                            }
-                            break;
-                        case "Deleted node":
-                            break;
-                        case "Connected/Disconnected nodes":
-                            var edgesToCreate = action.edgesList.edgesToCreate;
-                            var edgesToDelete = action.edgesList.edgesToDelete;
-                            var connectType = action.edgesList.connectType;
-                            var node1 = Graph.nodes[action.edgesList.node];
-                            if (edgesToCreate.length > edgesToDelete.length) {
-                                for (var n = 0; n < edgesToCreate.length; n++) {
-                                    var node2 = Graph.selectedNodes[edgesToCreate[n]];
-                                    if (connectType !== "branch") {
-                                        Graph.deselectNode(node2, false);
-                                    }
-                                    Graph.createEdge(node1, node2, false);
-                                    if (n < edgesToDelete.length) {
-                                        node2 = Graph.selectedNodes[edgesToDelete[n]];
-                                        if (connectType !== "branch") {
-                                            Graph.deselectNode(node2, false);
-                                        }
-                                        Graph.deleteEdge(node1, node2, false);
-                                    }
-                                }
-                            }
-                            else {
-                                for (var n = 0; n < edgesToDelete.length; n++) {
-                                    var node2 = Graph.selectedNodes[edgesToDelete[n]];
-                                    Graph.deselectNode(node2, false);
-                                    Graph.deleteEdge(node1, node2, false);
-                                    if (n < edgesToCreate.length) {
-                                        node2 = Graph.selectedNodes[edgesToCreate[n]];
-                                        Graph.deselectNode(node2, false);
-                                        Graph.createEdge(node1, node2, false);
-                                    }
-                                }
-                            }
-                            if (connectType === "auto") {
-                                console.log("hi");
-                                Graph.selectNode(node1, false);
-                            }
-                            break;
-                        case "Moved node":
-                            break;
-                        case "Pasted":
-                            break;
-                        case "Extruded nodes":
-                            //extrude lol?
-                            break;
-                        case "Complemented nodes":
-                            Graph.complement(false);
-                            break;
-                        case "Expanded":
-                            var nodes = action.nodes;
-                            for (var node in nodes) {
-                                Graph.selectNode(Graph.nodes[node], false);
-                            }
-                            break;
-                        case "Inverted":
-                            Graph.invert(false)
-                            break;
-                        case "Dominated":
-                            break;
-                    }
-                    //historyArray[++current]["redo"]();
+                    redrawGraph(action.afterInfo);
                 }
             },
 
-            'addToHistory': function (action) {
+            'addToHistory': function (actionName) {
+                var action = {
+                    'actionName': actionName,
+                    'beforeInfo': captureGraphState(),
+                    'afterInfo': null
+                };
+                console.log(actionName);
                 if (current === top) {
                     historyArray[++current] = action;
                     top++;
@@ -556,7 +414,6 @@ window.addEventListener("load", function loadGraph() {
                     historyArray[++current] = action;
                     top = current;
                 }
-                console.log(action);
             }
         };
     })();
@@ -564,11 +421,169 @@ window.addEventListener("load", function loadGraph() {
     //Graph.numberOfVantagePoints = 0;
     Graph.deselectOnRelease = false;
     Graph.selectedSingle = false;
-    
+
     Graph.badGravityReason = null;
     Graph.landmarks = {};
     Graph.vantagePoints = {};
     Graph.gravFlavorings = [];
+
+    //windows
+    Graph.topWindow = null;
+    Graph.importWindow = LoadImportWindow(parentSVG);
+    Graph.exportWindow = null;
+    Graph.scaleWindow = (function () {
+        var hidden = true;
+        var scalePercent;
+        var nodeInfo = [];
+
+        var pageWidth = window.innerWidth;
+        var pageHeight = window.innerHeight;
+
+        var scaleGroup = document.createElementNS(xmlns, "g");
+
+        var scaleBarX = pageWidth * .42;
+        var scaleBarY = pageHeight * .49;
+        var scaleBarWidth = pageWidth * .16;
+        var scaleBarHeight = pageHeight * .01;
+
+        var percentScale;
+
+        var scaleBar = document.createElementNS(xmlns, "rect");
+        scaleBar.setAttributeNS(null, "x", scaleBarX);
+        scaleBar.setAttributeNS(null, "y", scaleBarY);
+        scaleBar.setAttributeNS(null, "width", scaleBarWidth);
+        scaleBar.setAttributeNS(null, "height", scaleBarHeight);
+        scaleBar.setAttributeNS(null, "fill", "black");
+        scaleBar.setAttributeNS(null, "stroke", "white");
+        scaleBar.setAttributeNS(null, "stroke-width", "2");
+        scaleBar.setAttributeNS(null, "rx", "2.5");
+        scaleBar.style.cursor = "pointer";
+        scaleGroup.appendChild(scaleBar);
+
+        scaleBar.addEventListener("click", function (event) {
+            Graph.clipboard.addToHistory("Scaled nodes");
+            scaleSlider.setAttributeNS(null, "x", event.pageX - (scaleSliderWidth / 2));
+            percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
+            Graph.scaleWindow.scale();
+        }, false);
+
+        var scaleSliderY = scaleBarY - (scaleBarHeight * 2);
+        var scaleSliderWidth = scaleBarWidth / 20;
+        var scaleSliderHeight = scaleBarHeight * 5;
+        var scaleSliderX = scaleBarX + (scaleBarWidth / 2) - (scaleSliderWidth / 2);
+
+        var scaleSlider = document.createElementNS(xmlns, "rect");
+        scaleSlider.setAttributeNS(null, "x", scaleSliderX);
+        scaleSlider.setAttributeNS(null, "y", scaleSliderY);
+        scaleSlider.setAttributeNS(null, "width", scaleSliderWidth);
+        scaleSlider.setAttributeNS(null, "height", scaleSliderHeight);
+        scaleSlider.setAttributeNS(null, "fill", "red");
+        scaleSlider.setAttributeNS(null, "stroke", "white");
+        scaleSlider.setAttributeNS(null, "stroke-width", "2");
+        scaleSlider.setAttributeNS(null, "rx", "2.5");
+        scaleSlider.style.cursor = "pointer";
+        scaleGroup.appendChild(scaleSlider);
+
+
+        scaleSlider.addEventListener("mousedown", function down(event) {
+            var moved = false;
+            var offsetX = event.pageX - +scaleSlider.getAttributeNS(null, "x");
+
+            root.addEventListener("mousemove", move, false);
+            root.addEventListener("mouseup", function up(event) {
+                root.removeEventListener("mousemove", move, false);
+                root.removeEventListener("mouseup", up, false);
+            }, false);
+
+            function move(event) {
+                if (!moved) {
+                    Graph.clipboard.addToHistory("Scaled nodes");
+                    moved = true;
+                }
+                if (event.pageX < scaleBarX) {
+                    scaleSlider.setAttributeNS(null, "x", scaleBarX - (scaleSliderWidth / 2));
+                    percentScale = -1;
+                }
+                else if (event.pageX > (scaleBarX + scaleBarWidth)) {
+                    scaleSlider.setAttributeNS(null, "x", (scaleBarX + scaleBarWidth) - (scaleSliderWidth / 2));
+                    percentScale = 1;
+                }
+                else {
+                    scaleSlider.setAttributeNS(null, "x", event.pageX - offsetX);
+                    percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
+                }
+                Graph.scaleWindow.scale();
+            }
+        }, false);
+
+        parentSVG.appendChild(scaleGroup);
+
+        return {
+            'scale': function scale() {
+                for (var i = 0; i < Graph.numberOfSelectedNodes; i++) {
+                    var nextInfo = nodeInfo[i];
+                    var node = Graph.selectedNodes[nextInfo.nodeNum];
+                    var xDiff = nextInfo.x;
+                    var yDiff = nextInfo.y;
+                    var origX = nextInfo.origX;
+                    var origY = nextInfo.origY;
+                    var origTextX = nextInfo.origTextX;
+                    var origTextY = nextInfo.origTextY;
+                    node.rect.setAttributeNS(null, "x", node.X = (origX - (xDiff * (percentScale))));
+                    node.rect.setAttributeNS(null, "y", node.Y = (origY - (yDiff * (percentScale))));
+                    node.text.setAttributeNS(null, "x", node.text.X = (origTextX - (xDiff * (percentScale))));
+                    node.text.setAttributeNS(null, "y", node.text.Y = (origTextY - (yDiff * (percentScale))));
+                    //because im not moving them with the mouse i may be able to use edges instead of adjnodes
+                    var nodeMP = node.findMidpoint();
+                    for (var adj in node.adjacentNodes) {
+                        var adjNode = node.adjacentNodes[adj];
+                        var adjNodeMP = adjNode.findMidpoint();
+                        if (node.nodeNum < adjNode.nodeNum) {
+                            var nextEdge = node.edges[adj];
+                        }
+                        else {
+                            var nextEdge = adjNode.edges[node.nodeNum];
+                        }
+                        nextEdge.setAttributeNS(null, "d", "M " + nodeMP.x + " " + nodeMP.y + " " + adjNodeMP.x + " " + adjNodeMP.y);
+                    }
+                    //need to either make the slider be centered with the mouse of subtract the difference
+                }
+            },
+            'show': function () {
+                if (hidden) {
+                    parentSVG.appendChild(scaleGroup);
+                    this.reset();
+                    hidden = false;
+                }
+            },
+            'hide': function () {
+                if (!hidden) {
+                    parentSVG.removeChild(scaleGroup);
+                    hidden = true;
+                }
+            },
+            'reset': function () {
+                scaleSlider.setAttributeNS(null, "x", scaleSliderX);
+                var nodes = Graph.selectedNodes;
+                var midPoint = Graph.selectedNodesGroup.findMidpoint();
+                nodeInfo = [];
+                for (var node in nodes) {
+                    nextNode = nodes[node];
+                    nodeInfo.push({
+                        'nodeNum': nextNode.nodeNum,
+                        'x': midPoint.x - nextNode.X - (Graph.nodeWidth / 2),
+                        'y': midPoint.y - nextNode.Y - (Graph.nodeHeight / 2),
+                        'origX': nextNode.X,
+                        'origY': nextNode.Y,
+                        'origTextX': nextNode.text.X,
+                        'origTextY': nextNode.text.Y
+                    });
+                }
+            }
+        }
+    })();
+    Graph.panel = null;
+    Graph.gravityWindow = null;
 
     //create the graph plane/background
     Graph.plane = document.createElementNS(xmlns, "svg");
@@ -630,23 +645,25 @@ window.addEventListener("load", function loadGraph() {
                 selectionArea.maxX = selectionAreaBBox.x + selectionAreaBBox.width;
                 selectionArea.minY = selectionAreaBBox.y;
                 selectionArea.maxY = selectionAreaBBox.y + selectionAreaBBox.height;
-                var nodeList = [];
+
+                var found = false;
                 for (var node in Graph.nodes) {
-                    var nodeBBox = Graph.nodes[node].getBBox();
+                    var nextNode = Graph.nodes[node];
+                    var nodeBBox = nextNode.getBBox();
                     var nodeMaxX = nodeBBox.x + nodeBBox.width;
                     var nodeMaxY = nodeBBox.y + nodeBBox.height;
                     if ((nodeMaxX > selectionArea.minX && nodeBBox.x < selectionArea.maxX) && (nodeMaxY > selectionArea.minY && nodeBBox.y < selectionArea.maxY)) {
-                        nodeList.push(node);
+                        if (!found) {
+                            found = true;
+                            Graph.clipboard.addToHistory("Selection area used");
+                        }
+                        if (!nextNode.selected) {
+                            Graph.selectNode(nextNode);
+                        }
                     }
                 }
-                for (var n = 0; n < nodeList.length; n++) {
-                    var nextNode = Graph.nodes[nodeList[n]];
-                    if (n === nodeList.length - 1) {
-                        Graph.selectNode(nextNode, true, nodeList);
-                    }
-                    else {
-                        Graph.selectNode(nextNode, false);
-                    }
+                if (found) {
+                    Graph.scaleWindow.reset();
                 }
                 selectionArea.parentNode.removeChild(selectionArea);
                 /*Graph.plane*/root.removeEventListener("mousemove", expandSelectionArea, false);
@@ -656,32 +673,37 @@ window.addEventListener("load", function loadGraph() {
     }, false);
 
     Graph.plane.background.addEventListener("mouseup", function (event) {
+        Graph.scaleWindow.reset()
         if (Graph.numberOfSelectedNodes === 0) {
+            Graph.clipboard.addToHistory("Created node");
             var createdNode = Graph.createNode(event.pageX, event.pageY);
             if (Graph.autoConnect || Graph.branchConnect) {
-                Graph.selectNode(createdNode, false);
+                Graph.selectNode(createdNode);
             }
         }
         else {
             if (Graph.autoConnect) {
+                Graph.clipboard.addToHistory("Auto connected");
                 var createdNode = Graph.createNode(event.pageX, event.pageY);
                 for (var node in Graph.selectedNodes) {
                     var currentNode = Graph.selectedNodes[node];
-                    Graph.createEdge(currentNode, createdNode, false);
-                    Graph.deselectNode(currentNode, false);
+                    Graph.createEdge(currentNode, createdNode);
+                    Graph.deselectNode(currentNode);
                 }
-                Graph.selectNode(createdNode, false);
+                Graph.selectNode(createdNode);
 
             }
             else if (Graph.branchConnect) {
+                Graph.clipboard.addToHistory("Branch connected");
                 var createdNode = Graph.createNode(event.pageX, event.pageY);
                 for (var node in Graph.selectedNodes) {
                     var currentNode = Graph.selectedNodes[node];
-                    Graph.createEdge(currentNode, createdNode, false);
+                    Graph.createEdge(currentNode, createdNode);
                 }
             }
             else if (!Graph.multipleSelect) {
-                Graph.deselectAllNodes(true);
+                Graph.clipboard.addToHistory("Deselected all nodes");
+                Graph.deselectAllNodes();
             }
         }
     }, false);
@@ -692,33 +714,29 @@ window.addEventListener("load", function loadGraph() {
     Graph.edgesGroup.setAttributeNS(null, "stroke", "orange");
     Graph.edgesGroup.setAttributeNS(null, "stroke-width", "2");
     Graph.plane.appendChild(Graph.edgesGroup);
+    Graph.nodesGroup = document.createElementNS(xmlns, "g");
+    Graph.nodesGroup.id = "nodesGroup";
+    Graph.plane.appendChild(Graph.nodesGroup);
     Graph.selectedEdgesGroup = document.createElementNS(xmlns, "g");
     Graph.selectedEdgesGroup.id = "selectedEdgesGroup";
     Graph.selectedEdgesGroup.setAttributeNS(null, "stroke", "yellow");
     Graph.selectedEdgesGroup.setAttributeNS(null, "stroke-width", "2");
     Graph.plane.appendChild(Graph.selectedEdgesGroup);
-    Graph.nodesGroup = document.createElementNS(xmlns, "g");
-    Graph.nodesGroup.id = "nodesGroup";
-    Graph.plane.appendChild(Graph.nodesGroup);
     Graph.selectedNodesGroup = document.createElementNS(xmlns, "g");
     Graph.selectedNodesGroup.id = "selectedNodesGroup";
     //Graph.nodesGroup.appendChild(Graph.selectedNodesGroup);
     Graph.plane.appendChild(Graph.selectedNodesGroup);
 
     //create a node
-    Graph.createNode = function (x, y, nodeLabel) {
+    Graph.createNode = function (x, y, gravityValue, nodeLabel) {
         var nodeGroup = document.createElementNS(xmlns, "g");
         //nodeGroup.midpoint = { x: x, y: y };
         nodeGroup.adjacentNodes = {};
         nodeGroup.selected = false;
+        //nodeGroup.nodeNum = nodeGroup.gravityValue = Graph.numberOfNodes++;
         nodeGroup.nodeNum = Graph.numberOfNodes++;
-		nodeGroup.gravityValue = Graph.numberOfNodes;
+        nodeGroup.gravityValue = gravityValue || Graph.numberOfNodes - 1;
         nodeGroup.edges = {};
-		nodeGroup.color = "red";
-		nodeGroup.image = "empty";
-		nodeGroup.edgesList = new Array();
-		var nodeTextSize = nodeLabel || Graph.numberOfNodes;
-		nodeTextSize = "" + nodeTextSize + "";
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
@@ -728,9 +746,7 @@ window.addEventListener("load", function loadGraph() {
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (x - (Graph.nodeWidth / 2)));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (y - (Graph.nodeHeight / 2)));
         nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
-        //nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
-		nodeRect.setAttributeNS(null, "width", nodeTextSize.length * 25);
-		alert(nodeTextSize.length);
+        nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
         nodeGroup.appendChild(nodeRect);
 
         var nodeText = nodeGroup.text = document.createElementNS(xmlns, "text");
@@ -738,7 +754,7 @@ window.addEventListener("load", function loadGraph() {
         nodeText.setAttributeNS(null, "pointer-events", "none");
         nodeText.setAttributeNS(null, "text-anchor", "middle");
         nodeText.setAttributeNS(null, "alignment-baseline", "middle");
-        nodeText.setAttributeNS(null, "fill", "black");
+        nodeText.setAttributeNS(null, "fill", "white");
         nodeText.setAttributeNS(null, "font-family", "Arial");
         nodeText.setAttributeNS(null, "font-size", "12");
         nodeText.setAttributeNS(null, "font-weight", "bold");
@@ -757,109 +773,52 @@ window.addEventListener("load", function loadGraph() {
         nodeGroup.addEventListener("mousedown", Graph.pressHoldNode, false);
         return nodeGroup;
     }
-	//overloaded function for import creation
-	Graph.createImportedNode = function( node) {
-		var nodeGroup = document.createElementNS(xmlns, "g");
-        //nodeGroup.midpoint = { x: x, y: y };
-        nodeGroup.adjacentNodes = {};
-        nodeGroup.selected = false;
-        nodeGroup.nodeNum = Graph.numberOfNodes++;
-		nodeGroup.gravityValue = node.gravityValue;
-        nodeGroup.edges = {};
-		nodeGroup.color = node.color;
-		nodeGroup.image = node.image;
-		nodeGroup.edgesList = node.edges;
-		var nodeTextSize = node.label
-		nodeTextSize = "" + nodeTextSize + "";
-
-        var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
-        nodeRect.setAttributeNS(null, "rx", "2.5");
-        nodeRect.setAttributeNS(null, "fill", node.color);
-        nodeRect.setAttributeNS(null, "stroke", "black");
-        nodeRect.setAttributeNS(null, "stroke-width", "2.5");
-        nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X - (Graph.nodeWidth / 2)));
-        nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y - (Graph.nodeHeight / 2)));
-        nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
-        //nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
-		nodeRect.setAttributeNS(null, "width", nodeTextSize.length * 5 + 20);
-        nodeGroup.appendChild(nodeRect);
-
-        var nodeText = nodeGroup.text = document.createElementNS(xmlns, "text");
-        nodeText.textContent = nodeGroup.nodeLabel = node.label;
-        nodeText.setAttributeNS(null, "pointer-events", "none");
-        nodeText.setAttributeNS(null, "text-anchor", "middle");
-        nodeText.setAttributeNS(null, "alignment-baseline", "middle");
-        nodeText.setAttributeNS(null, "fill", "black");
-        nodeText.setAttributeNS(null, "font-family", "Arial");
-        nodeText.setAttributeNS(null, "font-size", "12");
-        nodeText.setAttributeNS(null, "font-weight", "bold");
-        nodeText.setAttributeNS(null, "x", nodeText.X = node.X);
-        nodeText.setAttributeNS(null, "y", nodeText.Y = node.Y);
-        nodeGroup.appendChild(nodeText);
-
-        Graph.nodes[nodeGroup.nodeNum] = Graph.nodesGroup.appendChild(nodeGroup);
-
-        nodeGroup.addEventListener("mouseout", function activateNodeHover() {
-            nodeGroup.removeEventListener("mouseout", activateNodeHover, false);
-            /*nodeGroup.addEventListener("mouseover", Graph.highlightEdges, false);
-            nodeGroup.addEventListener("mouseout", Graph.highlightEdges, false);*/
-        }, false)
-
-        nodeGroup.addEventListener("mousedown", Graph.pressHoldNode, false);
-        return nodeGroup;
-	
-	};
 
     //delete a node
-    Graph.deleteNode = function (node, addToHistory, nodeList) {
+    Graph.deleteNode = function (node) {
         for (var adj in node.adjacentNodes) {
             var adjNode = node.adjacentNodes[adj];
-            if (adjNode.nodeNum < node.nodeNum) {
-                Graph.deleteEdge(adjNode, node);
-            }
-            else {
-                Graph.deleteEdge(node, adjNode);
-            }
+            Graph.deleteEdge(adjNode, node);
         }
-
-        delete Graph.selectedNodes[node.nodeNum];
+        if (node.selected) {
+            delete Graph.selectedNodes[node.nodeNum];
+            Graph.numberOfSelectedNodes--;
+        }
+        else {
+            delete Graph.nodes[node.nodeNum];
+        }
         node.parentNode.removeChild(node);
         Graph.numberOfNodes--;
-        Graph.numberOfSelectedNodes--;
-        //****FUCKED UP BECAUSE FIXING NODE NUMBERS MESSES UP THE NUMBERS
-        //think i just need to bump everything up, i.e if I delete a 2 and there at 5 nodes, bump the 2 and everything after it up 1 - so then i have 1,3,4,5 and a place for the two
-        //but how will this work for multiple deletes? hopefully the same?
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Deleted node",
-                'nodes': nodeList,
-                'numberOfNodes': Graph.numberOfNodes
-            });
-        }
+
     };
 
     //mousedown on a node
     Graph.pressHoldNode = function (event) {
         var nodeGroup = event.currentTarget;
         if (Graph.numberOfSelectedNodes === 0) {
+            Graph.clipboard.addToHistory("Selected node");
             Graph.selectNode(nodeGroup);
             Graph.selectedSingle = true;
             Graph.deselectOnRelease = false;
+            Graph.scaleWindow.reset();
         }
         else {
             if (Graph.multipleSelect) {
                 if (nodeGroup.selected) {
+                    Graph.clipboard.addToHistory("Deselected node");
                     Graph.deselectNode(nodeGroup);
                     Graph.deselectOnRelease = false;
                 }
                 else {
+                    Graph.clipboard.addToHistory("Selected node");
                     Graph.selectNode(nodeGroup);
                     Graph.deselectOnRelease = false;
                 }
-
+                Graph.scaleWindow.reset();
             }
             else {
                 if (!nodeGroup.selected) {
+                    Graph.clipboard.addToHistory("Connected/Disconnected nodes");
                     for (var node in Graph.selectedNodes) {
                         var currentNode = Graph.selectedNodes[node];
                         if (!nodeGroup.adjacentNodes[currentNode.nodeNum]) {
@@ -879,6 +838,7 @@ window.addEventListener("load", function loadGraph() {
                         Graph.deselectOnRelease = true;
                     }
                     Graph.selectNode(nodeGroup);
+                    Graph.scaleWindow.reset();
                 }
                 else {
                     Graph.deselectOnRelease = false;
@@ -908,9 +868,14 @@ window.addEventListener("load", function loadGraph() {
             };
         }
         //maybe on root?
+        var firstMove = true;
         /*Graph.plane*/root.addEventListener("mousemove", moveNode, false);
 
         function moveNode(event) {
+            if (firstMove) {
+                Graph.clipboard.addToHistory("Moved nodes");
+                firstMove = false;
+            }
             nodeRect.setAttributeNS(null, "x", nodeGroup.X = event.pageX - rectXOffset);
             nodeRect.setAttributeNS(null, "y", nodeGroup.Y = event.pageY - rectYOffset);
             nodeText.setAttributeNS(null, "x", nodeText.X = event.pageX - textXOffset);
@@ -970,20 +935,16 @@ window.addEventListener("load", function loadGraph() {
                 Graph.deselectOnRelease = false;
             }
             Graph.selectedSingle = false;
+            if (!firstMove) {
+                Graph.scaleWindow.reset();
+            }
             /*Graph.plane*/root.removeEventListener("mousemove", moveNode, false);
             Graph.plane.removeEventListener("mouseup", release, false);
         }, false);
     };
 
     //select a node
-    Graph.selectNode = function (node, addToHistory, nodeList) {
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Selected node",
-                'nodes': nodeList
-            });
-        }
-
+    Graph.selectNode = function (node) {
         Graph.changeNodeColor(node, "white", "red");
         delete Graph.nodes[node.nodeNum];
         Graph.selectedNodes[node.nodeNum] = node;
@@ -1004,15 +965,8 @@ window.addEventListener("load", function loadGraph() {
     };
 
     //deselect a node
-    Graph.deselectNode = function (node, addToHistory) {
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Deselected node",
-                'node': node.nodeNum,
-            });
-        }
-
-        Graph.changeNodeColor(node, node.color, "black");
+    Graph.deselectNode = function (node) {
+        Graph.changeNodeColor(node, "red", "white");
         delete Graph.selectedNodes[node.nodeNum];
         Graph.nodes[node.nodeNum] = node;
         Graph.nodesGroup.appendChild(node);
@@ -1032,40 +986,16 @@ window.addEventListener("load", function loadGraph() {
     };
 
     //select all nodest
-    Graph.selectAllNodes = function (addToHistory) {
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Selected all nodes",
-                'nodes': (function (nodeList) {
-                    for (var node in Graph.nodes) {
-                        nodeList.push(node);
-                    }
-                    return nodeList;
-                })([])
-            });
-        }
-
+    Graph.selectAllNodes = function () {
         for (var node in Graph.nodes) {
-            Graph.selectNode(Graph.nodes[node], false);
+            Graph.selectNode(Graph.nodes[node]);
         }
     };
 
     //deselect all nodes
-    Graph.deselectAllNodes = function (addToHistory) {
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Deselected all nodes",
-                'nodes': (function (nodeList) {
-                    for (var node in Graph.selectedNodes) {
-                        nodeList.push(node);
-                    }
-                    return nodeList;
-                })([])
-            });
-        }
-
+    Graph.deselectAllNodes = function () {
         for (var node in Graph.selectedNodes) {
-            Graph.deselectNode(Graph.selectedNodes[node], false);
+            Graph.deselectNode(Graph.selectedNodes[node]);
         }
     };
 
@@ -1078,30 +1008,23 @@ window.addEventListener("load", function loadGraph() {
     };
 
     //invert selected/deselected nodes
-    Graph.invert = function (addToHistory) {
+    Graph.invert = function () {
         var length = Graph.numberOfNodes;
         for (var n = 0; n < length; n++) {
             if (Graph.nodes[n]) {
                 var node = Graph.nodes[n];
-                Graph.selectNode(node, false)
+                Graph.selectNode(node)
             }
             else {
                 var node = Graph.selectedNodes[n];
-                Graph.deselectNode(node, false);
+                Graph.deselectNode(node);
             }
 
-        }
-
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Inverted"
-            });
         }
     };
 
     //expand
-    Graph.expand = function (addToHistory) {
-        var initialSelected = Graph.numberOfSelectedNodes;
+    Graph.expand = function () {
         var expandList = {};
         for (var node in Graph.selectedNodes) {
             var nextNode = Graph.selectedNodes[node];
@@ -1114,23 +1037,12 @@ window.addEventListener("load", function loadGraph() {
         }
 
         for (var node in expandList) {
-            Graph.selectNode(Graph.nodes[expandList[node]], false);
-        }
-        var finalSelected = Graph.numberOfSelectedNodes;
-
-        if (addToHistory) {
-            if (finalSelected > initialSelected) {
-                Graph.clipboard.addToHistory({
-                    'name': "Expanded",
-                    'nodes': expandList
-                });
-
-            }
+            Graph.selectNode(Graph.nodes[expandList[node]]);
         }
     };
 
     //create an edge between two nodes
-    Graph.createEdge = function (node1, node2, addToHistory, edgesList) {
+    Graph.createEdge = function (node1, node2) {
         var pair = Graph.sortNodePair(node1, node2);
         var lowNode = pair.lowNode;
         var highNode = pair.highNode;
@@ -1139,70 +1051,19 @@ window.addEventListener("load", function loadGraph() {
         var highNodeMP = highNode.findMidpoint();
         var edge = document.createElementNS(xmlns, "path");
         edge.selected = false; //edge.parentNode === selectedEdgesGroup?
-        edge.setAttributeNS(null, "d", "M " + (lowNodeMP.x) + " " + (lowNodeMP.y) + " " + highNodeMP.x + " " + highNodeMP.y);
+        edge.setAttributeNS(null, "d", "M " + lowNodeMP.x + " " + lowNodeMP.y + " " + highNodeMP.x + " " + highNodeMP.y);
         Graph.edgesGroup.appendChild(edge);
         if (node1.selected && node2.selected) {
             Graph.selectEdge(edge);
         }
-		node1.edgesList.push(node2.nodeNum);
-		node2.edgesList.push(node1.nodeNum);
-		
         lowNode.edges[highNode.nodeNum] = edge;
         node1.adjacentNodes[node2.nodeNum] = node2;
         node2.adjacentNodes[node1.nodeNum] = node1;
 
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Connected/Disconnected nodes",
-                'edgesList': edgesList
-            });
-        }
     };
-	
-	Graph.connectNodes = function(addToHistory, edgesList) {
-		
-		for(var x = 0; x < Graph.numberOfNodes;x++)
-		{
-			for(var y = 0; y < Graph.nodes[x].edgesList.length;y++)
-			{
-				var node1 = Graph.nodes[x];
-				var node2 = Graph.nodes[Graph.nodes[x].edgesList[y]];
-				if(node2.nodeNum > x)
-				{
-					var pair = Graph.sortNodePair(node1,node2);
-					var lowNode = pair.lowNode;
-					var highNode = pair.highNode;
-	
-					var lowNodeMP = lowNode.findMidpoint();
-					var highNodeMP = highNode.findMidpoint();
-					var edge = document.createElementNS(xmlns, "path");
-					edge.selected = false; //edge.parentNode === selectedEdgesGroup?
-					edge.setAttributeNS(null, "d", "M " + (lowNodeMP.x) + " " + (lowNodeMP.y) + " " + highNodeMP.x + " " + highNodeMP.y);
-					Graph.edgesGroup.appendChild(edge);
-				
-					if (node1.selected && node2.selected) {
-						Graph.selectEdge(edge);
-					}
-		
-					lowNode.edges[highNode.nodeNum] = edge;
-					node1.adjacentNodes[node2.nodeNum] = node2;
-					node2.adjacentNodes[node1.nodeNum] = node1;
-
-					if (addToHistory) {
-					Graph.clipboard.addToHistory({
-						'name': "Connected/Disconnected nodes",
-						'edgesList': edgesList
-						});
-					}
-				}//end if
-				
-			}//end for y
-		}//end for x
-	
-	};
 
     //delete an edge between two nodes
-    Graph.deleteEdge = function (node1, node2, addToHistory, edgesList) {
+    Graph.deleteEdge = function (node1, node2) {
         var pair = Graph.sortNodePair(node1, node2);
         var lowNode = pair.lowNode;
         var highNode = pair.highNode;
@@ -1213,13 +1074,6 @@ window.addEventListener("load", function loadGraph() {
 
         delete node1.adjacentNodes[node2.nodeNum];
         delete node2.adjacentNodes[node1.nodeNum];
-
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Connected/Disconnected nodes",
-                'edgesList': edgesList
-            });
-        }
     };
 
     //select an edge (for clipboard purposes)
@@ -1259,126 +1113,23 @@ window.addEventListener("load", function loadGraph() {
 
     };
 
-    Graph.viewClipBoard = function () {
-
-        /*function SVGWindow(innerColor, borderColor, x, y, width, height) {
-    
-        }
-    
-        var clipBoardWindow = document.createElementNS(xmlns, "g");
-        clipBoardWindow.id = "clipBoard";
-        
-        var clipBoardDoc = document.createElementNS(xmlns, "rect");
-        clipBoardDoc.setAttributeNS(null, "x", "50");
-        clipBoardDoc.setAttributeNS(null, "y", "50");
-        clipBoardDoc.setAttributeNS(null, "width", "500");
-        clipBoardDoc.setAttributeNS(null, "height", "500");
-        //clipBoardDoc.setAttributeNS(null, "rx", "5");
-        clipBoardDoc.setAttributeNS(null, "fill", "black");
-        clipBoardDoc.setAttributeNS(null, "stroke", "red");
-        clipBoardDoc.setAttributeNS(null, "stroke-width", "5");
-        clipBoardDoc.style.cursor = "e-resize";
-        //clipBoardDoc.setAttributeNS(null, "pointer-events", "stroke");
-        clipBoardWindow.appendChild(clipBoardDoc);
-    
-        var button = document.createElementNS(xmlns, "rect");
-        button.setAttributeNS(null, "x", "50");
-        button.setAttributeNS(null, "y", "50");
-        button.setAttributeNS(null, "width", "100");
-        button.setAttributeNS(null, "height", "50");
-        button.setAttributeNS(null, "fill", "black");
-        button.setAttributeNS(null, "stroke", "red");
-        button.setAttributeNS(null, "stroke-width", "5");
-        //button.setAttributeNS(null, "rx", "1");
-        //clipBoardWindow.appendChild(button);
-        */
-        /*var clipBoardEdge = document.createElementNS(xmlns, "rect");
-        clipBoardEdge.setAttributeNS(null, "x", "50");
-        clipBoardEdge.setAttributeNS(null, "y", "50");
-        clipBoardEdge.setAttributeNS(null, "width", "500");
-        clipBoardEdge.setAttributeNS(null, "height", "500");
-        //clipBoardEdge.setAttributeNS(null, "rx", "5");
-        clipBoardEdge.setAttributeNS(null, "fill", "none");
-        clipBoardEdge.setAttributeNS(null, "stroke", "red");
-        clipBoardEdge.setAttributeNS(null, "stroke-width", "5");
-        clipBoardWindow.appendChild(clipBoardEdge);*/
-
-        /*root.appendChild(clipBoardWindow);
-        clipBoardWindow.addEventListener("mousedown", function (event) {
-            clipBoardWindow.drawBoundingRect();
-            var startX = event.pageX - clipBoardWindow.getCTM().e;
-            var startY = event.pageY - clipBoardWindow.getCTM().f;
-            root.addEventListener("mousemove", moveCBWindow, false);
-            root.addEventListener("mouseup", function releaseCBWindow(event) {
-                root.removeEventListener("mousemove", moveCBWindow, false);
-                root.removeEventListener("mouseup", releaseCBWindow, false);
-            }, false);
-    
-            function moveCBWindow(event) {
-                clipBoardWindow.setAttributeNS(null, "transform", "translate(" + (event.pageX - startX) + "," + (event.pageY - startY) + ")");            
-            }
-            
-        }, false);*/
-
-    };
-
     //extrude - 
-    Graph.extrude = function (addToHistory) {
+    Graph.extrude = function () {
         //THE EXTRUDE COPY NEEDS TO GO THE THE CLIPBOARD THEN BE TAKEN AWAY BECAUSE WE DONT WANT TO OVERWRITE WHAT THE USER HAD COPIED ON THE CLIPBOARD
         Graph.clipboard.copy(true);
         Graph.clipboard.paste(true);
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Extruded"
-            });
-        }
     };
+
 
     //scale -
     Graph.scale = function () {
-		alert("inside scale");
-        Graph.createScaleSlider();
+        Graph.scaleWindow.show();
     }
-	
-	//createScaleSlider
-	Graph.createScaleSlider = function () {
-		
-		sliderGroup = document.createElementNS(xmlns,"g");
-		sliderGroup.setAttributeNS(null,"id","scaleSlider");
-		var sliderRect = document.createElementNS(xmlns,"rect");
-		sliderRect.setAttributeNS(null,"height","40");
-		sliderRect.setAttributeNS(null,"width","140");
-		sliderRect.setAttributeNS(null,"x","120");
-		sliderRect.setAttributeNS(null,"y","100");
-		sliderRect.setAttributeNS(null,"rx","5");
-		sliderRect.setAttributeNS(null,"ry","5");
-		sliderRect.setAttributeNS(null,"fill","blue");
-		sliderRect.setAttributeNS(null,"stroke-width","2");
-		sliderRect.setAttributeNS(null,"stroke","orange");
-		
-		sliderRect.addEventListener("onmousedown", function () { alert("work!!!")} ,false);
-		
-		sliderGroup.appendChild(sliderRect);
-		parentSVG.appendChild(sliderGroup); //adds the slider on top of the Graph.plane so it is in front
-		
-	}//end createScaleSlider
-	
-	Graph.moveScaleSlider = function (event){
-		alert("inside moveScaleSlider");
-	}
-
 
     //complement - removes original edges, and creates new edges between it and nodes it was not originally adjacent to
-    Graph.complement = function (addToHistory) {
-        if (addToHistory) {
-            Graph.clipboard.addToHistory({
-                'name': "Complemented nodes",
-                'deselectOnUndo': Graph.numberOfSelectedNodes === 0 ? true : false
-            });
-        }
-
+    Graph.complement = function () {
         if (Graph.numberOfSelectedNodes == 0) {
-            Graph.selectAllNodes(false);
+            Graph.selectAllNodes();
         }
 
         for (var node in Graph.selectedNodes) {
@@ -1387,10 +1138,10 @@ window.addEventListener("load", function loadGraph() {
                 var adjNode = Graph.selectedNodes[adj];
                 if (nextNode.nodeNum < adjNode.nodeNum) {
                     if (nextNode.edges[adj]) {
-                        Graph.deleteEdge(nextNode, adjNode, false);
+                        Graph.deleteEdge(nextNode, adjNode);
                     }
                     else {
-                        Graph.createEdge(nextNode, adjNode, false);
+                        Graph.createEdge(nextNode, adjNode);
                     }
                 }
             }
@@ -1457,12 +1208,28 @@ window.addEventListener("load", function loadGraph() {
         Graph.findShortestPaths();
 
         if (Graph.runGravity(true)) {
-            var message = "Graph is gravitational!";
+            var msgBoxOptions = {
+                'msgType': SVGMsgBox.MsgType.Accept,
+                'msg': "Graph is gravitational!",
+                'acceptCallback': false,
+                'acceptButtonText': "OK",
+                'declineCallBack': false,
+                'declineButtonText': false
+            };
+            SVGMsgBox(parentSVG, msgBoxOptions);
         }
         else {
-            var message = Graph.badGravityReason + " Would you like to check other permutations?";
+            var msgBoxOptions = {
+                'msgType': SVGMsgBox.MsgType.Error,
+                'msg': Graph.badGravityReason + " Would you like to check other permutations?",
+                'acceptCallback': Graph.findGravFlavoring,
+                'acceptButtonText': "Yes",
+                'declineCallBack': false,
+                'declineButtonText': "No"
+            };
+            SVGMsgBox(parentSVG, msgBoxOptions);
         }
-        SVGMsgBox(parentSVG, message, Graph.findGravFlavoring);
+
     };
 
     //RUN GRAVITY
@@ -1610,9 +1377,9 @@ window.addEventListener("load", function loadGraph() {
             if (level === numNodes) {
                 if (Graph.runGravity()) {
                     var current = Graph.gravFlavorings.push(gravValues) - 1;
-                    if(current !== 0){
+                    if (current !== 0) {
                         var currentFlavoring = Graph.gravFlavorings[current];
-                        var previousFlavoring = Graph.gravFlavorings[current-1];
+                        var previousFlavoring = Graph.gravFlavorings[current - 1];
                         for (var i = 0; i < numNodes; i++) {
                             if (currentFlavoring[i] === undefined) {
                                 currentFlavoring[i] = previousFlavoring[i];
@@ -1642,11 +1409,22 @@ window.addEventListener("load", function loadGraph() {
         for (var i = 0; i < numNodes; i++) {
             initial[i] = i;
         }
-        
+
         permute(0);
 
+        console.log(Graph.gravFlavorings);
+
         if (Graph.gravFlavorings.length === 0) {
-            SVGMsgBox(parentSVG, "Sorry, there were no gravitational permutations found for this graph.");
+            var msgBoxOptions = {
+                'msgType': SVGMsgBox.MsgType.Info,
+                'msg': "Sorry, there were no gravitational permutations found for this graph.",
+                'acceptCallback': false,
+                'acceptButtonText': "OK",
+                'declineCallBack': false,
+                'declineButtonText': false
+            };
+            //SVGMsgBox(parentSVG, SVGMsgBox.MsgType.Info, "Sorry, there were no gravitational permutations found for this graph.");
+            SVGMsgBox(parentSVG, msgBoxOptions);
         }
         else {
             function showPermutation(num) {
@@ -1658,7 +1436,16 @@ window.addEventListener("load", function loadGraph() {
                 }
             }
 
-            SVGMsgBox(parentSVG, "There were " + Graph.gravFlavorings.length + " gravitational permutations found for this graph! One possible permutation is being displayed.");
+            var msgBoxOptions = {
+                'msgType': SVGMsgBox.MsgType.Info,
+                'msg': "There were " + Graph.gravFlavorings.length + " gravitational permutations found for this graph! One possible permutation is being displayed.",
+                'acceptCallback': false,
+                'acceptButtonText': "OK",
+                'declineCallBack': false,
+                'declineButtonText': false
+            };
+            //SVGMsgBox(parentSVG, SVGMsgBox.MsgType.Info, "There were " + Graph.gravFlavorings.length + " gravitational permutations found for this graph! One possible permutation is being displayed.");
+            SVGMsgBox(parentSVG, msgBoxOptions);
             var currentPermNum = 0;
             showPermutation(currentPermNum);
 
@@ -1666,9 +1453,9 @@ window.addEventListener("load", function loadGraph() {
             window.addEventListener("keydown", function () {
                 if (event.keyCode === 37) {
                     if (currentPermNum === 0) {
-                        currentPermNum = Graph.gravFlavorings.length-1;
+                        currentPermNum = Graph.gravFlavorings.length - 1;
                     }
-                    else{
+                    else {
                         currentPermNum--;
                     }
                 }
@@ -1680,18 +1467,57 @@ window.addEventListener("load", function loadGraph() {
                         currentPermNum++;
                     }
                 }
-                showPermutation(currentPermNum);                
+                showPermutation(currentPermNum);
             }, false);
 
         }
     };
 
+    Graph.import = function (openTab) {
+        Graph.importWindow.open(openTab);
+    };
 
+    Graph.export = function () {
+    };
 
+    Graph.cutPoints = function () {
+    };
 
+    Graph.dominate = function () {
+    };
 
+    Graph.shortestPath - function () {
+    };
 
+    Graph.viewPanel = function () {
+    };
 
+    Graph.viewHistory = function () {
+    };
+
+    Graph.viewSpreadsheet = function () {
+    };
+
+    Graph.viewHelp = function () {
+    };
+
+    Graph.findLandmarks = function () {
+    };
+
+    Graph.findVantagePoints = function () {
+    }
+
+    Graph.gravityOptions = function () {
+    };
+
+    Graph.createRandomGraph = function () {
+    };
+
+    Graph.breadthFirst = function () {
+    };
+
+    Graph.force = function () {
+    };
 
     Graph.speedCheck = function () {
         /*function createObj(first, last) {

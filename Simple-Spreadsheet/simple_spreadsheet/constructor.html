@@ -12,8 +12,9 @@ var h = window.innerHeight;            //gets the maximum height of the users pa
 numberOfClicks = 0;         //number of rooms the user has clicked on
 nodeColors = new Array();   //holds the color that will be associated with each node
 nodeContents = new Array(); //holds the word that corresponds with each node
-nodeImages - new Array();   //holds the image's that corresponds to each node
+nodeImages = new Array();   //holds the image's that corresponds to each node
 numOfEdges = new Array();   //used for sortingByGravityValues to loop through connecting nodes
+gravityValue = new Array(); //holds gravityValue for the node
 objectArray = new Array();  //holds the boolean value for whther or not we have a turkey at that location
 xCords = new Array();       //array for x coordinates of the xml
 yCords = new Array();       //array for the y coordinates of the xml
@@ -80,7 +81,7 @@ function initalizeNodes()
 	        value = N[x].getAttribute("id"); //gets the value of the id attribute
 			nodeArray[x][0]= parseInt(value.substring(1,value.length));  //parses out the unecassary g and changes it to and Int
 			objectArray[x] = false;
-            nodeImage[x] = xmlDoc.getElementsByTagName("img").getAttribute("src");
+            nodeImages[x] = xmlDoc.getElementsByTagName("img")[x].getAttribute("src");
 			
 			if(colorChoice ==0){
 			    nodeColors[x] = randomColor();  //gives each node it's own randomColor
@@ -98,7 +99,7 @@ function initalizeNodes()
 			    nodeColors[x] = "white";
 				console.log("No Color");
 			}
-			    
+			gravityValue[x] = parseInt(N[x].getAttribute("gravityValue"));
 			xCords[x] = N[x].getAttribute("x");
 			yCords[x] = N[x].getAttribute("y");
 			
@@ -293,6 +294,7 @@ function displayCurrentRoom(currentNode,mode)
 	   backToStart(currentNode);
 	   
     */
+	document.body.style.backgroundColor = nodeColors[currentNode];
     var group4 = document.createElementNS(xmlns,"g");
     group4.setAttributeNS(null,"id",currentNode);
     var rect = document.createElementNS(xmlns,"rect");
@@ -368,7 +370,7 @@ function displayCurrentRoom(currentNode,mode)
 		wordsText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
 	}
 	
-				
+			
 	var group = document.createElementNS(xmlns,"g");
 	group.addEventListener("click",function(){generateNodesInRoom(currentNode,2)},false);
 	var colors = document.createElementNS(xmlns,"rect");
@@ -435,17 +437,35 @@ function displayCurrentRoom(currentNode,mode)
 		svgimg.setAttributeNS(null,"visibility","visible");
 		group4.appendChild(svgimg);
 	}
+	group4.appendChild(rect);
+	group4.appendChild(text);
 	
-	var loadedImage = document.createElementNS(xmlns,"image");
-	loadedImage.setAttributeNS(null,"height","100");
-	loadedImage.setAttributeNS(null,"width","100");
-	loadedImage.setAttributeNS(null,"x", w-200);
-	loadedImage.setAttributeNS(null,"y", h-200);
-	loadedImage.setAttributeNS(xlink,"href",nodeImages[currentNode]);
-	loadedImage.setAttributeNS(null,"visibility","visible");
-	group4.appendChild(loadedImage);
+	var request = new XMLHttpRequest();  
+	request.open('GET', nodeImages[currentNode], true);
+	request.onreadystatechange = function(){
+		if (request.readyState === 4)
+		{
+			if (request.status === 404) {  
+				alert("Oh no, it does not exist!");
+			}
+			else
+			{
+				var loadedImage = document.createElementNS(xmlns,"image");
+				loadedImage.setAttributeNS(null,"height","100");
+				loadedImage.setAttributeNS(null,"width","100");
+				loadedImage.setAttributeNS(null,"x", w-200);
+				loadedImage.setAttributeNS(null,"y", h-100);
+				loadedImage.setAttributeNS(xlink,"href",nodeImages[currentNode]);
+				loadedImage.setAttributeNS(null,"visibility","visible");
+				group4.appendChild(loadedImage);
+			}
+		}
+	};
+	request.send();
+
 	
-	if(homeLocation == currentNode)
+	
+	/*if(homeLocation == currentNode)
 	{
 		var svgimg = document.createElementNS(xmlns,"image");
 		svgimg.setAttributeNS(null,"id","house");
@@ -456,12 +476,10 @@ function displayCurrentRoom(currentNode,mode)
 		svgimg.setAttributeNS(null,"y",(h/3));
 		svgimg.setAttributeNS(null,"visibility","visible");
 		group4.appendChild(svgimg);
-	}
+	}*/
 	
 	exportGroup.appendChild(exBtn);
 	exportGroup.appendChild(exportTxt);
-	group4.appendChild(rect);
-	group4.appendChild(text);
 	group3.appendChild(traverse);
 	group3.appendChild(traverseText);
 	group2.appendChild(words);
@@ -615,6 +633,7 @@ function editColors(connectingNode,mode)
 	var colorChange = prompt("Enter in your new color.","");
 	nodeColors[connectingNode] = colorChange;
 	S.getElementById(connectingNode).firstChild.setAttributeNS(null,"fill",colorChange);
+	document.body.style.backgroundColor = colorChange;
 }
 function beginTraversal()
 {
@@ -638,6 +657,7 @@ function exportXML()
 		s += "y=\"" + yCords[i] + "\" ";
 		s += "color=\"" + nodeColors[i] + "\" ";
 		s += "label=\"" + nodeContents[i] + "\" ";
+		s += "gravityValue=\"" + gravityValue[i] + "\" ";
 		
 		/* CONSTRUCTOR XML INFO
 		s += "object=\"" + objectArray[i] + "\" ";
@@ -649,7 +669,7 @@ function exportXML()
 		
 		s += ">\n" 
 		s += "<img src=\"" + nodeImages[i] + "\" ";
-		s += "/>
+		s += "/>"
 		for(j =1; j < nodeArray[i].length;j++)
 		{
 			s += "<edge to=\"g" + nodeArray[i][j] + "\" />\n";

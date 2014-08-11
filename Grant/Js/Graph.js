@@ -715,7 +715,7 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.gravityValue = Graph.numberOfNodes;
         nodeGroup.edges = {};
 		nodeGroup.color = "red";
-		nodeGroup.image = "empty";
+		nodeGroup.image = "";
 		nodeGroup.edgesList = new Array();
 		var nodeTextSize = nodeLabel || Graph.numberOfNodes;
 		nodeTextSize = "" + nodeTextSize + "";
@@ -777,8 +777,8 @@ window.addEventListener("load", function loadGraph() {
         nodeRect.setAttributeNS(null, "fill", node.color);
         nodeRect.setAttributeNS(null, "stroke", "black");
         nodeRect.setAttributeNS(null, "stroke-width", "2.5");
-        nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X - (Graph.nodeWidth / 2)));
-        nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y - (Graph.nodeHeight / 2)));
+        nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X));
+        nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y));
         nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
         //nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
 		nodeRect.setAttributeNS(null, "width", nodeTextSize.length * 5 + 20);
@@ -793,8 +793,8 @@ window.addEventListener("load", function loadGraph() {
         nodeText.setAttributeNS(null, "font-family", "Arial");
         nodeText.setAttributeNS(null, "font-size", "12");
         nodeText.setAttributeNS(null, "font-weight", "bold");
-        nodeText.setAttributeNS(null, "x", nodeText.X = node.X);
-        nodeText.setAttributeNS(null, "y", nodeText.Y = node.Y);
+        nodeText.setAttributeNS(null, "x", nodeText.X = (node.X + (nodeTextSize.length * 2.5 + 10)));
+        nodeText.setAttributeNS(null, "y", nodeText.Y = (node.Y + 10));
         nodeGroup.appendChild(nodeText);
 
         Graph.nodes[nodeGroup.nodeNum] = Graph.nodesGroup.appendChild(nodeGroup);

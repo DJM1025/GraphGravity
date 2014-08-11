@@ -78,8 +78,8 @@ function importClipboard(code)
 	var numNodes = xmlDoc.getElementsByTagName("node");
 	for(var i =0; i < numNodes.length;i++)
 	{
-		var x = numNodes[i].getAttribute("x");
-		var y = numNodes[i].getAttribute("y");
+		var x = parseInt(numNodes[i].getAttribute("x"));
+		var y = parseInt(numNodes[i].getAttribute("y"));
 		var nodeLabel = numNodes[i].getAttribute("label");
 		var id = numNodes[i].getAttribute("id");
 		var gravity = parseInt(numNodes[i].getAttribute("gravityValue"));

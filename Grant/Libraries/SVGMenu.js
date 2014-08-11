@@ -1,3 +1,4 @@
+
 //TO DO'S
 //ADD ALL METHODS TO SVGMenu.prototype possibly - though this may eliminate closure capability
 //CHANGE THE MENU TO HIDE ONLY WHEN THE USER CLICKS ON A DIFFERENT CONTROL BESIDES THE MENU
@@ -13,7 +14,9 @@
 //Error handling or no?
 //maybe instead of transparency in image shortcuts, make it black (sketch)
 //must remember that I must only keep the next level open when hovering, close as you backtrack as well
-window.addEventListener("load", function loadMenu() {
+//MAYBE ADD ON METHODS TO THE PROTOTYPE of SVG Elements SO I DONT HAVE TO HAVE THEM PASS A PARENT? just a thought?
+//make the length of the first child set a little longer, and maybe a little taller, so it doesnt blend in with the geometry header menu
+window.addEventListener("load", function () {
     window.SVGMenu = function SVGMenu(/*parent,*/x, y) {
         var xmlns = "http://www.w3.org/2000/svg";
         var xlink = "http://www.w3.org/1999/xlink";
@@ -27,8 +30,8 @@ window.addEventListener("load", function loadMenu() {
         var titleOffset = subItemWidth / 6;
         var shortcutOffset = subItemWidth * (2 / 3);
         var expandArrowOffset = (subItemWidth - (subItemWidth / 6)) + (subItemWidth / 10);
-        var imgOffsetHz = (subItemWidth / 6) * (1/5);
-        var imgOffsetVt = itemHeight * (1/4);
+        var imgOffsetHz = (subItemWidth / 6) * (1 / 5);
+        var imgOffsetVt = itemHeight * (1 / 4);
         var imgWidth = (subItemWidth / 6) - (imgOffsetHz * 2);
         var imgHeight = itemHeight - (imgOffsetVt * 2);
         var hideTimer;
@@ -68,7 +71,7 @@ window.addEventListener("load", function loadMenu() {
 
             //var hoverRect = itemGroup.hoverRect = itemRect.cloneNode(false);
             //itemGroup.appendChild(hoverRect);
-            
+
             var itemTitleText = itemGroup.text = document.createElementNS(xmlns, "text");
             itemTitleText.setAttributeNS(null, "font-family", "Arial");
             itemTitleText.setAttributeNS(null, "font-size", 11);
@@ -101,7 +104,7 @@ window.addEventListener("load", function loadMenu() {
                 if (img) {
                     var itemImage = document.createElementNS(xmlns, "image");
                     itemImage.setAttributeNS(xlink, "xlink:href", img);
-                    itemImage.setAttributeNS(null, "x", x +imgOffsetHz);
+                    itemImage.setAttributeNS(null, "x", x + imgOffsetHz);
                     itemImage.setAttributeNS(null, "y", y + imgOffsetVt);
                     itemImage.setAttributeNS(null, "width", imgWidth);
                     itemImage.setAttributeNS(null, "height", imgHeight);
@@ -125,7 +128,7 @@ window.addEventListener("load", function loadMenu() {
                 itemGroup.insertBefore(hoverRect, itemTitleText);
                 if (this.expandArrow) {
                     this.expandArrow.setAttributeNS(null, "fill", "red");
-                }    
+                }
                 itemGroup.addEventListener("mouseout", function out() {
                     hoverRect.parentElement.removeChild(hoverRect);
                     /*if (this.expandArrow) {
@@ -133,7 +136,7 @@ window.addEventListener("load", function loadMenu() {
                     }*/
                     itemGroup.removeEventListener("mouseout", out, false);
                 }, false);
-    
+
             }, false);
             return itemGroup;
         };
@@ -163,7 +166,7 @@ window.addEventListener("load", function loadMenu() {
                     //console.log("Hiding", subItem);
                     subItem.style.visibility = "hidden";
                     //if (recursive) {
-                        hide(subItem, true);
+                    hide(subItem, true);
                     //}
                 }
             }
@@ -317,7 +320,7 @@ window.addEventListener("load", function loadMenu() {
                     subItemGroup.expandArrowY = heirarchy.subItemY + (itemHeight / 2);
                     subItemGroup.addEventListener("mouseover", function (event) {
                         //clearTimeout(hideTimer);
-                        console.log(heirarchy.OpenItem);
+                        //console.log(heirarchy.OpenItem);
                         if (heirarchy.OpenItem !== null && heirarchy.OpenItem !== this) {
                             hide(heirarchy.OpenItem, true);
                         }
@@ -326,7 +329,7 @@ window.addEventListener("load", function loadMenu() {
                         event.stopPropagation();
                     }, false);
                     subItemGroup.addEventListener("click", function (event) {
-                      //  hide(menuHeirarchy.OpenItem, true);
+                        //  hide(menuHeirarchy.OpenItem, true);
                         //menuHeirarchy.OpenItem = null;
                         /*subItemGroup.addEventListener("mouseout", function out(event) {
                             clearTimeout(hideTimer);
@@ -392,7 +395,7 @@ window.addEventListener("load", function loadMenu() {
                 hide(menuHeirarchy.OpenItem, true);
                 menuHeirarchy.OpenItem = null;
                 func();
-            }, false);            
+            }, false);
         }
 
         this.append = function (parent) {
@@ -474,30 +477,53 @@ window.addEventListener("load", function loadMenu() {
         }
 
         //FILE - IMPORT
-        menu.bindAction(["File", "Import", "Local"], function () { temp("Import -> Local"); }); //loadFile() goes here
-        menu.bindAction(["File", "Import", "Server"], function () { temp("Import -> Server"); });
-        menu.bindAction(["File", "Import", "Clipboard"], function () { importClipboard(); });
-        menu.bindAction(["File", "Import", "Website"], function () { temp("Import -> Website"); });
+        //menu.bindAction(["File", "Import"], function () {  Graph.import() });
+        //menu.bindAction(["File", "Import", "Local"], function () { loadFile(window); }); //loadFile() goes here
+        menu.bindAction(["File", "Import", "Local"], function () { Graph.import("Local") });
+        menu.bindAction(["File", "Import", "Server"], function () { Graph.import("Server") });
+        menu.bindAction(["File", "Import", "Clipboard"], function () { Graph.import("Clipboard") });
+        menu.bindAction(["File", "Import", "Website"], function () { Graph.import("Website") });
 
         //FILE - EXPORT
-        menu.bindAction(["File", "Export", "Local"], function () { exportToFile(); });
-        menu.bindAction(["File", "Export", "Server"], function () { temp("Export -> Server"); });
-        menu.bindAction(["File", "Export", "Clipboard"], function () { exportClipboard(); });
-        menu.bindAction(["File", "Export", "Website"], function () { temp("Export -> Website"); });
+        menu.bindAction(["File", "Export", "Local"], function () { Graph.export("Local") });
+        menu.bindAction(["File", "Export", "Server"], function () { Graph.export("Server") });
+        menu.bindAction(["File", "Export", "Clipboard"], function () { Graph.export("Clipboard") });
+        menu.bindAction(["File", "Export", "Website"], function () { Graph.export("Website") });
 
         //EDIT
-        menu.bindAction(["Edit", "Undo"], function () { temp("Edit -> Undo"); });
-        menu.bindAction(["Edit", "Redo"], function () { temp("Edit -> Redo"); });
-        menu.bindAction(["Edit", "Cut"], function () { temp("Edit -> Cut"); });
-        menu.bindAction(["Edit", "Copy"], function () { temp("Edit -> Copy"); });
-        menu.bindAction(["Edit", "Paste"], function () { temp("Edit -> Paste"); });
-        menu.bindAction(["Edit", "Delete"], function () { temp("Edit -> Delete"); });
-        menu.bindAction(["Edit", "Scale"], function () { temp("Edit -> Scale"); });
+        menu.bindAction(["Edit", "Undo"], Graph.clipboard.undo);
+        menu.bindAction(["Edit", "Redo"], Graph.clipboard.redo);
+        menu.bindAction(["Edit", "Cut"], function () {
+            temp("Edit -> Cut");
+        });
+        menu.bindAction(["Edit", "Copy"], Graph.clipboard.copy);
+        menu.bindAction(["Edit", "Paste"], function () {
+            Graph.clipboard.addToHistory("Pasted subgraph");
+            Graph.clipboard.paste();
+        });
+        menu.bindAction(["Edit", "Delete"], function () {
+            Graph.clipboard.addToHistory("Deleted nodes");
+            for (var node in Graph.selectedNodes) {
+                var nextNode = Graph.selectedNodes[node];
+                Graph.deleteNode(nextNode);
+            }
+            Graph.fixGravityValues();
+        });
+        menu.bindAction(["Edit", "Scale"], Graph.scale);
 
         //SELECT
-        menu.bindAction(["Select", "All"], Graph.selectAllNodes);
-        menu.bindAction(["Select", "None"], Graph.deselectAllNodes);
-        menu.bindAction(["Select", "Invert"], Graph.invert);
+        menu.bindAction(["Select", "All"], function () {
+            Graph.clipboard.addToHistory("Selected all nodes");
+            Graph.selectAllNodes();
+        });
+        menu.bindAction(["Select", "None"], function () {
+            Graph.clipboard.addToHistory("Deselected all");
+            Graph.deselectAllNodes();
+        });
+        menu.bindAction(["Select", "Invert"], function () {
+            Graph.clipboard.addToHistory("Inverted subgraph");
+            Graph.invert();
+        });
         menu.bindAction(["Select", "Cut-points"], function () { temp("Select -> Cut-points"); });
         menu.bindAction(["Select", "Dominate"], function () { temp("Select -> Dominate"); });
         menu.bindAction(["Select", "Shortest Path"], function () { temp("Select -> Shortest Path"); });
@@ -505,12 +531,18 @@ window.addEventListener("load", function loadMenu() {
         //VIEW
         menu.bindAction(["View", "Panel"], function () { temp("View -> Panel"); });
         menu.bindAction(["View", "History"], function () { temp("View -> History"); });
-        menu.bindAction(["View", "Spreadsheet"], function () { exportToSpreadsheet(); });
+        menu.bindAction(["View", "Spreadsheet"], function () { temp("View -> Spreadsheet"); });
         menu.bindAction(["View", "Help"], function () { temp("View -> Help"); });
 
         //GRAPH
-        menu.bindAction(["Graph", "Complement"], Graph.complement);
-        menu.bindAction(["Graph", "Extrude"], Graph.extrude);
+        menu.bindAction(["Graph", "Complement"], function () {
+            Graph.clipboard.addToHistory("Complemented subgraph");
+            Graph.complement();
+        });
+        menu.bindAction(["Graph", "Extrude"], function () {
+            Graph.clipboard.addToHistory("Extruded subgraph");
+            Graph.extrude();
+        });
         menu.bindAction(["Graph", "Breadth-First"], function () { temp("Graph -> Breadth-First"); });
         menu.bindAction(["Graph", "Force"], function () { temp("Graph -> Force"); });
         menu.bindAction(["Graph", "Adjacency Matrix"], function () { temp("Graph -> Adjacency Matrix"); });
@@ -535,3 +567,4 @@ window.addEventListener("load", function loadMenu() {
 
     })();
 }, false);
+

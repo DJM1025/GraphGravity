@@ -31,6 +31,14 @@ objectsPlaced = 0;
 */
 //whoever has to use or edit this later on i feel bad for you because this thing is a hot mess. i don't know what i was
 //thinking when i wrote any of it.
+
+window.addEventListener("message", receiveMessage, false);
+
+function receiveMessage(event)
+{
+	beginTraversal(event.data);
+}
+
 function readTextFile()
 {
 	xmlhttp = new XMLHttpRequest();
@@ -158,9 +166,12 @@ function objectSelection()
 			 }
 	 }
 }//end objectSelection()
-function parseData()
+function parseData(code)
 {
-     var data = document.getElementById("input").value; //gets the input graph data 
+	 if(code) 
+	 	var data = code; 
+	 else 
+   	 	var data = document.getElementById("input").value; //gets the input graph data 
      parser = new DOMParser();                          //creates a DOMParser object to parse the xml that is given
 	 xmlDoc = parser.parseFromString(data,"text/xml");  //parses the xml file so so we can access it using the tree structure
 	 nodes = xmlDoc.getElementsByTagName("node").length; //gets the total number of nodes that the given graph has
@@ -175,6 +186,7 @@ function parseData()
 	 objectSelection();
 	 document.getElementsByName("display").innerHTML = "";
 }//end parseData()
+
 function checkBoxData()
 {
 	
@@ -635,9 +647,9 @@ function editColors(connectingNode,mode)
 	S.getElementById(connectingNode).firstChild.setAttributeNS(null,"fill",colorChange);
 	document.body.style.backgroundColor = colorChange;
 }
-function beginTraversal()
+function beginTraversal(code)
 {
-     parseData(); //goes to parse all the data used to construct the graph
+     parseData(code); //goes to parse all the data used to construct the graph
      display.parentNode.removeChild(display);//removes the div
 	 generateRooms(0); //puts us into the first room
 }//end beginTraversal()

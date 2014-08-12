@@ -40,15 +40,24 @@ function exportToFile()
 	download("Grapher Output.txt", s);
 }
 
-function exportToSpreadsheet()
+function exportToSite(site)
 {
 	var s = getXML();
-	if(document.domain)
-		var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/spreadsheet_offline.html");
-	else
-		var w = window.open("../Simple-Spreadsheet/simple_spreadsheet/spreadsheet_offline.html")
-	//setTimeout(function () {w.loadXML(s);}, 100);
+	if(site == "Spreadsheet"){
+		if(document.domain)
+			var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/spreadsheet_offline.html");
+		else
+			var w = window.open("../Simple-Spreadsheet/simple_spreadsheet/spreadsheet_offline.html")
+	}
+	else if(site == "Constructor")
+	{
+		if(document.domain)
+			var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/constructor.html");
+		else
+			var w = window.open("../Simple-Spreadsheet/simple_spreadsheet/constructor.html");
+	}
 	setTimeout(function () { w.postMessage(s, "*"); }, 500);
+	//setTimeout(function () {w.loadXML(s);}, 100);
 }
 
 function exportClipboard()

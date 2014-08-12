@@ -478,17 +478,16 @@ window.addEventListener("load", function () {
 
         //FILE - IMPORT
         //menu.bindAction(["File", "Import"], function () {  Graph.import() });
-        //menu.bindAction(["File", "Import", "Local"], function () { loadFile(window); }); //loadFile() goes here
-        menu.bindAction(["File", "Import", "Local"], function () { Graph.import("Local") });
+        menu.bindAction(["File", "Import", "Local"], function () { loadFile(window); }); 
         menu.bindAction(["File", "Import", "Server"], function () { Graph.import("Server") });
         menu.bindAction(["File", "Import", "Clipboard"], function () { importClipboard(null) });
         menu.bindAction(["File", "Import", "Website"], function () { Graph.import("Website") });
 
         //FILE - EXPORT
-        menu.bindAction(["File", "Export", "Local"], function () { Graph.export("Local") });
+        menu.bindAction(["File", "Export", "Local"], function () { exportToFile(); });
         menu.bindAction(["File", "Export", "Server"], function () { Graph.export("Server") });
         menu.bindAction(["File", "Export", "Clipboard"], function () { Graph.export() });
-        menu.bindAction(["File", "Export", "Website"], function () { Graph.export("Website") });
+        menu.bindAction(["File", "Export", "Website"], function () { exportToSite("Constructor"); });
 
         //EDIT
         menu.bindAction(["Edit", "Undo"], Graph.clipboard.undo);
@@ -531,7 +530,7 @@ window.addEventListener("load", function () {
         //VIEW
         menu.bindAction(["View", "Panel"], function () { temp("View -> Panel"); });
         menu.bindAction(["View", "History"], function () { temp("View -> History"); });
-        menu.bindAction(["View", "Spreadsheet"], function () { temp("View -> Spreadsheet"); });
+        menu.bindAction(["View", "Spreadsheet"], function () { exportToSite("Spreadsheet"); });
         menu.bindAction(["View", "Help"], function () { temp("View -> Help"); });
 
         //GRAPH

@@ -831,7 +831,47 @@ window.addEventListener("load", function loadGraph() {
         return nodeGroup;
 	
 	};
+	
+	Graph.connectNodes = function(addToHistory, edgesList) 
+	{	
+		for(var x = 0; x < Graph.numberOfNodes;x++)
+		{
+			for(var y = 0; y < Graph.nodes[x].edgesList.length;y++)
+			{
+				var node1 = Graph.nodes[x];
+				var node2 = Graph.nodes[Graph.nodes[x].edgesList[y]];
+				if(node2.nodeNum > x)
+				{
+					var pair = Graph.sortNodePair(node1,node2);
+					var lowNode = pair.lowNode;
+					var highNode = pair.highNode;
+	
+					var lowNodeMP = lowNode.findMidpoint();
+					var highNodeMP = highNode.findMidpoint();
+					var edge = document.createElementNS(xmlns, "path");
+					edge.selected = false; //edge.parentNode === selectedEdgesGroup?
+					edge.setAttributeNS(null, "d", "M " + (lowNodeMP.x) + " " + (lowNodeMP.y) + " " + highNodeMP.x + " " + highNodeMP.y);
+					Graph.edgesGroup.appendChild(edge);
+				
+					if (node1.selected && node2.selected) {
+						Graph.selectEdge(edge);
+					}
+		
+					lowNode.edges[highNode.nodeNum] = edge;
+					node1.adjacentNodes[node2.nodeNum] = node2;
+					node2.adjacentNodes[node1.nodeNum] = node1;
 
+					if (addToHistory) {
+					Graph.clipboard.addToHistory({
+						'name': "Connected/Disconnected nodes",
+						'edgesList': edgesList
+						});
+					}
+				}//end if
+				
+			}//end for y
+		}//end for x
+	};
 
     //delete a node
     Graph.deleteNode = function (node) {
@@ -1025,7 +1065,7 @@ window.addEventListener("load", function loadGraph() {
 
     //deselect a node
     Graph.deselectNode = function (node) {
-        Graph.changeNodeColor(node, "red", "white");
+        Graph.changeNodeColor(node, node.color, "black");
         delete Graph.selectedNodes[node.nodeNum];
         Graph.nodes[node.nodeNum] = node;
         Graph.nodesGroup.appendChild(node);
@@ -1115,6 +1155,10 @@ window.addEventListener("load", function loadGraph() {
         if (node1.selected && node2.selected) {
             Graph.selectEdge(edge);
         }
+		
+		node1.edgesList.push(node2.nodeNum);
+		node2.edgesList.push(node1.nodeNum);
+		
         lowNode.edges[highNode.nodeNum] = edge;
         node1.adjacentNodes[node2.nodeNum] = node2;
         node2.adjacentNodes[node1.nodeNum] = node1;
@@ -1537,6 +1581,8 @@ window.addEventListener("load", function loadGraph() {
     };
 
     Graph.export = function () {
+		exportClipboard();
+		
     };
 
     Graph.cutPoints = function () {

@@ -481,13 +481,13 @@ window.addEventListener("load", function () {
         //menu.bindAction(["File", "Import", "Local"], function () { loadFile(window); }); //loadFile() goes here
         menu.bindAction(["File", "Import", "Local"], function () { Graph.import("Local") });
         menu.bindAction(["File", "Import", "Server"], function () { Graph.import("Server") });
-        menu.bindAction(["File", "Import", "Clipboard"], function () { Graph.import("Clipboard") });
+        menu.bindAction(["File", "Import", "Clipboard"], function () { importClipboard(null) });
         menu.bindAction(["File", "Import", "Website"], function () { Graph.import("Website") });
 
         //FILE - EXPORT
         menu.bindAction(["File", "Export", "Local"], function () { Graph.export("Local") });
         menu.bindAction(["File", "Export", "Server"], function () { Graph.export("Server") });
-        menu.bindAction(["File", "Export", "Clipboard"], function () { Graph.export("Clipboard") });
+        menu.bindAction(["File", "Export", "Clipboard"], function () { Graph.export() });
         menu.bindAction(["File", "Export", "Website"], function () { Graph.export("Website") });
 
         //EDIT

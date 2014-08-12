@@ -394,6 +394,8 @@ function LoadImportWindow(parent) {
             this.removeEventListener("mouseout", out, false);
         }, false);
     }, false);
+	
+	//okButtonGroup.addEventListener("click", function () {alert("importing")}, false);
 
     var okButtonWidth = cancelButtonWidth;
     var okButtonHeight = cancelButtonHeight;

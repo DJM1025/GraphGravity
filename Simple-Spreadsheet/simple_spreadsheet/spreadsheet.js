@@ -38,6 +38,14 @@ function saveAsFile(){
 	download("Spreadsheet Output.txt", cellsToGrapher());  //Call to function within fileWriter.js 
 }
 
+function exportToConstructor() {
+	if(document.domain)
+		var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/constructor.html"); 
+	else
+		var w = window.open("constructor.html");
+	setTimeout(function () { w.postMessage(cellsToGrapher(), "*"); }, 500); //Give page some time to properly load before sending the data
+}
+
 function exportToGrapher(){
 	if(document.domain)
 		var w = window.open("http://cs.sru.edu/~gravity/newGrapher/Grant/Grapher.html"); 
@@ -739,6 +747,7 @@ function display() {
     out += "<a href='#' onclick='loadCode(); return false;' accesskey='l'>"+"Load from XML"+"</a> - ";
     if (sys.saveMethod) out += "<a href='#' onclick='sys.saveMethod(); return false;' accesskey='s'>"+"View XML"+"</a> - ";
 	out += "<a href='#' onclick='exportToGrapher(); return false;' accesskey='l'>"+"Open in Grapher"+"</a> - ";
+	out += "<a href='#' onclick='exportToConstructor(); return false;' accesskey='l'>"+"Open in Constructor"+"</a> - ";
   }
   //out += "<a href='#' onclick='print(); return false;' accesskey='p'>"+trans("Print")+"</a> - ";
   if (sys.allowPaging) {

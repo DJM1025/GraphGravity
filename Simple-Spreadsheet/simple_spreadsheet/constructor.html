@@ -3,6 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<script src="fileHandler.js"></script> 
 <script>
 var xmlns="http://www.w3.org/2000/svg";
 var xlink="http://www.w3.org/1999/xlink";
@@ -50,13 +51,15 @@ function readTextFile()
 		   textArray = fileText.split("\n");
 		}
 	}
-	xmlhttp.send();
+	xmlhttp.send(); 
 }
+
 function randomWord()
 {
 	word = textArray[Math.floor(Math.random()*textArray.length)];
 	return word.charAt(0).toUpperCase() + word.slice(1);
 }
+
 function initalizeArray(nodes)
 {
   nodeArray = new Array();  //creates our 2-d array to hold the value for each node and all the edges it is connected to.
@@ -658,47 +661,79 @@ function randomColor()
     color = "rgb("+parseInt(127+Math.random()*128)+","+parseInt(127+Math.random()*128)+","+parseInt(127+Math.random()*128)+")";
 	return color;
 }//end function randomColor()
+
 function exportXML()
 {
-    var s = '';
-	s += "<graph>\n";
-	for(var i = 0; i < nodes;i++)
-	{
-		s += "<node id=\"g" + nodeArray[i][0] + "\" ";
-		s += "x=\"" + xCords[i] + "\" ";
-		s += "y=\"" + yCords[i] + "\" ";
-		s += "color=\"" + nodeColors[i] + "\" ";
-		s += "label=\"" + nodeContents[i] + "\" ";
-		s += "gravityValue=\"" + gravityValue[i] + "\" ";
-		
-		/* CONSTRUCTOR XML INFO
-		s += "object=\"" + objectArray[i] + "\" ";
-		if(i == homeLocation)
-			s += "home=\"true\"";
-		else
-			s += "home=\"false\"";
-		*/
-		
-		s += ">\n" 
-		s += "<img src=\"" + nodeImages[i] + "\" ";
-		s += "/>"
-		for(j =1; j < nodeArray[i].length;j++)
+	var w = window.open("","","width = 300, height = 200");
+	w.document.body.innerHTML = "<form id = 'format'";
+	//w.document.body.innerHTML += "<input type='radio' name = 'app' id ='grapher'>Open in Grapher</input><br>";
+	//w.document.body.innerHTML += "<input type='radio' name = 'app' id ='spreadsheet'>Open in Spreadsheet</input><br>";
+	w.document.body.innerHTML += "<input type='radio' checked name = 'app' id ='xml'>Show XML</input><br>";
+	w.document.body.innerHTML += "<input type='radio' name = 'app' id = 'file'>Save in file</input><br>"
+	w.document.body.innerHTML += "</form>";
+	w.document.body.innerHTML += "<input type='button' value='Export' id='exportButton'/>"
+	w.document.getElementById("exportButton").onclick = function () {
+ 		//Store XML info into variable s 
+	    var s = '';
+		s += "<graph>\n";
+		for(var i = 0; i < nodes;i++)
 		{
-			s += "<edge to=\"g" + nodeArray[i][j] + "\" />\n";
+			s += "<node id=\"g" + nodeArray[i][0] + "\" ";
+			s += "x=\"" + xCords[i] + "\" ";
+			s += "y=\"" + yCords[i] + "\" ";
+			s += "color=\"" + nodeColors[i] + "\" ";
+			s += "label=\"" + nodeContents[i] + "\" ";
+			s += "gravityValue=\"" + gravityValue[i] + "\" ";
+			
+			/* CONSTRUCTOR XML INFO
+			s += "object=\"" + objectArray[i] + "\" ";
+			if(i == homeLocation)
+				s += "home=\"true\"";
+			else
+				s += "home=\"false\"";
+			*/
+			
+			s += ">\n" 
+			s += "<img src=\"" + nodeImages[i] + "\" ";
+			s += "/>"
+			for(j =1; j < nodeArray[i].length;j++)
+			{
+				s += "<edge to=\"g" + nodeArray[i][j] + "\" />\n";
+			}
+			s += "</node>\n";
 		}
-		s += "</node>\n";
+		s += "</graph>";
+
+		if(w.document.getElementById("xml").checked)
+			exportToClipboard(s);
+		else if(w.document.getElementById("grapher").checked)
+			exportToSite("Grapher", s);
+		else if(w.document.getElementById("spreadsheet").checked)
+			exportToSite("Spreadsheet", s);
+		else if(w.document.getElementById("file").checked)
+			download("Constructor Output.txt", s);
+		w.close();
 	}
-	s += "</graph>";
-		
-	/* PHP FILE SAVING - NOT NEEDED FOR SPREADSHEET CURRENTLY 
-	Might be needed later for "saving" a website 
-	fileName2 = prompt("Plese enter in the name of this graph.","");
-	xmlhttp2 = new XMLHttpRequest();
-	xmlhttp2.open("POST","xmlGraph.php",true);
-	xmlhttp2.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xmlhttp2.send("xmlGraph="+s+"&fileName="+fileName2+"");
-	*/
-		
+}
+
+function exportToSite(site, s){
+	if(site == "Spreadsheet"){
+		if(document.domain)
+			var w = window.open("http://cs.sru.edu/~gravity/simple_spreadsheet/spreadsheet_offline.html");
+		else
+			var w = window.open("spreadsheet_offline.html")
+	}
+	else if(site == "Grapher")
+	{
+		if(document.domain)
+			var w = window.open("http://cs.sru.edu/~gravity/newGrapher/Grant/Grapher.html");
+		else
+			var w = window.open("../../Grant/grapher.html");
+	}
+	setTimeout(function () { w.postMessage(s, "*"); }, 500);
+}
+
+function exportToClipboard(s){
 	var xmlWindow = window.open("","","width = 700, height = 1000");
 	var heading = xmlWindow.document.createElement("h2");
 	var xmlArea = xmlWindow.document.createElement("textarea");
@@ -709,8 +744,8 @@ function exportXML()
 	xmlArea.value = s;
 	xmlWindow.document.body.appendChild(heading);
 	xmlWindow.document.body.appendChild(xmlArea);
+}
 	
-}//end exportXML
 function findIndex(targetNode)
 {
    for(var p=0;p<nodeArray.length;p++) //looks through all of the nodes and gets the index of the target one
@@ -765,6 +800,7 @@ Hello please enter in your properly formatted graph data to begin a traversal.
 </tr>
 </table>
 <input type="button" id="start" value="Start Traversal" onclick="beginTraversal()">
+<input type="button" id="load" value="Load Site from File" onclick="loadFile(window)">
 </form>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.2" id="svg" width="1%" height="1%" viewbox="0 0 1366 768" preserveAspectRatio="none">
 

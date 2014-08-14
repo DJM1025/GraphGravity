@@ -37,7 +37,7 @@ window.addEventListener("message", receiveMessage, false);
 
 function receiveMessage(event)
 {
-	beginTraversal(event.data);
+	document.getElementById("input").value = event.data;
 }
 
 function readTextFile()

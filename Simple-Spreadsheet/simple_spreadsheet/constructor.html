@@ -42,21 +42,30 @@ function receiveMessage(event)
 
 function readTextFile()
 {
-	xmlhttp = new XMLHttpRequest();
-	xmlhttp.open("GET","wordlist2.txt",true);
-	xmlhttp.onreadystatechange=function(){
-		if(xmlhttp.readyState ==4)
-		{
-		   fileText = xmlhttp.responseText;
-		   textArray = fileText.split("\n");
+	if(document.domain){  
+		xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET","wordlist2.txt",true);
+		xmlhttp.onreadystatechange=function(){
+			if(xmlhttp.readyState ==4)
+			{
+			   fileText = xmlhttp.responseText;
+			   textArray = fileText.split("\n");
+			}
 		}
+		xmlhttp.send(); 
 	}
-	xmlhttp.send(); 
+	else {  //Offline "random" words 
+		textArray = ['absorb', 'abound', 'abolish', 'doorman', 'eatery', 
+		'fine', 'nice', 'ice', 'lake', 'tower', 'duke', 'pet', 'blanket', 
+		'newspaper', 'quickly', 'alternatively', 'catch', 'celebrate',
+		'television', 'silently', 'gregarious'];
+	}
 }
 
 function randomWord()
 {
 	word = textArray[Math.floor(Math.random()*textArray.length)];
+	textArray.splice(textArray.indexOf(word), 1);    //Remove a word when it is used (prevents repeating words)
 	return word.charAt(0).toUpperCase() + word.slice(1);
 }
 

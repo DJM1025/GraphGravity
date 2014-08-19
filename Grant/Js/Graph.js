@@ -1174,6 +1174,22 @@ window.addEventListener("load", function loadGraph() {
         var edge = lowNode.edges[highNode.nodeNum];
         edge.parentNode.removeChild(edge);
         delete lowNode.edges[highNode.nodeNum];
+		
+		for(var x = 0; x < node1.edgesList.length; x++)
+		{
+			if(node1.edgesList[x] == node2.nodeNum)
+				node1.edgesList.splice(x,1);
+		}
+		
+		for(var y = 0; y < node2.edgesList.length; y++)
+		{
+			if(node2.edgesList[y] == node1.nodeNum)
+				node2.edgesList.splice(y,1);
+		}
+
+		
+		delete node1.edgesList[node2.nodeNum];
+		delete node2.edgesList[node1.nodeNum];
 
         delete node1.adjacentNodes[node2.nodeNum];
         delete node2.adjacentNodes[node1.nodeNum];

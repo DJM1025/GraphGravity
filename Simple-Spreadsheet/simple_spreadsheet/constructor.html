@@ -675,8 +675,10 @@ function exportXML()
 {
 	var w = window.open("","","width = 300, height = 200");
 	w.document.body.innerHTML = "<form id = 'format'";
-	w.document.body.innerHTML += "<input type='radio' name = 'app' id ='grapher'>Open in Grapher</input><br>";
-	w.document.body.innerHTML += "<input type='radio' name = 'app' id ='spreadsheet'>Open in Spreadsheet</input><br>";
+	if(document.domain) {
+		w.document.body.innerHTML += "<input type='radio' name = 'app' id ='grapher'>Open in Grapher</input><br>";
+		w.document.body.innerHTML += "<input type='radio' name = 'app' id ='spreadsheet'>Open in Spreadsheet</input><br>";
+	}
 	w.document.body.innerHTML += "<input type='radio' checked name = 'app' id ='xml'>Show XML</input><br>";
 	w.document.body.innerHTML += "<input type='radio' name = 'app' id = 'file'>Save in file</input><br>"
 	w.document.body.innerHTML += "</form>";

@@ -342,9 +342,9 @@ function displayCurrentRoom(currentNode,mode)
     var group3 = document.createElementNS(xmlns,"g");
     group3.addEventListener("click",function(){generateNodesInRoom(currentNode,0),false});
     var traverse = document.createElementNS(xmlns,"rect");
-    traverse.setAttributeNS(null,"x",(w-490));
+    traverse.setAttributeNS(null,"x",(w-385));
 	traverse.setAttributeNS(null,"y",30);
-	traverse.setAttributeNS(null,"width",100);
+	traverse.setAttributeNS(null,"width",80);
 	traverse.setAttributeNS(null,"height",40);
 	traverse.setAttributeNS(null,"fill",nodeColors[currentNode]);
 	
@@ -352,9 +352,9 @@ function displayCurrentRoom(currentNode,mode)
 
 	
 	var traverseText = document.createElementNS(xmlns,"text");
-	traverseText.setAttributeNS(null,"x",(w-480));
+	traverseText.setAttributeNS(null,"x",(w-380));
 	traverseText.setAttributeNS(null,"y",60);
-	traverseText.setAttributeNS(null,"font-size","25");
+	traverseText.setAttributeNS(null,"font-size","20");
 	traverseText.textContent = "Traverse";
 	if(mode == 0){
 		traverse.setAttributeNS(null,"stroke","red");
@@ -371,16 +371,16 @@ function displayCurrentRoom(currentNode,mode)
 	var group2 = document.createElementNS(xmlns,"g");
 	group2.addEventListener("click",function(){generateNodesInRoom(currentNode,1)},false);
 	var words = document.createElementNS(xmlns,"rect");
-	words.setAttributeNS(null,"x",(w-370));
+	words.setAttributeNS(null,"x",(w-290));
 	words.setAttributeNS(null,"y",30);
-	words.setAttributeNS(null,"width",100);
+	words.setAttributeNS(null,"width",75);
 	words.setAttributeNS(null,"height",40);
 	words.setAttributeNS(null,"fill",nodeColors[currentNode]);
 	words.setAttributeNS(null,"stroke-width",2);
 	var wordsText = document.createElementNS(xmlns,"text");  //creates the text that is linked with the other node
-	wordsText.setAttributeNS(null,"x",(w-355));
+	wordsText.setAttributeNS(null,"x",(w-275));
 	wordsText.setAttributeNS(null,"y",60);
-	wordsText.setAttributeNS(null,"font-size","25");
+	wordsText.setAttributeNS(null,"font-size","21");
 	wordsText.textContent = "Words";
 	if(mode == 1)
 	{
@@ -398,16 +398,16 @@ function displayCurrentRoom(currentNode,mode)
 	var group = document.createElementNS(xmlns,"g");
 	group.addEventListener("click",function(){generateNodesInRoom(currentNode,2)},false);
 	var colors = document.createElementNS(xmlns,"rect");
-	colors.setAttributeNS(null,"x",(w-250));
+	colors.setAttributeNS(null,"x",(w-195));
 	colors.setAttributeNS(null,"y",30);
-	colors.setAttributeNS(null,"width",100);
+	colors.setAttributeNS(null,"width",75);
 	colors.setAttributeNS(null,"height",40);
 	colors.setAttributeNS(null,"fill",nodeColors[currentNode]);
 	colors.setAttributeNS(null,"stroke-width",2);
 	var colorsText = document.createElementNS(xmlns,"text");  //creates the text that is linked with the other node
-	colorsText.setAttributeNS(null,"x",(w-235));
+	colorsText.setAttributeNS(null,"x",(w-180));
 	colorsText.setAttributeNS(null,"y",60);
-	colorsText.setAttributeNS(null,"font-size","25");
+	colorsText.setAttributeNS(null,"font-size","21");
 	colorsText.textContent = "Colors";
 	if(mode == 2)
 	{
@@ -425,16 +425,16 @@ function displayCurrentRoom(currentNode,mode)
 	var exportGroup = document.createElementNS(xmlns, "g");
 	exportGroup.addEventListener("click", function () {exportXML()}, false);
 	var exBtn = document.createElementNS(xmlns, "rect");
-	exBtn.setAttributeNS(null, "x", (w-130));
+	exBtn.setAttributeNS(null, "x", (w-100));
 	exBtn.setAttributeNS(null, "y", 30)
-	exBtn.setAttributeNS(null, "width", 100);
+	exBtn.setAttributeNS(null, "width", 75);
 	exBtn.setAttributeNS(null,"height",40);
 	exBtn.setAttributeNS(null,"fill",nodeColors[currentNode]);
 	exBtn.setAttributeNS(null,"stroke-width",2);
 	var exportTxt = document.createElementNS(xmlns, "text");
-	exportTxt.setAttributeNS(null, "x", (w-115));
+	exportTxt.setAttributeNS(null, "x", (w-85));
 	exportTxt.setAttributeNS(null, "y", 60);
-	exportTxt.setAttributeNS(null,"font-size","25");
+	exportTxt.setAttributeNS(null,"font-size","21");
 	exportTxt.textContent = "Export";
 	if(mode == 3)
 	{

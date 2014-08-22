@@ -88,6 +88,8 @@ function initalizeArray(nodes)
 		    nodeContents[i] += randomWord();
 		 else if(wordChoice==1)
 		    nodeContents[i] += "";
+		 else if(wordChoice ==2)
+			nodeContents[i] +=  xmlDoc.getElementsByTagName("node")[i].getAttribute("label");
 	}
 }//end initalizeArray()
 function initalizeNodes()
@@ -214,7 +216,7 @@ function checkBoxData()
 	else 
 		colorChoice = 3;
 	
-	for(var z=0; z < 2;z++) //get the word setup the user wants
+	for(var z=0; z < 3;z++) //get the word setup the user wants
 	{
 		if(document.display.words[z].checked)
 		  wordChoice = z;
@@ -463,29 +465,42 @@ function displayCurrentRoom(currentNode,mode)
 	}
 	group4.appendChild(rect);
 	group4.appendChild(text);
-	
-	var request = new XMLHttpRequest();  
-	request.open('GET', nodeImages[currentNode], true);
-	request.onreadystatechange = function(){
-		if (request.readyState === 4)
+	if(document.domain)
 		{
-			if (request.status === 404) {  
-				alert("Oh no, it does not exist!");
-			}
-			else
+		var request = new XMLHttpRequest();  
+		request.open('GET', nodeImages[currentNode], true);
+		request.onreadystatechange = function(){
+			if (request.readyState === 4)
 			{
-				var loadedImage = document.createElementNS(xmlns,"image");
-				loadedImage.setAttributeNS(null,"height","100");
-				loadedImage.setAttributeNS(null,"width","100");
-				loadedImage.setAttributeNS(null,"x", w-200);
-				loadedImage.setAttributeNS(null,"y", h-100);
-				loadedImage.setAttributeNS(xlink,"href",nodeImages[currentNode]);
-				loadedImage.setAttributeNS(null,"visibility","visible");
-				group4.appendChild(loadedImage);
+				if (request.status === 404) {  
+					alert("Oh no, it does not exist!");
+				}
+				else
+				{
+					var loadedImage = document.createElementNS(xmlns,"image");
+					loadedImage.setAttributeNS(null,"height","100");
+					loadedImage.setAttributeNS(null,"width","100");
+					loadedImage.setAttributeNS(null,"x", w-200);
+					loadedImage.setAttributeNS(null,"y", h-100);
+					loadedImage.setAttributeNS(xlink,"href",nodeImages[currentNode]);
+					loadedImage.setAttributeNS(null,"visibility","visible");
+					group4.appendChild(loadedImage);
+				}
 			}
-		}
-	};
-	request.send();
+		};
+		request.send();
+	}
+	else if( nodeImages[currentNode] != "")
+	{
+		var loadedImage = document.createElementNS(xmlns,"image");
+		loadedImage.setAttributeNS(null,"height","100");
+		loadedImage.setAttributeNS(null,"width","100");
+		loadedImage.setAttributeNS(null,"x", w-200);
+		loadedImage.setAttributeNS(null,"y", h-100);
+		loadedImage.setAttributeNS(xlink,"href",nodeImages[currentNode]);
+		loadedImage.setAttributeNS(null,"visibility","visible");
+		group4.appendChild(loadedImage);
+	}
 
 	
 	
@@ -793,6 +808,7 @@ Hello please enter in your properly formatted graph data to begin a traversal.
 </td>
 <td><input type="radio" name="words" value="0">Random Words<br>
 <input type="radio" checked name="words">Blank nodes<br>
+<input type="radio" name="words">Imported Labels<br>
 </td>
 <td>
 <input type="radio" checked name="values">Gravity Values<br>

@@ -54,7 +54,7 @@ function exportToGrapher(){
 	setTimeout(function () { w.postMessage(cellsToGrapher(), "*"); }, 500); //Give page some time to properly load before sending the data
 }
 
-window.addEventListener("message", receiveMessage, false);
+window.addEventListener("message", receiveMessage, false); 
 
 function receiveMessage(event)
 {
@@ -1495,9 +1495,7 @@ function removeSpCols(startR, endR)
 		updateGravity(i);
 		for(var j = i; j <= sys.cells.length; j++)
 		{
-			if(sys.cells[j+1]){
-				shiftArrays(j,j+1);
-			}
+			shiftArrays(j,j+1);
 		}
 	}
 }

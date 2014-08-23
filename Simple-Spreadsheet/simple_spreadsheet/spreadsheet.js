@@ -1251,6 +1251,14 @@ function toHex(n) {
 	return "0123456789ABCDEF".charAt((n-n%16)/16) + "0123456789ABCDEF".charAt(n%16);
 }
 
+function isEmpty(i){
+	var empty = false;
+	if(!sys.cells[i][colNames.indexOf("Node Name")] && !sys.cells[i][colNames.indexOf("X")] && !sys.cells[i][colNames.indexOf("Y")]
+		&& !sys.cells[i][colNames.indexOf("Color")] && !sys.cells[i][colNames.indexOf("Label")])
+		empty = true;
+	return empty;
+}
+
 //Save Grapher code and any changes made to send back to the user
 function cellsToGrapher()
 {
@@ -1260,7 +1268,7 @@ function cellsToGrapher()
 	//sys.cells[rows][cols][3 = info inside cells]
 	var out = "<graph> \n"
 	for (var i =0; i < sys.cells.length; i++) {
-		if(sys.cells[i])
+		if(sys.cells[i] && !isEmpty(i))
 		{
 			if(sys.cells[i][colNames.indexOf("Node Name")])
 				out += "<node id=\""+sys.cells[i][colNames.indexOf("Node Name")][3]+"\"";  //gets the id

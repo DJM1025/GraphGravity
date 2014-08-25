@@ -6,7 +6,7 @@
 
 //SVGSVGElement.prototype.loadImportWindow = function () {
 function LoadImportWindow(parent) {
-
+    var root = document.documentElement;
     var xmlns = "http://www.w3.org/2000/svg";
     var xlink = "http://www.w3.org/1999/xlink";
     var open = null;
@@ -14,12 +14,15 @@ function LoadImportWindow(parent) {
     var impExpObj = {
         'openTab': null,
         'open': function open(/*importExport,*/ openTab) {
+            root.removeEventListener("mousedown", Graph.disableTextHighlight, false);
             this.openTab(openTab);
             parent.appendChild(importWindowGroup);
+
         },
         'close': function close() {
             //window.removeEventListener("resize", resizeWindow, false);
             //reset first
+            root.addEventListener("mousedown", Graph.disableTextHighlight, false);
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke");
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke-width");
             parent.removeChild(importWindowGroup);

@@ -75,7 +75,8 @@ window.addEventListener("load", function loadGraph() {
     var root = document.documentElement;
     var parentSVG = document.getElementById("parentSVG");
     //prevent text highlighting
-    root.addEventListener("mousedown", function (event) { event.preventDefault(); }, false); //only remove when the import window is open
+    //this disables the text area in import/export window
+    //root.addEventListener("mousedown", function (event) { event.preventDefault(); }, false); //only remove when the import window is open    
 
     //add drawBoundingRect method to SVGElement prototype (for debugging purposes)
     SVGElement.prototype.drawBoundingRect = function drawBoundingRect() {
@@ -266,6 +267,10 @@ window.addEventListener("load", function loadGraph() {
     };
 
     //graph global properties
+    Graph.disableTextHighlight = function (event) {
+        event.preventDefault();
+    };
+    root.addEventListener("mousedown", Graph.disableTextHighlight, false);
     Graph.nodeWidth = 25;
     Graph.nodeHeight = 20;
     Graph.numberOfNodes = 0;

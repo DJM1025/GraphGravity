@@ -1,0 +1,266 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="stylesheet" type="text/css" href="styles.css"><title>Rapid Prototyping of Web Site Generation</title>
+
+<meta name="description" content="Abstract of the presentation">
+<meta name="keywords" content="conference proceedings, keywords of the presentation">
+<!-- saved from url=(0022)http://internet.e-mail -->
+</head>
+ 
+<body>
+<div class="article" lang="en">
+<div class="titlepage">
+
+<h1 class="title" style="clear: both;"><a id="L1T2">Rapid Prototyping of Web Site Generation</a></h1>
+<div align="center">
+Dr. Deborah Whitfield <br>
+Mr. Nicholas Botzer<br>
+Mr. Zachary Petrusch<br>
+Dr. David Dailey<br>
+Mr. Grant Denmeand<br>
+Mr. Tyler Bassett<br>
+<br>
+<font color="green">Slippery Rock University</font>
+</div>
+
+<!--
+Site development is haphazard at best - some start by designing a page, others add pages to existing sites. 
+Rarely is the navigability of the site considered. We have created a tool 
+using SVG for the rapid prototyping of web site structures. 
+The tool permits the user to design a web site by either a graph or via a 
+spreadsheet. The user can create a graph that represents the connectivity of 
+the web site and then export the structure to a skeleton website or import the 
+structure into a spreadsheet. Or the user can create the web pages completely 
+in the spreadsheet by specifying links, colors, images, and text for each page. 
+Then the rapid prototype generates a test site for the user to walk through and
+ see the structure. Researchers may then test the navigability of the site as a 
+ function of various properties of connectivity.
+ 
+The tool uses SVG, XML and simple spreadsheet
+(http://www.simple-groupware.de/cms/spreadsheet/home  - 
+an open-source spreadsheet software for use in browsers). 
+It is built on Grapher (as previously presented at SVG Open 2009). 
+Grapher is used to create graphs for page interconnections and generates 
+XML code that can be input into the spreadsheet so that the designer can add data to pages.
+
+This work also includes force-directed layout of the graphs to help visualize
+both the connectivity and visitors' traffic in graphs.  Central to much of the 
+design has been the use of graph theoretic metaphors for navigability, namely 
+graph gravity, landmarks and vantage points. Previous work has shown that graph
+gravity can be used to facilitate users' navigation of the connective structure of a web site.
+-->
+<h2 class="title" style="clear: both;"><a id="L1T2">Overview</a></h2>
+<ul>
+<li>Rapid prototyping of web site structures</li>
+<li>User can create a graph that represents the connectivity of 
+the web site </li>
+<li> Export the structure to a skeleton website </li>
+<li>Import the 
+structure into a spreadsheet </li>
+<li>Populate the web pages fully in the spreadsheet specifying links, colors, images, and text </li> 
+<li>Generate a test site for the user to walk through</li>
+<li>Test the navigability of the site </li>
+</ul>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Grapher</a></h2>
+<ul><li>Grapher was originally developed in 1987 ported to SVG in 2009</li>
+<li>GUI that permits graph building</li>
+<li>Written with HTML, Javascript, and SVG
+</li> 
+<li>Features include:</li>
+<ul><li>graph scaling </li>
+<li>graph compliment</li>
+<li>extrude (i.e., Multiply by K<sub>2</sub>)</li>
+</ul>
+<li>Utility:</li>
+<ul><li> Research the types of graphs that are easy to navigate</li>
+<li>Optimization of web site design for ease of navigation</li>
+<li>Used for testing Mathematical hypotheses regarding graph navigability</li>
+</ul>
+</ul>
+
+<img src="peterson.jpg" align="center">
+<caption>
+<P>Figure 1. Peterson Graph created in Grapher
+<caption>
+</P>
+<a href="GraphGravity/Grant/grapher.html"> Demonstration of grapher</a>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Constructor</a></h2>
+<ul><li>Developed by the SRU Virtual Gravity Group in 2013  </li>
+<li>Creates a prototype of a website based on a graph structure</li>
+<li>Not intended to be a web <b>page design</b> tool, rather a web <b>site layout</b> tool</li>
+<li>Graph nodes are displayed as web pages
+</li> 
+<li>Graph edges are displayed as buttons ("doors") that link to other pages</li>
+<li>Each page's background color is the same as the color of the door  that leads to it</li>
+<li>Constructor's options include:</li>
+<ul><li>Selection of words on each page</li>
+<li>Selection of a numbering scheme for the pages</li>
+<li>Create a search game with goal of finding all pages and returning home</li>
+<li>Create a search game to find object (e.g., turkey) and return them to home base</li>
+<li>Other games to follow ... </li> <!--blockade games, multiperson games -->
+</ul>
+<li>Constructor used to determine ease of site navigation</li>
+</ul>
+
+<img src="constructor.jpg" align="center">
+<caption>
+<P>Figure 2. Constructor Options
+<caption>
+</P>
+<a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/constructor.html">
+Constructor</a>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Grapher and Constructor Communication</a></h2>
+<ul>
+<li>Grapher and Constructor use the same XML structure</li>
+<li>Both tools permit importing and exporting of graphs and updates</li> 
+<li>Data maintained even if not visible in particular tool<br>
+e.g., the x,y coordinates of a node are not used by the constructor</li>
+</ul>
+<image src="XMLsample.jpg">
+<caption>
+<P>Figure 3. Peterson Graph created in XML of labeled Peterson graph
+<caption>
+</P>
+<P>The previous peterson graph that has been labeled with words from the XML above in Figure 3,
+can be seen in Figure 4</P>
+<image src="PetersonLabeled.jpg">
+<caption>
+<P>Figure 4. Labeled Peterson Graph Viewed in Grapher
+<caption>
+</P>
+<a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/constructor.html">
+Demonstration of Constructor on Peterson Graph</a>
+<br><P>
+A simpler graph will be used for further explanations
+<table border="0">
+<tr>
+<td width="30%"><img src="graph2Labeled.jpg">
+</td>
+<td><img src="graph2Traverse.jpg" >
+</td>
+</tr>
+<tr> <td>
+Figure 5. Simple Graph
+</td>
+<td>
+Figure 6. Simple Graph in Constructor
+</td>
+</tr>
+</table>
+<p>
+Demonstration of 
+<a href="GraphGravity/Grant/grapher.html">Grapher</a>,
+<a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/constructor.html"> Constructor</a>
+and traversal</p>
+<h2 class="title" style="clear: both;"><a id="L1T2">Spreadsheet</a></h2>
+<ul>
+<li>Spreadsheet representation of a web site is not intuituve</li>
+<li>Each row of spreadsheet represents a web page</li>
+<li>Spreadsheet columns are various properties of the page</li>
+<li>Spreadsheet was originally developed by Simple Groupware(http://www.simple-groupware.de/cms/spreadsheet/home  - 
+an open-source spreadsheet software for use in browsers)</li>
+<ul><li>Exports to JSON </li> <!--Javascript Object Notation -->
+<li>Part of a larger spreadsheet project</li>
+<li>General use</li>
+<li>Typical spreadsheet options (Adding columns, chart generation,...)</li>
+</ul>
+<li>Modified by SRU Virtual Gravity Group to integrate with both Grapher and Constructor using XML</li> 
+<li>Used in this project to control:</li>
+<ul>
+
+<li>node number </li>
+<li>node name</li>
+<li>edges</li>
+<li>automatic update of edges when a row is added or deleted</li>
+<li>color of page</li>
+<li>image for page (local or URL)</li>
+</ul>
+</ul>
+<table border="0">
+<tr>
+<td width="30%"><img src="spreadsheet.jpg">
+</td>
+<td width="30%"><img src="graph2Labeled.jpg">
+</td>
+</tr>
+<tr> <td>
+Figure 7. Spreadsheet View of Simple Graph
+</td>
+<td>
+Figure 5. Simple Graph
+</td>
+</tr>
+</table>
+
+<br>
+<a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/spreadsheet_offline.html"> 
+Spreadsheet Demonstration</a>
+
+<hr>
+<h3 class="title"><a id="L2T3">Constructor revisited </a></h3>
+<ul>
+<li>Constructor and Spreadsheet use the same XML structures</li> 
+<li>Constructor generates a web site protoype with additional page information
+imported from constructor</li> 
+<li>Page design is not part of the project</li> 
+<li>Properties of the page imported from Spreadsheet provide conceptual idea for a prototype of web site</li> 
+</ul>
+
+Demonstration of 
+<a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/spreadsheet_offline.html"> Spreadsheet</a>
+interaction with 
+<a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/constructor.html">Constructor</a>
+
+<hr>
+<h3 class="title"><a id="L2T3">Grapher Revisited </a></h3>
+<ul>
+<li>Grapher uses the same XML structure as both Constructor and Spreadsheet</li> 
+<li>Changes made to the node connectivity via Spreadsheet can be viewed in Grapher</li>  
+</ul>
+
+Demonstration of 
+<a href="GraphGravity/Grant/grapher.html">Grapher</a>
+interaction with
+<a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/spreadsheet_offline.html"> Spreadsheet</a>
+
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Related Work and 
+Future Directions</a></h2>
+<ul>
+<li>Enhancement of page layout in Constructor</li>
+<li>Making images visible on the nodes in Grapher</li>
+<li>Additional games for Constructor</li>
+<li>Website navigability and optimization</li>
+<li>Use of 
+<a href="http://cs.sru.edu/~gravity/Bassett/grapher.html">Force directed layout </a>using D3 when x,y coordinates are not specificied</li>
+<table border="0">
+<tr>
+<td width="40%"><img src="PetersonMess.jpg">
+</td>
+<td><img src="Forced1.jpg">
+</td>
+</tr>
+<tr> <td>
+Figure 8. Confused Peterson Graph 
+</td>
+<td>
+Figure 9. Peterson Graph after Force Directed Layout
+</td>
+</tr>
+</table>
+<br>
+<li>Future use of graphs for traffic visualization</li>
+<ul><li>Illustrate the nodes visited, edges taken </li>
+<li>Collapse hot spots into a node</li>
+<li>Make visible edges that are traversed frequently</li>
+<li>Use live data</li>
+
+
+</ul>
+
+</ul>
+<h2 class="title" style="clear: both;"><a id="L1T2">Questions?</a></h2>
+
+</body></html>

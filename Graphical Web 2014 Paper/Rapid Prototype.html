@@ -155,29 +155,12 @@ Demonstration of
 <a href="GraphGravity/Simple-Spreadsheet/simple_spreadsheet/constructor.html"> Constructor</a>
 and traversal</p>
 <h2 class="title" style="clear: both;"><a id="L1T2">Spreadsheet</a></h2>
-<ul>
-<li>Spreadsheet representation of a web site is not intuituve</li>
-<li>Each row of spreadsheet represents a web page</li>
-<li>Spreadsheet columns are various properties of the page</li>
-<li>Spreadsheet was originally developed by Simple Groupware(http://www.simple-groupware.de/cms/spreadsheet/home  - 
-an open-source spreadsheet software for use in browsers)</li>
-<ul><li>Exports to JSON </li> <!--Javascript Object Notation -->
-<li>Part of a larger spreadsheet project</li>
-<li>General use</li>
-<li>Typical spreadsheet options (Adding columns, chart generation,...)</li>
-</ul>
-<li>Modified by SRU Virtual Gravity Group to integrate with both Grapher and Constructor using XML</li> 
-<li>Used in this project to control:</li>
-<ul>
 
-<li>node number </li>
-<li>node name</li>
-<li>edges</li>
-<li>automatic update of edges when a row is added or deleted</li>
-<li>color of page</li>
-<li>image for page (local or URL)</li>
-</ul>
-</ul>
+The representation of a website in a spreadsheet format is not intuitive. However, representing a site in such a way can have major advantages when it comes to 
+viewing the overall structure of the site and the contents of each page. For the representation to work every row on the spreadsheet represents a page on the website, or a node on a graph. The columns of the spreadsheet represent various attributes that a page can contain. These attributes include things like page name, edges or links to other pages, color of the page, and page content such as images. 
+<br><br>
+An open source project was used and adapted by the Slippery Rock University Virtual Gravity Group in order to meet the needs of the project. The original project was created by Simple Groupware and mostly functioned as a free, open-source alternative to a spreadsheet program like Excel, but browser based. In order to adapt the program for use within the Virtual Gravity Group a few things needed changed. Mainly the program needed to be able to interact and communicate with the pre-existing softwares created by the group; Grapher and Constructor. For this to occur the spreadsheet needed to be edited to create and accept Graph XML. The program also needed to perform some graph and website specific tasks, such as automatically removing edges to deleted rows. 
+
 <table border="0">
 <tr>
 <td width="30%"><img src="spreadsheet.jpg">

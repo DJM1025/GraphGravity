@@ -62,21 +62,12 @@ structure into a spreadsheet </li>
 </ul>
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Grapher</a></h2>
-<ul><li>Grapher was originally developed in 1987 ported to SVG in 2009</li>
-<li>GUI that permits graph building</li>
-<li>Written with HTML, Javascript, and SVG
-</li> 
-<li>Features include:</li>
-<ul><li>graph scaling </li>
-<li>graph compliment</li>
-<li>extrude (i.e., Multiply by K<sub>2</sub>)</li>
-</ul>
-<li>Utility:</li>
-<ul><li> Research the types of graphs that are easy to navigate</li>
-<li>Optimization of web site design for ease of navigation</li>
-<li>Used for testing Mathematical hypotheses regarding graph navigability</li>
-</ul>
-</ul>
+Grapher is a tool that can be used to design and test different types of Graphs. This tool is extremely useful for someone who is interested in studying Graph Theory. Grapher was originally developed in 1987 and ported to SVG in 2009. The new version of Grapher is written with HTML,javascript, and SVG. Grapher mainly uses javascript for handling various functions that can be performed on the graph. A few of the features that Grapher offers to the end user are graph scaling, graph compliment, and extruding.
+<br>
+<br>
+The SRU Virtual Gravity Group has used Grapher for many different functions of research. The first utility is has been used for is researching which types of graphs are easy to navigate. To test these various graphs they can be looked at as websites that people can then navigate. A graph can be seen as a website in that every node is a webpage and every edge is a link to another page. By looking at a graph in this way Grapher can then be used for Optimization of web site design to ease an indivduals navigation.
+<br>
+<br>
 
 <img src="peterson.jpg" align="center">
 <caption>
@@ -86,22 +77,12 @@ structure into a spreadsheet </li>
 <a href="GraphGravity/Grant/grapher.html"> Demonstration of grapher</a>
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Constructor</a></h2>
-<ul><li>Developed by the SRU Virtual Gravity Group in 2013  </li>
-<li>Creates a prototype of a website based on a graph structure</li>
-<li>Not intended to be a web <b>page design</b> tool, rather a web <b>site layout</b> tool</li>
-<li>Graph nodes are displayed as web pages
-</li> 
-<li>Graph edges are displayed as buttons ("doors") that link to other pages</li>
-<li>Each page's background color is the same as the color of the door  that leads to it</li>
-<li>Constructor's options include:</li>
-<ul><li>Selection of words on each page</li>
-<li>Selection of a numbering scheme for the pages</li>
-<li>Create a search game with goal of finding all pages and returning home</li>
-<li>Create a search game to find object (e.g., turkey) and return them to home base</li>
-<li>Other games to follow ... </li> <!--blockade games, multiperson games -->
-</ul>
-<li>Constructor used to determine ease of site navigation</li>
-</ul>
+The Website Constructor was a tool developed by the Virtual Gravity Group in 2013 that allows for the creation of a prototype website based on a given graph structure. A key point to keep in mind about the constructor is that it's purpose is not to be a web page deisgn tool but instead be a web site layout tool. The Constructor creates each website by taking every node of the given graph and making a web page for it. Each of these pages will be given a background color and a word to correspond with it that gets displayed at the top. The construcotr then displays all of the edges from that given node in the webpage by creating buttons that link to other pages. Each of these buttons color and word on it reflect the color of that webpage and it's given word. This allows someone navigating through one of these webpages to identify different pages and the connections that each one has.
+<br>
+<br>
+The Construcotr allows for a user to select a variety of choices for how their website will be displayed. The first is how the various colors will show up for each page. The user can select random colors, pick a color which gives every page the same color, no colors, or Imported Colors which takes the nodes colors. Another editable option is whether the pages will have words and numbers associated with them which can be changed. The last feature of constructor is that it allows for various games to be played on these websites. The first game is simple and requires a user to visit all of the pages and then return home to succedd. The second game has the user find an object(e.g. turkey) and bring it back to the starting location. Once all of the objects have been collected the user is done playing. The ultimate goal of these games is to see how long it takes to finish them so we can determine ease of site navigation.
+<br>
+<br>
 
 <img src="constructor.jpg" align="center">
 <caption>
@@ -112,12 +93,11 @@ structure into a spreadsheet </li>
 Constructor</a>
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Grapher and Constructor Communication</a></h2>
-<ul>
-<li>Grapher and Constructor use the same XML structure</li>
-<li>Both tools permit importing and exporting of graphs and updates</li> 
-<li>Data maintained even if not visible in particular tool<br>
-e.g., the x,y coordinates of a node are not used by the constructor</li>
-</ul>
+
+Grapher and Constructor are two tools that work well together for generating websites. Both tools have the same XML structure for Graphs which allows for easy communication between the two. Grapher and Constructor both allow for a user to export the XML data as well as import it back into the tool or into each other for use. This is especially useful once you have created your website in construcotr if you wish to see an overhead layout of it in grapher with the given colors and random words. Also all of the data is maintainted even if it's not visible in that tool. For instance Constructor doesn't use the x and y values but still stores them so when you expor the XML from constructor it's not lost.
+<br>
+<br>
+
 <image src="XMLsample.jpg">
 <caption>
 <P>Figure 3. Peterson Graph created in XML of labeled Peterson graph

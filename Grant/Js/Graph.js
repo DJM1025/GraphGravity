@@ -67,7 +67,7 @@ function () {
 */
 window.addEventListener("load", function loadGraph() {
     //SVG namespaces;
-    var xmlns = "http://www.w3.org/2000/svg";
+    xmlns = "http://www.w3.org/2000/svg";
     var xlink = "http://www.w3.org/1999/xlink";
     var svgXmlNs = "http://www.w3.org/2000/xmlns/";
 

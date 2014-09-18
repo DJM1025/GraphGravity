@@ -49,17 +49,30 @@ graph gravity, landmarks and vantage points. Previous work has shown that graph
 gravity can be used to facilitate users' navigation of the connective structure of a web site.
 -->
 <h2 class="title" style="clear: both;"><a id="L1T2">Overview</a></h2>
-<ul>
-<li>Rapid prototyping of web site structures</li>
-<li>User can create a graph that represents the connectivity of 
-the web site </li>
-<li> Export the structure to a skeleton website </li>
-<li>Import the 
-structure into a spreadsheet </li>
-<li>Populate the web pages fully in the spreadsheet specifying links, colors, images, and text </li> 
-<li>Generate a test site for the user to walk through</li>
-<li>Test the navigability of the site </li>
-</ul>
+Site development is haphazard at best - some start by designing a page, others add pages to existing sites. 
+Rarely is the navigability of the site considered. We have created a tool 
+using SVG for the rapid prototyping of web site structures. 
+The tool permits the user to design a web site by either a graph or via a 
+spreadsheet. The user can create a graph that represents the connectivity of 
+the web site and then export the structure to a skeleton website or import the 
+structure into a spreadsheet. Or the user can create the web pages completely 
+in the spreadsheet by specifying links, colors, images, and text for each page. 
+Then the rapid prototype generates a test site for the user to walk through and
+ see the structure. Researchers may then test the navigability of the site as a 
+ function of various properties of connectivity.
+ 
+The tool uses SVG, XML and simple spreadsheet
+(http://www.simple-groupware.de/cms/spreadsheet/home  - 
+an open-source spreadsheet software for use in browsers). 
+It is built on Grapher (as previously presented at SVG Open 2009). 
+Grapher is used to create graphs for page interconnections and generates 
+XML code that can be input into the spreadsheet so that the designer can add data to pages.
+
+This work also includes force-directed layout of the graphs to help visualize
+both the connectivity and visitors' traffic in graphs.  Central to much of the 
+design has been the use of graph theoretic metaphors for navigability, namely 
+graph gravity, landmarks and vantage points. Previous work has shown that graph
+gravity can be used to facilitate users' navigation of the connective structure of a web site.
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Grapher</a></h2>
 Grapher is a tool that can be used to design and test different types of Graphs. This tool is extremely useful for someone who is interested in studying Graph Theory. Grapher was originally developed in 1987 and ported to SVG in 2009. The new version of Grapher is written with HTML,javascript, and SVG. Grapher mainly uses javascript for handling various functions that can be performed on the graph. A few of the features that Grapher offers to the end user are graph scaling, graph compliment, and extruding.
@@ -191,13 +204,13 @@ interaction with
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Related Work and 
 Future Directions</a></h2>
-<ul>
-<li>Enhancement of page layout in Constructor</li>
-<li>Making images visible on the nodes in Grapher</li>
-<li>Additional games for Constructor</li>
-<li>Website navigability and optimization</li>
-<li>Use of 
-<a href="http://cs.sru.edu/~gravity/Bassett/grapher.html">Force directed layout </a>using D3 when x,y coordinates are not specificied</li>
+
+The current project has many improvements that can be made and are already planned for. One of the additions will be to make the images that can be added in spreadsheet visible in Grapher. When the image shows up in Graph it will be a thumbnail version of it but will allow the user to see what the website will have much better once it's in the constructor. Another improvement that will be made is adding other games to the constructor to be used for testing. Along with this the improvements are looking to be made into how constructor lays out the webpages.
+<br>
+<br>
+The Virtual Gravity Group is also looking to add some new functionalities into Grapher for data visualizations. A Force-directed layout that had been in older versions of Grapher will be re-implemented. In addition a tool will be added that will allow users to observe how people walked through various graphs that were used for navigation testing. Some features for this visualization will be illustrating the nodes visited frequently as well as which edges are traveled the most. 
+Link to 
+<a href="http://cs.sru.edu/~gravity/Bassett/grapher.html">Force directed layout. </a>
 <table border="0">
 <tr>
 <td width="40%"><img src="PetersonMess.jpg">
@@ -213,12 +226,7 @@ Figure 9. Peterson Graph after Force Directed Layout
 </td>
 </tr>
 </table>
-<br>
-<li>Future use of graphs for traffic visualization</li>
-<ul><li>Illustrate the nodes visited, edges taken </li>
-<li>Collapse hot spots into a node</li>
-<li>Make visible edges that are traversed frequently</li>
-<li>Use live data</li>
+
 
 
 </ul>

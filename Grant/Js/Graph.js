@@ -821,7 +821,7 @@ window.addEventListener("load", function loadGraph() {
         nodeText.setAttributeNS(null, "font-size", "12");
         nodeText.setAttributeNS(null, "font-weight", "bold");
         nodeText.setAttributeNS(null, "x", nodeText.X = (node.X + (nodeTextSize.length * 2.5 + 10)));
-        nodeText.setAttributeNS(null, "y", nodeText.Y = (node.Y + 10));
+        nodeText.setAttributeNS(null, "y", nodeText.Y = (node.Y + Graph.nodeHeight / 2));
         nodeGroup.appendChild(nodeText);
 
         Graph.nodes[nodeGroup.nodeNum] = Graph.nodesGroup.appendChild(nodeGroup);

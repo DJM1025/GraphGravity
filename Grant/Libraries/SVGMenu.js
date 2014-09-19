@@ -457,7 +457,10 @@ window.addEventListener("load", function () {
         menu.addSubItem(["Graph", "Gravity"], "Find Flavoring");
         menu.addSubItem(["Graph", "Gravity"], "Options");
         menu.addSubItem(["Graph"], "Create Random");
-		menu.addSubItem(["Graph"], "Traverse the Graph");
+        menu.addSubItem(["Graph"], "Traverse the Graph");
+		menu.addSubItem(["Graph", "Traverse the Graph"], "Random Start");
+        menu.addSubItem(["Graph", "Traverse the Graph"], "Pick Start Node");
+        menu.addSubItem(["Graph", "Traverse the Graph"], "Use Data");
         menu.addSubItem(["Graph", "Create Random"], "Adjacency Matrix");
         menu.addSubItem(["Graph", "Create Random"], "Visual");
         menu.addSubItem(["Graph", "Create Random"], "Tree");
@@ -554,7 +557,9 @@ window.addEventListener("load", function () {
         menu.bindAction(["Graph", "Gravity", "Find Flavoring"], function () { temp("Graph -> Gravity -> Find Flavoring"); });
         menu.bindAction(["Graph", "Gravity", "Options"], function () { temp("Graph -> Gravity -> Options"); });
 
-		menu.bindAction(["Graph", "Traverse the Graph"], function () {var test = new graphWalker(); test.init()});
+		menu.bindAction(["Graph", "Traverse the Graph", "Random Start"], function () {var test = new graphWalker(); test.init()});
+        //menu.bindAction(["Graph", "Traverse the Graph", "Pick Start Node"], function () {var test = new graphWalker(); test.init()});
+        //menu.bindAction(["Graph", "Traverse the Graph", "Use Data"], function () {var test = new graphWalker(); test.init()});
 
         //GRAPH - CREATE RANDOM
         menu.bindAction(["Graph", "Create Random", "Adjacency Matrix"], function () { temp("Graph -> Create Random -> Adjacency Matrix"); });

@@ -6,4 +6,5 @@
   <script type="text/javascript" xlink:href = "SVGMsgBox.js"></script>
   <script type="text/javascript" xlink:href = "graphLoader.js"></script>
   <script type="text/javascript" xlink:href = ".\Js\traverse.js"></script>
+  <script type="text/javascript" xlink:href = ".\Js\traverseWindow.js"></script>
 </svg>

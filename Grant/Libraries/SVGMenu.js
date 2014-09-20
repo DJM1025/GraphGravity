@@ -558,7 +558,7 @@ window.addEventListener("load", function () {
         menu.bindAction(["Graph", "Gravity", "Options"], function () { temp("Graph -> Gravity -> Options"); });
 
 		menu.bindAction(["Graph", "Traverse the Graph", "Random Start"], function () {var test = new graphWalker(); test.randomStart()});
-        //menu.bindAction(["Graph", "Traverse the Graph", "Pick Start Node"], function () {var test = new graphWalker(); test.init()});
+        menu.bindAction(["Graph", "Traverse the Graph", "Pick Start Node"], function () {var test = new graphWalker(); test.init()});
         //menu.bindAction(["Graph", "Traverse the Graph", "Use Data"], function () {var test = new graphWalker(); test.init()});
 
         //GRAPH - CREATE RANDOM

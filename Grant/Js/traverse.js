@@ -3,6 +3,7 @@ function graphWalker(){
 	this.cx = 500;
 	this.cy = 500;
 	this.color = "black";
+	this.traverseWin = LoadTraverseWindow(parentSVG);
 }
 
 graphWalker.prototype.init = function(){
@@ -12,6 +13,8 @@ graphWalker.prototype.init = function(){
 	circle.setAttributeNS(null,"cy", this.cy);
 	circle.setAttributeNS(null,"fill", this.color);
 	document.getElementById("graphPlane").appendChild(circle);
+
+	this.traverseWin.open();
 }
 graphWalker.prototype.randomStart = function ()
 {

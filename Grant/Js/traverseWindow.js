@@ -232,10 +232,10 @@ function LoadTraverseWindow(parent) {
     bottomPanelGroup.id = "bottomPanelGroup";
     importOuterGroup.appendChild(bottomPanelGroup);
 
-    var importWindowX = pageWidth * .30;
-    var importWindowY = pageHeight * .25;
-    var importWindowWidth = pageWidth * .40;
-    var importWindowHeight = pageHeight * .5;
+    var importWindowWidth = pageWidth * .2;
+    var importWindowHeight = pageHeight * .45;
+    var importWindowX = pageWidth - importWindowWidth;
+    var importWindowY = 0;
 
     var outerRect = document.createElementNS(xmlns, "rect");
     outerRect.addEventListener("mousedown", function (event) {
@@ -267,8 +267,8 @@ function LoadTraverseWindow(parent) {
 
     var tabBgX = importWindowX + tabGroupOffsetX;
     var tabBgY = importWindowY + tabGroupOffsetTop;
-    var tabBgWidth = (importWindowWidth - (tabGroupOffsetX * 2)) / 4;
-    var tabBgHeight = importWindowHeight - (tabGroupOffsetTop * 2.5) - (tabGroupOffsetX / 2);
+    var tabBgWidth = importWindowWidth - 2*tabGroupOffsetX;
+    var tabBgHeight = importWindowHeight - (3/2)*tabGroupOffsetTop;
 
     var tabGroup = document.createElementNS(xmlns, "g");
     tabGroup.id = "tabGroup";
@@ -282,152 +282,56 @@ function LoadTraverseWindow(parent) {
     tabBackground.setAttributeNS(null, "fill", "white");
     tabBackground.setAttributeNS(null, "rx", "3.5");
     tabGroup.appendChild(tabBackground);
-    tabGroup.appendChild(generateTabs("Local", "Server", "Clipboard", "Website"))
-    //var buttonGroup = document.createElementNS(xmlns, "g");
+    //tabGroup.appendChild(generateTabs("Local", "Server", "Clipboard", "Website"))  
 
-    var foreignObjX = (tabBgX + tabBgWidth) + (tabGroupOffsetX / 2);
-    var foreignObjY = tabBgY;
-    var foreignObjWidth = importWindowWidth - tabBgWidth - (tabGroupOffsetX * 2) - (tabGroupOffsetX / 2);
-    var foreignObjHeight = tabBgHeight;
+    //Play button 
+    var playBtn = document.createElementNS(xmlns, "polygon");
+    var xA = importWindowX+importWindowWidth*.30;
+    var xB = importWindowX+importWindowWidth*.43;
+    var yA = tabBgY+tabBgWidth*.05;
+    var yB = tabBgY+tabBgWidth*.15;
+    var yC = tabBgY+tabBgWidth*.25;
+    var points = xA+","+yA+" "+xB+","+yB+" "+xA+","+yC;
+    playBtn.setAttributeNS(null, "points", points);
+    playBtn.setAttributeNS(null, "fill", "#4CBB17");
 
-    var importBodyFO = document.createElementNS(xmlns, "foreignObject");
-    importBodyFO.setAttributeNS(null, "x", foreignObjX);
-    importBodyFO.setAttributeNS(null, "y", foreignObjY);
-    importBodyFO.setAttributeNS(null, "width", foreignObjWidth);
-    importBodyFO.setAttributeNS(null, "height", foreignObjHeight);
-    importBodyGroup.appendChild(importBodyFO);
+    //Play button title (hover over text)
+    var playTxt = document.createElementNS(xmlns, "title");
+    playTxt.textContent = "Start Traversal";
+    playBtn.appendChild(playTxt);
 
-    var importDivPadding = (foreignObjHeight / 25);
-    var importDivFontSize = importDivPadding + "px"; //just make it equal to font size?
-    var importBodyDiv = document.createElement("div");
-    //importBodyDiv.style.position = "absolute";
-    importBodyDiv.contentEditable = true;
-    importBodyDiv.spellcheck = false;
-    importBodyDiv.style.width = (foreignObjWidth - (importDivPadding * 2)) + "px";
-    importBodyDiv.style.height = (foreignObjHeight - (importDivPadding * 2)) + "px";
-    importBodyDiv.style.fontFamily = "Arial";
-    importBodyDiv.style.fontWeight = "bold";
-    importBodyDiv.style.fontSize = importDivFontSize;
-    importBodyDiv.style.padding = importDivPadding + "px";
-    importBodyDiv.style.overflowY = "scroll";
-    //importBodyDiv.style.opacity = ".5";
-    importBodyDiv.style.backgroundColor = "white";
-    importBodyDiv.style.color = "gray";
-    importBodyDiv.style.borderRadius = "3.5px";
-    importBodyDiv.innerHTML = "Paste xml here...";
-    importBodyFO.appendChild(importBodyDiv);
-    importBodyDiv.addEventListener("click", function () {
-        if (this.innerHTML == "Paste xml here...") {
-            this.innerHTML = "";
-            this.style.color = "black";
-        }
-    }, false);
+    //Pause button is a group that includes two lines 
+    var pauseBtn = document.createElementNS(xmlns, "g");
 
-    var importFileInput = document.createElement("input");
-    importFileInput.setAttributeNS(null, "type", "file");
-    //importBodyDiv.appendChild(importFileInput);
+    var pauseBtnA = document.createElementNS(xmlns, "line");
+    var x = importWindowX+importWindowWidth*.55;
+    var y1 = tabBgY+tabBgWidth*.05;
+    var y2 = tabBgY+tabBgWidth*.25;
+    pauseBtnA.setAttributeNS(null, "x1", x);
+    pauseBtnA.setAttributeNS(null, "x2", x);
+    pauseBtnA.setAttributeNS(null, "y1", y1);
+    pauseBtnA.setAttributeNS(null, "y2", y2);
+    pauseBtnA.setAttributeNS(null, "stroke", "#4CBB17");
+    pauseBtnA.setAttributeNS(null, "stroke-width", "6");
+    pauseBtn.appendChild(pauseBtnA);
 
-    var bottomPanelX = tabBgX;
-    var bottomPanelY = tabBgY + tabBgHeight + (tabGroupOffsetX / 2);
-    var bottomPanelWidth = tabBgWidth + foreignObjWidth + (tabGroupOffsetX / 2);
-    var bottomPanelHeight = (tabBgHeight / 8) + (tabGroupOffsetX / 1.5);
+    var pauseBtnB = document.createElementNS(xmlns, "line");
+    x = importWindowX+importWindowWidth*.60;
+    pauseBtnB.setAttributeNS(null, "x1", x);
+    pauseBtnB.setAttributeNS(null, "x2", x);
+    pauseBtnB.setAttributeNS(null, "y1", y1);
+    pauseBtnB.setAttributeNS(null, "y2", y2);
+    pauseBtnB.setAttributeNS(null, "stroke", "#4CBB17");
+    pauseBtnB.setAttributeNS(null, "stroke-width", "6");
+    pauseBtn.appendChild(pauseBtnB);
 
-    var bottomPanelRect = document.createElementNS(xmlns, "rect");
-    bottomPanelRect.setAttributeNS(null, "x", bottomPanelX);
-    bottomPanelRect.setAttributeNS(null, "y", bottomPanelY);
-    bottomPanelRect.setAttributeNS(null, "width", bottomPanelWidth);
-    bottomPanelRect.setAttributeNS(null, "height", bottomPanelHeight);
-    bottomPanelRect.setAttributeNS(null, "fill", "white");
-    bottomPanelRect.setAttributeNS(null, "rx", "3.5");
-    bottomPanelGroup.appendChild(bottomPanelRect);
+    var pauseTxt = document.createElementNS(xmlns, "title");
+    pauseTxt.textContent = "Pause Traversal";
+    pauseBtn.appendChild(pauseTxt);
 
-    var cancelButtonGroup = document.createElementNS(xmlns, "g");
-    cancelButtonGroup.addEventListener("mouseover", function over() {
-        this.firstChild.setAttributeNS(null, "fill", "#0431B4");
-        this.addEventListener("mouseout", function out() {
-            this.firstChild.setAttributeNS(null, "fill", "black");
-            this.removeEventListener("mouseout", out, false);
-        }, false);
-    }, false);
-
-    var cancelButtonWidth = tabBgWidth * .55;
-    var cancelButtonHeight = bottomPanelHeight * .6;
-    var cancelButtonRectX = bottomPanelX + bottomPanelWidth - cancelButtonWidth - tabGroupOffsetX;
-    var cancelButtonRectY = bottomPanelY + ((bottomPanelHeight - cancelButtonHeight) / 2);
-
-    var cancelButtonRect = document.createElementNS(xmlns, "rect");
-    cancelButtonRect.setAttributeNS(null, "x", cancelButtonRectX);
-    cancelButtonRect.setAttributeNS(null, "y", cancelButtonRectY);
-    cancelButtonRect.setAttributeNS(null, "width", cancelButtonWidth);
-    cancelButtonRect.setAttributeNS(null, "height", cancelButtonHeight);
-    cancelButtonRect.setAttributeNS(null, "fill", "black");
-    cancelButtonRect.setAttributeNS(null, "stroke", "black");
-    cancelButtonRect.setAttributeNS(null, "stroke-width", "3");
-    cancelButtonRect.setAttributeNS(null, "rx", "3.5");
-    cancelButtonGroup.appendChild(cancelButtonRect);
-
-    var cancelButtonTextX = cancelButtonRectX + (cancelButtonWidth / 2);
-    var cancelButtonTextY = cancelButtonRectY + (cancelButtonHeight / 2);
-
-    var cancelButtonText = document.createElementNS(xmlns, "text");
-    cancelButtonText.setAttributeNS(null, "x", cancelButtonTextX);
-    cancelButtonText.setAttributeNS(null, "y", cancelButtonTextY);
-    cancelButtonText.setAttributeNS(null, "pointer-events", "none");
-    cancelButtonText.setAttributeNS(null, "text-anchor", "middle");
-    cancelButtonText.setAttributeNS(null, "alignment-baseline", "middle");
-    cancelButtonText.setAttributeNS(null, "fill", "white");
-    cancelButtonText.setAttributeNS(null, "font-family", "Arial");
-    cancelButtonText.setAttributeNS(null, "font-size", cancelButtonHeight / 2);
-    cancelButtonText.setAttributeNS(null, "font-weight", "bold");
-    cancelButtonText.textContent = "Cancel";
-    cancelButtonGroup.appendChild(cancelButtonText);
-    bottomPanelGroup.appendChild(cancelButtonGroup);
-
-    var okButtonGroup = document.createElementNS(xmlns, "g");
-    okButtonGroup.addEventListener("mouseover", function over() {
-        this.firstChild.setAttributeNS(null, "fill", "#0431B4");
-        this.addEventListener("mouseout", function out() {
-            this.firstChild.setAttributeNS(null, "fill", "black");
-            this.removeEventListener("mouseout", out, false);
-        }, false);
-    }, false);
-	
-	//okButtonGroup.addEventListener("click", function () {alert("importing")}, false);
-
-    var okButtonWidth = cancelButtonWidth;
-    var okButtonHeight = cancelButtonHeight;
-    var okButtonRectX = cancelButtonRectX - okButtonWidth - tabGroupOffsetX;
-    var okButtonRectY = cancelButtonRectY;
-
-    var okButtonRect = document.createElementNS(xmlns, "rect");
-    okButtonRect.setAttributeNS(null, "x", okButtonRectX);
-    okButtonRect.setAttributeNS(null, "y", okButtonRectY);
-    okButtonRect.setAttributeNS(null, "width", okButtonWidth);
-    okButtonRect.setAttributeNS(null, "height", okButtonHeight);
-    okButtonRect.setAttributeNS(null, "fill", "black");
-    okButtonRect.setAttributeNS(null, "stroke", "black");
-    okButtonRect.setAttributeNS(null, "stroke-width", "3");
-    okButtonRect.setAttributeNS(null, "rx", "3.5");
-    okButtonGroup.appendChild(okButtonRect);
-
-    var okButtonTextX = okButtonRectX + (okButtonWidth / 2);
-    var okButtonTextY = okButtonRectY + (okButtonHeight / 2);
-
-    var okButtonText = document.createElementNS(xmlns, "text");
-    okButtonText.setAttributeNS(null, "x", okButtonTextX);
-    okButtonText.setAttributeNS(null, "y", okButtonTextY);
-    okButtonText.setAttributeNS(null, "pointer-events", "none");
-    okButtonText.setAttributeNS(null, "text-anchor", "middle");
-    okButtonText.setAttributeNS(null, "alignment-baseline", "middle");
-    okButtonText.setAttributeNS(null, "fill", "white");
-    okButtonText.setAttributeNS(null, "font-family", "Arial");
-    okButtonText.setAttributeNS(null, "font-size", okButtonHeight / 2);
-    okButtonText.setAttributeNS(null, "font-weight", "bold");
-    okButtonText.textContent = "OK";
-    okButtonGroup.appendChild(okButtonText);
-
-    bottomPanelGroup.appendChild(okButtonGroup);
-    okButtonGroup.style.cursor = cancelButtonGroup.style.cursor = "pointer";
+    //Add everything to the background (tabGroup) 
+    tabGroup.appendChild(pauseBtn);
+    tabGroup.appendChild(playBtn);
 
     var importHeaderX = tabBgX;
     var importHeaderY = tabBgY - (tabGroupOffsetTop / 2);
@@ -441,7 +345,7 @@ function LoadTraverseWindow(parent) {
     importHeaderText.setAttributeNS(null, "font-family", "Arial");
     importHeaderText.setAttributeNS(null, "font-size", /*"30"*/tabGroupOffsetTop / 2);
     importHeaderText.setAttributeNS(null, "font-weight", "bold");
-    importHeaderText.textContent = "IMPORT";
+    importHeaderText.textContent = "Traversal Options";
     importOuterGroup.appendChild(importHeaderText);
 
     var closeButtonGroup = document.createElementNS(xmlns, "g");

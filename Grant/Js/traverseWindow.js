@@ -329,9 +329,37 @@ function LoadTraverseWindow(parent) {
     pauseTxt.textContent = "Pause Traversal";
     pauseBtn.appendChild(pauseTxt);
 
+
+    //Place a text import for number of crawlers desired 
+    //First, place text to describe what the box is for 
+    var numText = document.createElementNS(xmlns, "text");
+    x = importWindowX + importWindowWidth*.05;
+    var y = y2 + 30; 
+    numText.setAttributeNS(null, "x", x);
+    numText.setAttributeNS(null, "y", y);
+    numText.setAttributeNS(null, "fill", "black");
+    numText.setAttributeNS(null, "font-family", "Arial");
+    numText.setAttributeNS(null, "font-size", /*"30"*/tabGroupOffsetTop / 2.5);
+    numText.setAttributeNS(null, "font-weight", "bold");
+    numText.textContent = "Number Crawlers ";
+
+    var foreign = document.createElementNS(xmlns, "foreignObject");
+    x = x + 110;
+    y = y2 + 15;
+    foreign.setAttributeNS(null, "x", x);
+    foreign.setAttributeNS(null, "y", y);
+    foreign.setAttributeNS(null, "width", "50");
+    foreign.setAttributeNS(null, "height", "20");
+    var numInput = document.createElement("input");
+    numInput.setAttribute("type", "text");
+    numInput.setAttribute("value", "1");
+    foreign.appendChild(numInput);
+
     //Add everything to the background (tabGroup) 
     tabGroup.appendChild(pauseBtn);
     tabGroup.appendChild(playBtn);
+    tabGroup.appendChild(numText);
+    tabGroup.appendChild(foreign);
 
     var importHeaderX = tabBgX;
     var importHeaderY = tabBgY - (tabGroupOffsetTop / 2);

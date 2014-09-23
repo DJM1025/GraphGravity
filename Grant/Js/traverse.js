@@ -24,7 +24,34 @@ graphWalker.prototype.randomStart = function ()
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
 		this.init();
-		var randomAdjacent = Math.floor(Math.random() * Graph.nodes[randomNode].adjacentNodes.length);
+		var randomAdjacent = Math.floor(Math.random() * Graph.nodes[randomNode].edgesList.length);
+		var destinationNode = Graph.nodes[randomNode].edgesList[randomAdjacent];
+		
+		var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
+		var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
+		
+		var animateX = document.createElementNS(xmlns,"animate");
+		animateX.setAttributeNS(null,"attributeName","cx");
+		animateX.setAttributeNS(null,"attributeType","XML");
+		animateX.setAttributeNS(null,"from",this.cx);
+		animateX.setAttributeNS(null,"to",destX);
+		animateX.setAttributeNS(null,"begin","0s");
+		animateX.setAttributeNS(null,"dur","5s");
+		animateX.setAttributeNS(null,"fill","freeze");
+		animateX.setAttributeNS(null,"repeatCount","indefinite");
+		
+		var animateY = document.createElementNS(xmlns,"animate");
+		animateY.setAttributeNS(null,"attributeName","cy");
+		animateY.setAttributeNS(null,"attributeType","XML");
+		animateY.setAttributeNS(null,"from",this.cy);
+		animateY.setAttributeNS(null,"to",destY);
+		animateY.setAttributeNS(null,"begin","0s");
+		animateY.setAttributeNS(null,"dur","5s");
+		animateY.setAttributeNS(null,"fill","freeze");
+		animateY.setAttributeNS(null,"repeatCount","indefinite");
+
+		document.getElementById(this.id).appendChild(animateX);
+		document.getElementById(this.id).appendChild(animateY);
 	}
 	else
 		alert("Please create a graph with at least 2 nodes first!");

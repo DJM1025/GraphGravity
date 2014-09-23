@@ -321,6 +321,7 @@ function LoadTraverseWindow(parent) {
     var points = xA+","+yA+" "+xB+","+yB+" "+xA+","+yC;
     playBtn.setAttributeNS(null, "points", points);
     playBtn.setAttributeNS(null, "fill", "#4CBB17");
+	
 
     //Play button title (hover over text)
     var playTxt = document.createElementNS(xmlns, "title");

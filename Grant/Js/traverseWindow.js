@@ -13,7 +13,7 @@ function LoadTraverseWindow(parent) {
             type = openTab;
             walkers = new Array();
             root.removeEventListener("mousedown", Graph.disableTextHighlight, false);
-            this.openTab(openTab);
+            //this.openTab(openTab);
             parent.appendChild(importWindowGroup);
 
         },
@@ -30,20 +30,6 @@ function LoadTraverseWindow(parent) {
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke-width");
             parent.removeChild(importWindowGroup);
         },
-        'minimize': function minimize() {
-            //do not reset here
-        },
-        'maximize': function maximize() {
-        },
-        'resize': function resize() {
-        },
-        'center': function center() {
-        },
-        'accept': function accept() {
-        },
-        'cancel': function cancel() {
-            //reset first
-        }
     };
 
     function changedNum(){
@@ -64,6 +50,14 @@ function LoadTraverseWindow(parent) {
         }
     }
 
+	function moveWalkers() {
+		switch(type){
+                case "random":
+					for(var i=0; i<walkers.length; i++)
+						walkers[i].randomWalk();
+                    break;
+            }
+	}
     function mouseOverHighlight() {
         this.addEventListener("mouseover", function over() {
             this.firstChild.setAttributeNS(null, "stroke", "white");
@@ -74,39 +68,6 @@ function LoadTraverseWindow(parent) {
                 this.removeEventListener("mouseout", out, false);
             }, false);
         }, false);
-    };
-
-    function generateMinimizeIcon(cx, cy, width) {
-        var minimizeIcon = document.createElementNS(xmlns, "line");
-        minimizeIcon.setAttributeNS(null, "x1", cx - (width / 3.5));
-        minimizeIcon.setAttributeNS(null, "y1", cy);
-        minimizeIcon.setAttributeNS(null, "x2", cx + (width / 3.5));
-        minimizeIcon.setAttributeNS(null, "y2", cy);
-        minimizeIcon.setAttributeNS(null, "stroke", "white");
-        minimizeIcon.setAttributeNS(null, "stroke-width", width / 8);
-        return minimizeIcon;
-
-    };
-
-    function generateMaximizeIcon(cx, cy, width) {
-        var maximizeIconGroup = document.createElementNS(xmlns, "g");
-        var maximizeHorizontal = document.createElementNS(xmlns, "line");
-        maximizeHorizontal.setAttributeNS(null, "x1", cx - (width / 3.5));
-        maximizeHorizontal.setAttributeNS(null, "y1", cy);
-        maximizeHorizontal.setAttributeNS(null, "x2", cx + (width / 3.5));
-        maximizeHorizontal.setAttributeNS(null, "y2", cy);
-        maximizeHorizontal.setAttributeNS(null, "stroke", "white");
-        maximizeHorizontal.setAttributeNS(null, "stroke-width", width / 8);
-        maximizeIconGroup.appendChild(maximizeHorizontal);
-        var maximizeVertical = document.createElementNS(xmlns, "line");
-        maximizeVertical.setAttributeNS(null, "x1", cx);
-        maximizeVertical.setAttributeNS(null, "y1", cy - (width / 3.5));
-        maximizeVertical.setAttributeNS(null, "x2", cx);
-        maximizeVertical.setAttributeNS(null, "y2", cy + (width / 3.5));
-        maximizeVertical.setAttributeNS(null, "stroke", "white");
-        maximizeVertical.setAttributeNS(null, "stroke-width", width / 8);
-        maximizeIconGroup.appendChild(maximizeVertical);
-        return maximizeIconGroup;
     };
 
     function generateCloseIcon(cx, cy, halfWidth) {
@@ -125,119 +86,6 @@ function LoadTraverseWindow(parent) {
         }
         return closeIconGroup;
     };
-
-    function generateTabs() {
-        function openClose(tabName) {
-            if (open) {
-                open.firstChild.setAttributeNS(null, "fill", "black");
-            }
-            if (typeof(tabName) == "string") {
-                open = tabs[tabName.toLowerCase()];
-            }
-            else {
-                open = this;
-            }
-            for (var i = 0; i < argsLength; i++) {
-                var nextTab = importTabGroup.childNodes[i];
-                var rect = nextTab.firstChild;
-                var text = rect.nextSibling;
-                var img = text.nextSibling;
-                if (nextTab == open) {
-                    rect.setAttributeNS(null, "fill", "#0431B4");
-                    rect.setAttributeNS(null, "x", openRectX);
-                    text.setAttributeNS(null, "x", openTextX);
-                    img.setAttributeNS(null, "x", openImgX);
-                    nextTab.removeAttributeNS(null, "opacity");
-
-                }
-                else {
-                    rect.setAttributeNS(null, "x", closedRectX);
-                    text.setAttributeNS(null, "x", closedTextX);
-                    img.setAttributeNS(null, "x", closedImgX);
-                    nextTab.setAttributeNS(null, "opacity", ".8");
-                }
-            }
-
-        }
-
-        var argsLength = arguments.length;
-        var tabs = {};
-        var tabWidth = tabBgWidth - (tabBgWidth / 5);
-        var tabHeight = tabBgHeight / 8;
-        var tabX = tabBgX + (tabBgWidth / 10);
-        var tabY = tabBgY + (tabHeight / 2);
-
-        var openRectX = tabX + (tabBgWidth / 10);
-        var openTextX = openRectX + (tabWidth / 2) + (tabBgWidth / 20);
-        var openImgX = openRectX;
-        var closedRectX = tabX - (tabBgWidth / 10);
-        var closedTextX = tabX + (tabWidth / 2) - (tabBgWidth / 20);
-        var closedImgX = closedRectX;
-
-        var open = null;
-
-        var importTabGroup = document.createElementNS(xmlns, "g");
-        importTabGroup.style.cursor = "pointer";
-
-        for (var n = 0; n < argsLength; n++) {
-            var tabGroup = document.createElementNS(xmlns, "g");
-            tabGroup.addEventListener("mouseover", function over() {
-                importTabGroup.appendChild(this);
-                this.firstChild.setAttributeNS(null, "fill", "#0431B4");
-                this.addEventListener("mouseout", function out() {
-                    if (open != this) {
-                        this.firstChild.setAttributeNS(null, "fill", "black");
-                    }
-                    this.removeEventListener("mouseout", out, false);
-                }, false);
-            }, false);
-
-            tabGroup.addEventListener("click", openClose, false);
-
-            var tabRect = document.createElementNS(xmlns, "rect");
-            tabRect.setAttributeNS(null, "x", tabX);
-            tabRect.setAttributeNS(null, "y", tabY);
-            tabRect.setAttributeNS(null, "width", tabWidth);
-            tabRect.setAttributeNS(null, "height", tabHeight);
-            tabRect.setAttributeNS(null, "fill", "black");
-            tabRect.setAttributeNS(null, "stroke", "black");
-            tabRect.setAttributeNS(null, "stroke-width", "3");
-            tabRect.setAttributeNS(null, "rx", "3.5");
-            tabGroup.appendChild(tabRect);
-
-            var tabText = document.createElementNS(xmlns, "text");
-            tabText.setAttributeNS(null, "x", tabX + (tabWidth / 1.75));
-            tabText.setAttributeNS(null, "y", (tabY + (tabHeight / 2)))
-            tabText.setAttributeNS(null, "pointer-events", "none");
-            tabText.setAttributeNS(null, "text-anchor", "middle");
-            tabText.setAttributeNS(null, "alignment-baseline", "middle");
-            tabText.setAttributeNS(null, "fill", "white");
-            tabText.setAttributeNS(null, "font-family", "Arial");
-            tabText.setAttributeNS(null, "font-size", (tabHeight / 3.5));
-            tabText.setAttributeNS(null, "font-weight", "bold");
-            tabText.textContent = arguments[n].toUpperCase();
-            tabGroup.appendChild(tabText);
-
-            var tabImg = document.createElementNS(xmlns, "image");
-            tabImg.setAttributeNS(xlink, "xlink:href", "./ImportExportImages/" + arguments[n] + ".gif");
-            tabImg.setAttributeNS(null, "x", tabX);
-            tabImg.setAttributeNS(null, "y", tabY + (tabHeight / 4));
-            tabImg.setAttributeNS(null, "width", tabHeight);
-            tabImg.setAttributeNS(null, "height", tabHeight / 2);
-            tabGroup.appendChild(tabImg);
-
-            importTabGroup.appendChild(tabGroup);
-
-            tabY += tabHeight + (tabHeight / 3);
-            tabs[arguments[n].toLowerCase()] = tabGroup;
-        }
-        
-        impExpObj.openTab = openClose;
-        return importTabGroup;
-    };
-
-    function reset() {
-    }
 
     var pageWidth = window.innerWidth;
     var pageHeight = window.innerHeight;
@@ -284,8 +132,6 @@ function LoadTraverseWindow(parent) {
     outerRect.setAttributeNS(null, "width", importWindowWidth);
     outerRect.setAttributeNS(null, "height", importWindowHeight);
     outerRect.setAttributeNS(null, "fill", "black");
-    //outerRect.setAttributeNS(null, "stroke", "white");
-    //outerRect.setAttributeNS(null, "stroke-width", "5");
     outerRect.setAttributeNS(null, "rx", "3.5");
     importOuterGroup.insertBefore(outerRect, importWindowButtonsGroup);
 
@@ -321,7 +167,7 @@ function LoadTraverseWindow(parent) {
     var points = xA+","+yA+" "+xB+","+yB+" "+xA+","+yC;
     playBtn.setAttributeNS(null, "points", points);
     playBtn.setAttributeNS(null, "fill", "#4CBB17");
-	
+	playBtn.addEventListener("click", moveWalkers);
 
     //Play button title (hover over text)
     var playTxt = document.createElementNS(xmlns, "title");
@@ -372,7 +218,7 @@ function LoadTraverseWindow(parent) {
     numText.textContent = "Number Crawlers ";
 
     var foreign = document.createElementNS(xmlns, "foreignObject");
-    x = x + 110;
+    x = importWindowX + importWindowWidth*.55;
     y = y2 + 15;
     foreign.setAttributeNS(null, "x", x);
     foreign.setAttributeNS(null, "y", y);

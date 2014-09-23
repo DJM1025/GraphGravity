@@ -557,9 +557,9 @@ window.addEventListener("load", function () {
         menu.bindAction(["Graph", "Gravity", "Find Flavoring"], function () { temp("Graph -> Gravity -> Find Flavoring"); });
         menu.bindAction(["Graph", "Gravity", "Options"], function () { temp("Graph -> Gravity -> Options"); });
 
-		menu.bindAction(["Graph", "Traverse the Graph", "Random Start"], function () {var test = new graphWalker(); test.randomStart()});
-        menu.bindAction(["Graph", "Traverse the Graph", "Pick Start Node"], function () {var test = new graphWalker(); test.init()});
-        //menu.bindAction(["Graph", "Traverse the Graph", "Use Data"], function () {var test = new graphWalker(); test.init()});
+		menu.bindAction(["Graph", "Traverse the Graph", "Random Start"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("random");});
+        //menu.bindAction(["Graph", "Traverse the Graph", "Pick Start Node"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("pick");});
+        //menu.bindAction(["Graph", "Traverse the Graph", "Use Data"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("data");});
 
         //GRAPH - CREATE RANDOM
         menu.bindAction(["Graph", "Create Random", "Adjacency Matrix"], function () { temp("Graph -> Create Random -> Adjacency Matrix"); });

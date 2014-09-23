@@ -3,19 +3,19 @@ function graphWalker(){
 	this.cx = 500;
 	this.cy = 500;
 	this.color = "black";
-	this.traverseWin = LoadTraverseWindow(parentSVG);
+	this.id = Math.random()*10000;  //Give each walker a 'unique' ID 
 }
 
 graphWalker.prototype.init = function(){
 	var circle = document.createElementNS(xmlns, "circle");
+	circle.setAttributeNS(null, "id", this.id);
 	circle.setAttributeNS(null,"r", this.radius);
 	circle.setAttributeNS(null,"cx", this.cx);
 	circle.setAttributeNS(null,"cy", this.cy);
 	circle.setAttributeNS(null,"fill", this.color);
 	document.getElementById("graphPlane").appendChild(circle);
-
-	this.traverseWin.open();
 }
+
 graphWalker.prototype.randomStart = function ()
 {
 	if(Graph.numberOfNodes> 1)
@@ -28,4 +28,10 @@ graphWalker.prototype.randomStart = function ()
 	}
 	else
 		alert("Please create a graph with at least 2 nodes first!");
+}
+
+//Destroys the graph walker's SVG image that is displayed on the screen 
+graphWalker.prototype.removeWalker = function () {
+	var element = document.getElementById(this.id);
+	element.parentNode.removeChild(element);
 }

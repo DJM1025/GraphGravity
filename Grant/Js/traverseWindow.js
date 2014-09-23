@@ -4,10 +4,14 @@ function LoadTraverseWindow(parent) {
     var xmlns = "http://www.w3.org/2000/svg";
     var xlink = "http://www.w3.org/1999/xlink";
     var open = null;
+    var type = null;
     
     var impExpObj = {
         'openTab': null,
         'open': function open(/*importExport,*/ openTab) {
+            //Initialize walkers array and add a walker to it 
+            type = openTab;
+            walkers = new Array();
             root.removeEventListener("mousedown", Graph.disableTextHighlight, false);
             this.openTab(openTab);
             parent.appendChild(importWindowGroup);
@@ -16,6 +20,11 @@ function LoadTraverseWindow(parent) {
         'close': function close() {
             //window.removeEventListener("resize", resizeWindow, false);
             //reset first
+            //Remove all walkers
+            for(var i=0; i<walkers.length; i++){
+                walkers[i].removeWalker();
+                //Array will be reset when the window is re-opened (no need to remove the elements from the array)
+            }
             root.addEventListener("mousedown", Graph.disableTextHighlight, false);
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke");
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke-width");
@@ -36,6 +45,24 @@ function LoadTraverseWindow(parent) {
             //reset first
         }
     };
+
+    function changedNum(){
+        //alert("In changedNum");
+        var num = parseInt(document.getElementById("numWalkers").value);
+        while(num > walkers.length){
+            walkers.push(new graphWalker());
+            //Determine state of traversal (random, pick-a-start, or data-based)
+            switch(type){
+                case "random":
+                    walkers[walkers.length-1].randomStart();
+                    break;
+            }
+        }
+        while(num < walkers.length){
+            walkers[walkers.length-1].removeWalker();
+            walkers.pop();
+        }
+    }
 
     function mouseOverHighlight() {
         this.addEventListener("mouseover", function over() {
@@ -352,7 +379,9 @@ function LoadTraverseWindow(parent) {
     foreign.setAttributeNS(null, "height", "20");
     var numInput = document.createElement("input");
     numInput.setAttribute("type", "text");
-    numInput.setAttribute("value", "1");
+    numInput.setAttribute("id", "numWalkers");
+    numInput.setAttribute("value", "0");
+    numInput.addEventListener("change", changedNum);
     foreign.appendChild(numInput);
 
     //Add everything to the background (tabGroup) 

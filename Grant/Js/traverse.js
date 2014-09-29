@@ -3,8 +3,8 @@ function graphWalker(){
 	this.cx = 500;
 	this.cy = 500;
 	this.color = "black";
-	this.id = Math.random()*10000;  //Give each walker a 'unique' ID 
 	this.currentNode = null;
+	this.element = null; 	//Holds the SVG element for the walker (document.getElementBy not needed)
 }
 
 graphWalker.prototype.init = function(){
@@ -15,6 +15,7 @@ graphWalker.prototype.init = function(){
 	circle.setAttributeNS(null,"cy", this.cy);
 	circle.setAttributeNS(null,"fill", this.color);
 	document.getElementById("graphPlane").appendChild(circle);
+	this.element = circle;
 }
 
 graphWalker.prototype.randomStart = function ()
@@ -58,12 +59,11 @@ graphWalker.prototype.randomWalk = function () {
 	animateY.setAttributeNS(null,"fill","freeze");
 	animateY.setAttributeNS(null,"repeatCount","indefinite");
 
-	document.getElementById(this.id).appendChild(animateX);
-	document.getElementById(this.id).appendChild(animateY);
+	this.element.appendChild(animateX);
+	this.element.appendChild(animateY);
 }
 
 //Destroys the graph walker's SVG image that is displayed on the screen 
 graphWalker.prototype.removeWalker = function () {
-	var element = document.getElementById(this.id);
-	element.parentNode.removeChild(element);
+	this.element.parentNode.removeChild(this.element);
 }

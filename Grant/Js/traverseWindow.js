@@ -33,8 +33,8 @@ function LoadTraverseWindow(parent) {
     };
 
     function changedNum(){
-        //alert("In changedNum");
         var num = parseInt(document.getElementById("numWalkers").value);
+        //Add walkers 
         while(num > walkers.length){
             walkers.push(new graphWalker());
             //Determine state of traversal (random, pick-a-start, or data-based)
@@ -44,6 +44,7 @@ function LoadTraverseWindow(parent) {
                     break;
             }
         }
+        //Remove walkers (# was decreased)
         while(num < walkers.length){
             walkers[walkers.length-1].removeWalker();
             walkers.pop();
@@ -58,6 +59,7 @@ function LoadTraverseWindow(parent) {
                     break;
             }
 	}
+    
     function mouseOverHighlight() {
         this.addEventListener("mouseover", function over() {
             this.firstChild.setAttributeNS(null, "stroke", "white");
@@ -203,7 +205,6 @@ function LoadTraverseWindow(parent) {
     pauseTxt.textContent = "Pause Traversal";
     pauseBtn.appendChild(pauseTxt);
 
-
     //Place a text import for number of crawlers desired 
     //First, place text to describe what the box is for 
     var numText = document.createElementNS(xmlns, "text");
@@ -218,7 +219,7 @@ function LoadTraverseWindow(parent) {
     numText.textContent = "Number Crawlers ";
 
     var foreign = document.createElementNS(xmlns, "foreignObject");
-    x = importWindowX + importWindowWidth*.55;
+    x = importWindowX + importWindowWidth*.65;
     y = y2 + 15;
     foreign.setAttributeNS(null, "x", x);
     foreign.setAttributeNS(null, "y", y);
@@ -231,11 +232,100 @@ function LoadTraverseWindow(parent) {
     numInput.addEventListener("change", changedNum);
     foreign.appendChild(numInput);
 
+    //Speed Bar (background "bar" rect and then a moveable rect on top)
+    var scaleGroup = document.createElementNS(xmlns, "g");
+
+    //Test describing purpose of bar 
+    var speedTxt = document.createElementNS(xmlns, "text");
+    x = importWindowX + importWindowWidth*.05;
+    y = tabBgY+tabBgHeight*.4;
+    speedTxt.setAttributeNS(null, "x", x);
+    speedTxt.setAttributeNS(null, "y", y);
+    speedTxt.setAttributeNS(null, "fill", "black");
+    speedTxt.setAttributeNS(null, "font-family", "Arial");
+    speedTxt.setAttributeNS(null, "font-size", /*"30"*/tabGroupOffsetTop / 2.5);
+    speedTxt.setAttributeNS(null, "font-weight", "bold");
+    speedTxt.textContent = "Speed: ";
+    scaleGroup.appendChild(speedTxt);
+
+    var scaleBarX = x + importWindowWidth*.25;
+    var scaleBarY = tabBgY+tabBgHeight*.38;
+    var scaleBarWidth = tabBgWidth * .6;
+    var scaleBarHeight = tabBgHeight * .01;
+
+    var scaleBar = document.createElementNS(xmlns, "rect");
+    scaleBar.setAttributeNS(null, "x", scaleBarX);
+    scaleBar.setAttributeNS(null, "y", scaleBarY);
+    scaleBar.setAttributeNS(null, "width", scaleBarWidth);
+    scaleBar.setAttributeNS(null, "height", scaleBarHeight);
+    scaleBar.setAttributeNS(null, "fill", "black");
+    scaleBar.setAttributeNS(null, "stroke", "white");
+    scaleBar.setAttributeNS(null, "stroke-width", "2");
+    scaleBar.setAttributeNS(null, "rx", "2.5");
+    scaleBar.style.cursor = "pointer";
+    scaleGroup.appendChild(scaleBar);
+
+    // scaleBar.addEventListener("click", function (event) {
+    //     Graph.clipboard.addToHistory("Scaled nodes");
+    //     scaleSlider.setAttributeNS(null, "x", event.pageX - (scaleSliderWidth / 2));
+    //     percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
+    //     Graph.scaleWindow.scale();
+    // }, false);
+
+    var scaleSliderY = scaleBarY - (scaleBarHeight * 2);
+    var scaleSliderWidth = scaleBarWidth / 20;
+    var scaleSliderHeight = scaleBarHeight * 5;
+    var scaleSliderX = scaleBarX + (scaleBarWidth / 2) - (scaleSliderWidth / 2);
+
+    var scaleSlider = document.createElementNS(xmlns, "rect");
+    scaleSlider.setAttributeNS(null, "x", scaleSliderX);
+    scaleSlider.setAttributeNS(null, "y", scaleSliderY);
+    scaleSlider.setAttributeNS(null, "width", scaleSliderWidth);
+    scaleSlider.setAttributeNS(null, "height", scaleSliderHeight);
+    scaleSlider.setAttributeNS(null, "fill", "red");
+    scaleSlider.setAttributeNS(null, "stroke", "white");
+    scaleSlider.setAttributeNS(null, "stroke-width", "2");
+    scaleSlider.setAttributeNS(null, "rx", "2.5");
+    scaleSlider.style.cursor = "pointer";
+    scaleGroup.appendChild(scaleSlider);
+
+    scaleSlider.addEventListener("mousedown", function down(event) {
+        var moved = false;
+        var offsetX = event.pageX - +scaleSlider.getAttributeNS(null, "x");
+
+        root.addEventListener("mousemove", move, false);
+        root.addEventListener("mouseup", function up(event) {
+            root.removeEventListener("mousemove", move, false);
+            root.removeEventListener("mouseup", up, false);
+        }, false);
+
+        function move(event) {
+            if (!moved) {
+                Graph.clipboard.addToHistory("Scaled nodes");
+                moved = true;
+            }
+            if (event.pageX < scaleBarX) {
+                scaleSlider.setAttributeNS(null, "x", scaleBarX - (scaleSliderWidth / 2));
+                percentScale = -1;
+            }
+            else if (event.pageX > (scaleBarX + scaleBarWidth)) {
+                scaleSlider.setAttributeNS(null, "x", (scaleBarX + scaleBarWidth) - (scaleSliderWidth / 2));
+                percentScale = 1;
+            }
+            else {
+                scaleSlider.setAttributeNS(null, "x", event.pageX - offsetX);
+                percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
+            }
+            //Graph.scaleWindow.scale();
+        }
+    }, false);
+
     //Add everything to the background (tabGroup) 
     tabGroup.appendChild(pauseBtn);
     tabGroup.appendChild(playBtn);
     tabGroup.appendChild(numText);
     tabGroup.appendChild(foreign);
+    tabGroup.appendChild(scaleGroup);
 
     var importHeaderX = tabBgX;
     var importHeaderY = tabBgY - (tabGroupOffsetTop / 2);

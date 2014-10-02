@@ -218,7 +218,7 @@ function LoadTraverseWindow(parent) {
     //First, place text to describe what the box is for 
     var numText = document.createElementNS(xmlns, "text");
     x = importWindowX + importWindowWidth*.05;
-    var y = y2 + 30; 
+    var y = y2 + tabBgHeight*.15; 
     numText.setAttributeNS(null, "x", x);
     numText.setAttributeNS(null, "y", y);
     numText.setAttributeNS(null, "fill", "black");
@@ -229,7 +229,7 @@ function LoadTraverseWindow(parent) {
 
     var foreign = document.createElementNS(xmlns, "foreignObject");
     x = importWindowX + importWindowWidth*.65;
-    y = y2 + 15;
+    y = y2 + tabBgHeight*.09;
     foreign.setAttributeNS(null, "x", x);
     foreign.setAttributeNS(null, "y", y);
     foreign.setAttributeNS(null, "width", "50");
@@ -247,7 +247,7 @@ function LoadTraverseWindow(parent) {
     //Test describing purpose of bar 
     var speedTxt = document.createElementNS(xmlns, "text");
     x = importWindowX + importWindowWidth*.05;
-    y = tabBgY+tabBgHeight*.4;
+    y = tabBgY+tabBgHeight*.5;
     speedTxt.setAttributeNS(null, "x", x);
     speedTxt.setAttributeNS(null, "y", y);
     speedTxt.setAttributeNS(null, "fill", "black");
@@ -258,7 +258,7 @@ function LoadTraverseWindow(parent) {
     scaleGroup.appendChild(speedTxt);
 
     var scaleBarX = x + importWindowWidth*.25;
-    var scaleBarY = tabBgY+tabBgHeight*.38;
+    var scaleBarY = tabBgY+tabBgHeight*.48;
     var scaleBarWidth = tabBgWidth * .6;
     var scaleBarHeight = tabBgHeight * .01;
 

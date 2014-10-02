@@ -13,7 +13,7 @@ function LoadTraverseWindow(parent) {
             type = openTab;
             walkers = new Array();
             root.removeEventListener("mousedown", Graph.disableTextHighlight, false);
-            this.openTab(openTab);
+            //this.openTab(openTab);
             parent.appendChild(importWindowGroup);
 
         },
@@ -30,25 +30,11 @@ function LoadTraverseWindow(parent) {
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke-width");
             parent.removeChild(importWindowGroup);
         },
-        'minimize': function minimize() {
-            //do not reset here
-        },
-        'maximize': function maximize() {
-        },
-        'resize': function resize() {
-        },
-        'center': function center() {
-        },
-        'accept': function accept() {
-        },
-        'cancel': function cancel() {
-            //reset first
-        }
     };
 
     function changedNum(){
-        //alert("In changedNum");
         var num = parseInt(document.getElementById("numWalkers").value);
+        //Add walkers 
         while(num > walkers.length){
             walkers.push(new graphWalker());
             //Determine state of traversal (random, pick-a-start, or data-based)
@@ -58,12 +44,22 @@ function LoadTraverseWindow(parent) {
                     break;
             }
         }
+        //Remove walkers (# was decreased)
         while(num < walkers.length){
             walkers[walkers.length-1].removeWalker();
             walkers.pop();
         }
     }
 
+	function moveWalkers() {
+		switch(type){
+                case "random":
+					for(var i=0; i<walkers.length; i++)
+						walkers[i].randomWalk();
+                    break;
+            }
+	}
+    
     function mouseOverHighlight() {
         this.addEventListener("mouseover", function over() {
             this.firstChild.setAttributeNS(null, "stroke", "white");
@@ -74,39 +70,6 @@ function LoadTraverseWindow(parent) {
                 this.removeEventListener("mouseout", out, false);
             }, false);
         }, false);
-    };
-
-    function generateMinimizeIcon(cx, cy, width) {
-        var minimizeIcon = document.createElementNS(xmlns, "line");
-        minimizeIcon.setAttributeNS(null, "x1", cx - (width / 3.5));
-        minimizeIcon.setAttributeNS(null, "y1", cy);
-        minimizeIcon.setAttributeNS(null, "x2", cx + (width / 3.5));
-        minimizeIcon.setAttributeNS(null, "y2", cy);
-        minimizeIcon.setAttributeNS(null, "stroke", "white");
-        minimizeIcon.setAttributeNS(null, "stroke-width", width / 8);
-        return minimizeIcon;
-
-    };
-
-    function generateMaximizeIcon(cx, cy, width) {
-        var maximizeIconGroup = document.createElementNS(xmlns, "g");
-        var maximizeHorizontal = document.createElementNS(xmlns, "line");
-        maximizeHorizontal.setAttributeNS(null, "x1", cx - (width / 3.5));
-        maximizeHorizontal.setAttributeNS(null, "y1", cy);
-        maximizeHorizontal.setAttributeNS(null, "x2", cx + (width / 3.5));
-        maximizeHorizontal.setAttributeNS(null, "y2", cy);
-        maximizeHorizontal.setAttributeNS(null, "stroke", "white");
-        maximizeHorizontal.setAttributeNS(null, "stroke-width", width / 8);
-        maximizeIconGroup.appendChild(maximizeHorizontal);
-        var maximizeVertical = document.createElementNS(xmlns, "line");
-        maximizeVertical.setAttributeNS(null, "x1", cx);
-        maximizeVertical.setAttributeNS(null, "y1", cy - (width / 3.5));
-        maximizeVertical.setAttributeNS(null, "x2", cx);
-        maximizeVertical.setAttributeNS(null, "y2", cy + (width / 3.5));
-        maximizeVertical.setAttributeNS(null, "stroke", "white");
-        maximizeVertical.setAttributeNS(null, "stroke-width", width / 8);
-        maximizeIconGroup.appendChild(maximizeVertical);
-        return maximizeIconGroup;
     };
 
     function generateCloseIcon(cx, cy, halfWidth) {
@@ -125,119 +88,6 @@ function LoadTraverseWindow(parent) {
         }
         return closeIconGroup;
     };
-
-    function generateTabs() {
-        function openClose(tabName) {
-            if (open) {
-                open.firstChild.setAttributeNS(null, "fill", "black");
-            }
-            if (typeof(tabName) == "string") {
-                open = tabs[tabName.toLowerCase()];
-            }
-            else {
-                open = this;
-            }
-            for (var i = 0; i < argsLength; i++) {
-                var nextTab = importTabGroup.childNodes[i];
-                var rect = nextTab.firstChild;
-                var text = rect.nextSibling;
-                var img = text.nextSibling;
-                if (nextTab == open) {
-                    rect.setAttributeNS(null, "fill", "#0431B4");
-                    rect.setAttributeNS(null, "x", openRectX);
-                    text.setAttributeNS(null, "x", openTextX);
-                    img.setAttributeNS(null, "x", openImgX);
-                    nextTab.removeAttributeNS(null, "opacity");
-
-                }
-                else {
-                    rect.setAttributeNS(null, "x", closedRectX);
-                    text.setAttributeNS(null, "x", closedTextX);
-                    img.setAttributeNS(null, "x", closedImgX);
-                    nextTab.setAttributeNS(null, "opacity", ".8");
-                }
-            }
-
-        }
-
-        var argsLength = arguments.length;
-        var tabs = {};
-        var tabWidth = tabBgWidth - (tabBgWidth / 5);
-        var tabHeight = tabBgHeight / 8;
-        var tabX = tabBgX + (tabBgWidth / 10);
-        var tabY = tabBgY + (tabHeight / 2);
-
-        var openRectX = tabX + (tabBgWidth / 10);
-        var openTextX = openRectX + (tabWidth / 2) + (tabBgWidth / 20);
-        var openImgX = openRectX;
-        var closedRectX = tabX - (tabBgWidth / 10);
-        var closedTextX = tabX + (tabWidth / 2) - (tabBgWidth / 20);
-        var closedImgX = closedRectX;
-
-        var open = null;
-
-        var importTabGroup = document.createElementNS(xmlns, "g");
-        importTabGroup.style.cursor = "pointer";
-
-        for (var n = 0; n < argsLength; n++) {
-            var tabGroup = document.createElementNS(xmlns, "g");
-            tabGroup.addEventListener("mouseover", function over() {
-                importTabGroup.appendChild(this);
-                this.firstChild.setAttributeNS(null, "fill", "#0431B4");
-                this.addEventListener("mouseout", function out() {
-                    if (open != this) {
-                        this.firstChild.setAttributeNS(null, "fill", "black");
-                    }
-                    this.removeEventListener("mouseout", out, false);
-                }, false);
-            }, false);
-
-            tabGroup.addEventListener("click", openClose, false);
-
-            var tabRect = document.createElementNS(xmlns, "rect");
-            tabRect.setAttributeNS(null, "x", tabX);
-            tabRect.setAttributeNS(null, "y", tabY);
-            tabRect.setAttributeNS(null, "width", tabWidth);
-            tabRect.setAttributeNS(null, "height", tabHeight);
-            tabRect.setAttributeNS(null, "fill", "black");
-            tabRect.setAttributeNS(null, "stroke", "black");
-            tabRect.setAttributeNS(null, "stroke-width", "3");
-            tabRect.setAttributeNS(null, "rx", "3.5");
-            tabGroup.appendChild(tabRect);
-
-            var tabText = document.createElementNS(xmlns, "text");
-            tabText.setAttributeNS(null, "x", tabX + (tabWidth / 1.75));
-            tabText.setAttributeNS(null, "y", (tabY + (tabHeight / 2)))
-            tabText.setAttributeNS(null, "pointer-events", "none");
-            tabText.setAttributeNS(null, "text-anchor", "middle");
-            tabText.setAttributeNS(null, "alignment-baseline", "middle");
-            tabText.setAttributeNS(null, "fill", "white");
-            tabText.setAttributeNS(null, "font-family", "Arial");
-            tabText.setAttributeNS(null, "font-size", (tabHeight / 3.5));
-            tabText.setAttributeNS(null, "font-weight", "bold");
-            tabText.textContent = arguments[n].toUpperCase();
-            tabGroup.appendChild(tabText);
-
-            var tabImg = document.createElementNS(xmlns, "image");
-            tabImg.setAttributeNS(xlink, "xlink:href", "./ImportExportImages/" + arguments[n] + ".gif");
-            tabImg.setAttributeNS(null, "x", tabX);
-            tabImg.setAttributeNS(null, "y", tabY + (tabHeight / 4));
-            tabImg.setAttributeNS(null, "width", tabHeight);
-            tabImg.setAttributeNS(null, "height", tabHeight / 2);
-            tabGroup.appendChild(tabImg);
-
-            importTabGroup.appendChild(tabGroup);
-
-            tabY += tabHeight + (tabHeight / 3);
-            tabs[arguments[n].toLowerCase()] = tabGroup;
-        }
-        
-        impExpObj.openTab = openClose;
-        return importTabGroup;
-    };
-
-    function reset() {
-    }
 
     var pageWidth = window.innerWidth;
     var pageHeight = window.innerHeight;
@@ -284,8 +134,6 @@ function LoadTraverseWindow(parent) {
     outerRect.setAttributeNS(null, "width", importWindowWidth);
     outerRect.setAttributeNS(null, "height", importWindowHeight);
     outerRect.setAttributeNS(null, "fill", "black");
-    //outerRect.setAttributeNS(null, "stroke", "white");
-    //outerRect.setAttributeNS(null, "stroke-width", "5");
     outerRect.setAttributeNS(null, "rx", "3.5");
     importOuterGroup.insertBefore(outerRect, importWindowButtonsGroup);
 
@@ -321,8 +169,12 @@ function LoadTraverseWindow(parent) {
     var points = xA+","+yA+" "+xB+","+yB+" "+xA+","+yC;
     playBtn.setAttributeNS(null, "points", points);
     playBtn.setAttributeNS(null, "fill", "#4CBB17");
+<<<<<<< HEAD
 	playBtn.setAttributeNS(null, "id", "Z");
 	
+=======
+	playBtn.addEventListener("click", moveWalkers);
+>>>>>>> origin/Traversal-Man
 
     //Play button title (hover over text)
     var playTxt = document.createElementNS(xmlns, "title");
@@ -358,7 +210,6 @@ function LoadTraverseWindow(parent) {
     pauseTxt.textContent = "Pause Traversal";
     pauseBtn.appendChild(pauseTxt);
 
-
     //Place a text import for number of crawlers desired 
     //First, place text to describe what the box is for 
     var numText = document.createElementNS(xmlns, "text");
@@ -373,7 +224,7 @@ function LoadTraverseWindow(parent) {
     numText.textContent = "Number Crawlers ";
 
     var foreign = document.createElementNS(xmlns, "foreignObject");
-    x = x + 110;
+    x = importWindowX + importWindowWidth*.65;
     y = y2 + 15;
     foreign.setAttributeNS(null, "x", x);
     foreign.setAttributeNS(null, "y", y);
@@ -386,11 +237,100 @@ function LoadTraverseWindow(parent) {
     numInput.addEventListener("change", changedNum);
     foreign.appendChild(numInput);
 
+    //Speed Bar (background "bar" rect and then a moveable rect on top)
+    var scaleGroup = document.createElementNS(xmlns, "g");
+
+    //Test describing purpose of bar 
+    var speedTxt = document.createElementNS(xmlns, "text");
+    x = importWindowX + importWindowWidth*.05;
+    y = tabBgY+tabBgHeight*.4;
+    speedTxt.setAttributeNS(null, "x", x);
+    speedTxt.setAttributeNS(null, "y", y);
+    speedTxt.setAttributeNS(null, "fill", "black");
+    speedTxt.setAttributeNS(null, "font-family", "Arial");
+    speedTxt.setAttributeNS(null, "font-size", /*"30"*/tabGroupOffsetTop / 2.5);
+    speedTxt.setAttributeNS(null, "font-weight", "bold");
+    speedTxt.textContent = "Speed: ";
+    scaleGroup.appendChild(speedTxt);
+
+    var scaleBarX = x + importWindowWidth*.25;
+    var scaleBarY = tabBgY+tabBgHeight*.38;
+    var scaleBarWidth = tabBgWidth * .6;
+    var scaleBarHeight = tabBgHeight * .01;
+
+    var scaleBar = document.createElementNS(xmlns, "rect");
+    scaleBar.setAttributeNS(null, "x", scaleBarX);
+    scaleBar.setAttributeNS(null, "y", scaleBarY);
+    scaleBar.setAttributeNS(null, "width", scaleBarWidth);
+    scaleBar.setAttributeNS(null, "height", scaleBarHeight);
+    scaleBar.setAttributeNS(null, "fill", "black");
+    scaleBar.setAttributeNS(null, "stroke", "white");
+    scaleBar.setAttributeNS(null, "stroke-width", "2");
+    scaleBar.setAttributeNS(null, "rx", "2.5");
+    scaleBar.style.cursor = "pointer";
+    scaleGroup.appendChild(scaleBar);
+
+    // scaleBar.addEventListener("click", function (event) {
+    //     Graph.clipboard.addToHistory("Scaled nodes");
+    //     scaleSlider.setAttributeNS(null, "x", event.pageX - (scaleSliderWidth / 2));
+    //     percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
+    //     Graph.scaleWindow.scale();
+    // }, false);
+
+    var scaleSliderY = scaleBarY - (scaleBarHeight * 2);
+    var scaleSliderWidth = scaleBarWidth / 20;
+    var scaleSliderHeight = scaleBarHeight * 5;
+    var scaleSliderX = scaleBarX + (scaleBarWidth / 2) - (scaleSliderWidth / 2);
+
+    var scaleSlider = document.createElementNS(xmlns, "rect");
+    scaleSlider.setAttributeNS(null, "x", scaleSliderX);
+    scaleSlider.setAttributeNS(null, "y", scaleSliderY);
+    scaleSlider.setAttributeNS(null, "width", scaleSliderWidth);
+    scaleSlider.setAttributeNS(null, "height", scaleSliderHeight);
+    scaleSlider.setAttributeNS(null, "fill", "red");
+    scaleSlider.setAttributeNS(null, "stroke", "white");
+    scaleSlider.setAttributeNS(null, "stroke-width", "2");
+    scaleSlider.setAttributeNS(null, "rx", "2.5");
+    scaleSlider.style.cursor = "pointer";
+    scaleGroup.appendChild(scaleSlider);
+
+    scaleSlider.addEventListener("mousedown", function down(event) {
+        var moved = false;
+        var offsetX = event.pageX - +scaleSlider.getAttributeNS(null, "x");
+
+        root.addEventListener("mousemove", move, false);
+        root.addEventListener("mouseup", function up(event) {
+            root.removeEventListener("mousemove", move, false);
+            root.removeEventListener("mouseup", up, false);
+        }, false);
+
+        function move(event) {
+            if (!moved) {
+                Graph.clipboard.addToHistory("Scaled nodes");
+                moved = true;
+            }
+            if (event.pageX < scaleBarX) {
+                scaleSlider.setAttributeNS(null, "x", scaleBarX - (scaleSliderWidth / 2));
+                percentScale = -1;
+            }
+            else if (event.pageX > (scaleBarX + scaleBarWidth)) {
+                scaleSlider.setAttributeNS(null, "x", (scaleBarX + scaleBarWidth) - (scaleSliderWidth / 2));
+                percentScale = 1;
+            }
+            else {
+                scaleSlider.setAttributeNS(null, "x", event.pageX - offsetX);
+                percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
+            }
+            //Graph.scaleWindow.scale();
+        }
+    }, false);
+
     //Add everything to the background (tabGroup) 
     tabGroup.appendChild(pauseBtn);
     tabGroup.appendChild(playBtn);
     tabGroup.appendChild(numText);
     tabGroup.appendChild(foreign);
+    tabGroup.appendChild(scaleGroup);
 
     var importHeaderX = tabBgX;
     var importHeaderY = tabBgY - (tabGroupOffsetTop / 2);

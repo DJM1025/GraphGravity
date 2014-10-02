@@ -72,9 +72,17 @@ function changeDirection(evt)
 }*/
 
 
-graphWalker.prototype.changeDirection = function () {
+graphWalker.prototype.pauseTraversal = function () {
 
-	alert("did isfasdf work?");
+	this.cx = this.element.getAttribute("cx");
+	this.cy = this.element.getAttribute("cy");
+	this.element.setAttributeNS(null,"cx",this.cx);
+	this.element.setAttributeNS(null,"cy",this.cy);
+	
+	while(this.element.firstChild)
+	{
+		this.element.removeChild(this.element.firstChild);
+	}
 }
 
 //Destroys the graph walker's SVG image that is displayed on the screen 

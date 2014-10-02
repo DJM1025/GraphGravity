@@ -70,7 +70,12 @@ function changeDirection(evt)
 {
 	alert("did i work");
 }*/
+graphWalker.prototype.updateSpeed = function () {
 
+	this.element.firstChild.setAttributeNS(null,"dur","2s");
+	
+	this.element.childNodes[1].setAttributeNS(null,"dur","2s");
+}
 
 graphWalker.prototype.pauseTraversal = function () {
 

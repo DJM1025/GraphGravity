@@ -64,6 +64,10 @@ function LoadTraverseWindow(parent) {
 		for(var i=0; i<walkers.length; i++)
 						walkers[i].pauseTraversal();
 	}
+	function changeSpeed(){
+		for(var i=0; i<walkers.length; i++)
+						walkers[i].updateSpeed();
+	}
     
     function mouseOverHighlight() {
         this.addEventListener("mouseover", function over() {
@@ -186,7 +190,7 @@ function LoadTraverseWindow(parent) {
     //Pause button is a group that includes two lines 
     var pauseBtn = document.createElementNS(xmlns, "g");
 	
-	pauseBtn.addEventListener("click",pause);
+	pauseBtn.addEventListener("click",changeSpeed);
 
     var pauseBtnA = document.createElementNS(xmlns, "line");
     var x = importWindowX+importWindowWidth*.55;

@@ -35,20 +35,23 @@ graphWalker.prototype.randomStart = function ()
 		animateX.setAttributeNS(null,"attributeType","XML");
 		animateX.setAttributeNS(null,"from",this.cx);
 		animateX.setAttributeNS(null,"to",destX);
-		animateX.setAttributeNS(null,"begin","0s");
+		animateX.setAttributeNS(null,"begin","Z.click");
 		animateX.setAttributeNS(null,"dur","5s");
+		animateX.setAttributeNS(null,"onend","function(){this.changeDirection}");
 		animateX.setAttributeNS(null,"fill","freeze");
-		animateX.setAttributeNS(null,"repeatCount","indefinite");
+		//animateX.setAttributeNS(null,"repeatCount","indefinite");
+		
 		
 		var animateY = document.createElementNS(xmlns,"animate");
 		animateY.setAttributeNS(null,"attributeName","cy");
 		animateY.setAttributeNS(null,"attributeType","XML");
 		animateY.setAttributeNS(null,"from",this.cy);
 		animateY.setAttributeNS(null,"to",destY);
-		animateY.setAttributeNS(null,"begin","0s");
+		animateY.setAttributeNS(null,"begin","Z.click");
 		animateY.setAttributeNS(null,"dur","5s");
+		animateY.setAttributeNS(null,"onend","this.changeDirection()");
 		animateY.setAttributeNS(null,"fill","freeze");
-		animateY.setAttributeNS(null,"repeatCount","indefinite");
+		//animateY.setAttributeNS(null,"repeatCount","indefinite");
 
 		document.getElementById(this.id).appendChild(animateX);
 		document.getElementById(this.id).appendChild(animateY);
@@ -56,7 +59,16 @@ graphWalker.prototype.randomStart = function ()
 	else
 		alert("Please create a graph with at least 2 nodes first!");
 }
+/*
+function changeDirection(evt)
+{
+	alert("did i work");
+}*/
 
+graphWalker.prototype.changeDirection = function () {
+
+	alert("did isfasdf work?");
+}
 //Destroys the graph walker's SVG image that is displayed on the screen 
 graphWalker.prototype.removeWalker = function () {
 	var element = document.getElementById(this.id);

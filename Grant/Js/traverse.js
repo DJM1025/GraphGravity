@@ -27,7 +27,7 @@ graphWalker.prototype.randomStart = function ()
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
 		this.currentNode = randomNode;
 		this.init();
-<<<<<<< HEAD
+
 		var randomAdjacent = Math.floor(Math.random() * Graph.nodes[randomNode].edgesList.length);
 		var destinationNode = Graph.nodes[randomNode].edgesList[randomAdjacent];
 		
@@ -59,8 +59,8 @@ graphWalker.prototype.randomStart = function ()
 
 		document.getElementById(this.id).appendChild(animateX);
 		document.getElementById(this.id).appendChild(animateY);
-=======
->>>>>>> origin/Traversal-Man
+
+
 	}
 	else
 		alert("Please create a graph with at least 2 nodes first!");
@@ -71,44 +71,12 @@ function changeDirection(evt)
 	alert("did i work");
 }*/
 
-<<<<<<< HEAD
+
 graphWalker.prototype.changeDirection = function () {
 
 	alert("did isfasdf work?");
 }
-=======
-graphWalker.prototype.randomWalk = function () {
-	var randomAdjacent = Math.floor(Math.random() * Graph.nodes[this.currentNode].edgesList.length);
-	var destinationNode = Graph.nodes[this.currentNode].edgesList[randomAdjacent];
-	
-	var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
-	var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
-	
-	var animateX = document.createElementNS(xmlns,"animate");
-	animateX.setAttributeNS(null,"attributeName","cx");
-	animateX.setAttributeNS(null,"attributeType","XML");
-	animateX.setAttributeNS(null,"from",this.cx);
-	animateX.setAttributeNS(null,"to",destX);
-	animateX.setAttributeNS(null,"begin","0s");
-	animateX.setAttributeNS(null,"dur","5s");
-	animateX.setAttributeNS(null,"fill","freeze");
-	animateX.setAttributeNS(null,"repeatCount","indefinite");
-	
-	var animateY = document.createElementNS(xmlns,"animate");
-	animateY.setAttributeNS(null,"attributeName","cy");
-	animateY.setAttributeNS(null,"attributeType","XML");
-	animateY.setAttributeNS(null,"from",this.cy);
-	animateY.setAttributeNS(null,"to",destY);
-	animateY.setAttributeNS(null,"begin","0s");
-	animateY.setAttributeNS(null,"dur","5s");
-	animateY.setAttributeNS(null,"fill","freeze");
-	animateY.setAttributeNS(null,"repeatCount","indefinite");
 
-	this.element.appendChild(animateX);
-	this.element.appendChild(animateY);
-}
-
->>>>>>> origin/Traversal-Man
 //Destroys the graph walker's SVG image that is displayed on the screen 
 graphWalker.prototype.removeWalker = function () {
 	this.element.parentNode.removeChild(this.element);

@@ -79,7 +79,7 @@ graphWalker.prototype.randomStart = function ()
 
 function changeDirection(node)
 {
-	alert(node.element);
+	alert(node);
 }
 graphWalker.prototype.updateSpeed = function () {
 

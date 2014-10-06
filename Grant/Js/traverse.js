@@ -2,6 +2,10 @@ function graphWalker(){
 	this.radius = 10;
 	this.cx = 500;
 	this.cy = 500;
+	this.destinationX = 0;
+	this.destinationY = 0;
+	this.destinationNode = 0;
+	this.speed = "5s";
 	this.color = "black";
 	this.currentNode = null;
 	this.element = null; 	//Holds the SVG element for the walker (document.getElementBy not needed)
@@ -34,16 +38,24 @@ graphWalker.prototype.randomStart = function ()
 		var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
 		var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
 		
+		this.destinationNode = destinationNode;
+		this.destinationX = destX;
+		this.destinationY = destY;
+		var obj = this;
+		
 		var animateX = document.createElementNS(xmlns,"animate");
 		animateX.setAttributeNS(null,"attributeName","cx");
 		animateX.setAttributeNS(null,"attributeType","XML");
 		animateX.setAttributeNS(null,"from",this.cx);
 		animateX.setAttributeNS(null,"to",destX);
 		animateX.setAttributeNS(null,"begin","Z.click");
-		animateX.setAttributeNS(null,"dur","5s");
-		animateX.setAttributeNS(null,"onend","function(){this.changeDirection}");
+		animateX.setAttributeNS(null,"dur",this.speed);
+		animateX.onend = function ()
+		{
+			changeDirection(obj);
+		}
 		animateX.setAttributeNS(null,"fill","freeze");
-		//animateX.setAttributeNS(null,"repeatCount","indefinite");
+		
 		
 		
 		var animateY = document.createElementNS(xmlns,"animate");
@@ -52,10 +64,9 @@ graphWalker.prototype.randomStart = function ()
 		animateY.setAttributeNS(null,"from",this.cy);
 		animateY.setAttributeNS(null,"to",destY);
 		animateY.setAttributeNS(null,"begin","Z.click");
-		animateY.setAttributeNS(null,"dur","5s");
-		animateY.setAttributeNS(null,"onend","this.changeDirection()");
+		animateY.setAttributeNS(null,"dur",this.speed);
 		animateY.setAttributeNS(null,"fill","freeze");
-		//animateY.setAttributeNS(null,"repeatCount","indefinite");
+		
 
 		document.getElementById(this.id).appendChild(animateX);
 		document.getElementById(this.id).appendChild(animateY);
@@ -65,16 +76,52 @@ graphWalker.prototype.randomStart = function ()
 	else
 		alert("Please create a graph with at least 2 nodes first!");
 }
-/*
-function changeDirection(evt)
+
+function changeDirection(node)
 {
-	alert("did i work");
-}*/
+	alert(node.element);
+}
 graphWalker.prototype.updateSpeed = function () {
 
-	this.element.firstChild.setAttributeNS(null,"dur","2s");
+	//alert(this.element.childNodes[1]);
+	this.pauseTraversal();
+	this.speed = "10s";
+	this.moveTo();
+	//this.element.firstChild.setAttributeNS(null,"dur","2s");
 	
-	this.element.childNodes[1].setAttributeNS(null,"dur","2s");
+	//this.element.childNodes[1].setAttributeNS(null,"dur","2s");
+}
+
+graphWalker.prototype.moveTo = function () {
+
+	var obj = this;
+	var animateX = document.createElementNS(xmlns,"animate");
+		animateX.setAttributeNS(null,"attributeName","cx");
+		animateX.setAttributeNS(null,"attributeType","XML");
+		animateX.setAttributeNS(null,"from",this.cx);
+		animateX.setAttributeNS(null,"to",this.destinationX);
+		animateX.setAttributeNS(null,"begin","Z.click");
+		animateX.setAttributeNS(null,"dur",this.speed);
+		animateX.onend = function ()
+		{
+			changeDirection(obj);
+		}
+		animateX.setAttributeNS(null,"fill","freeze");
+		//animateX.setAttributeNS(null,"repeatCount","indefinite");
+		
+		var animateY = document.createElementNS(xmlns,"animate");
+		animateY.setAttributeNS(null,"attributeName","cy");
+		animateY.setAttributeNS(null,"attributeType","XML");
+		animateY.setAttributeNS(null,"from",this.cy);
+		animateY.setAttributeNS(null,"to",this.destinationY);
+		animateY.setAttributeNS(null,"begin","Z.click");
+		animateY.setAttributeNS(null,"dur",this.speed);
+		animateY.setAttributeNS(null,"fill","freeze");
+		//animateY.setAttributeNS(null,"repeatCount","indefinite");
+
+		document.getElementById(this.id).appendChild(animateX);
+		document.getElementById(this.id).appendChild(animateY);
+	
 }
 
 graphWalker.prototype.pauseTraversal = function () {

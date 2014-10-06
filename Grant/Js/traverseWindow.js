@@ -189,6 +189,7 @@ function LoadTraverseWindow(parent) {
 
     //Pause button is a group that includes two lines 
     var pauseBtn = document.createElementNS(xmlns, "g");
+	pauseBtn.setAttributeNS(null,"id","P");
 	
 	pauseBtn.addEventListener("click",changeSpeed);
 

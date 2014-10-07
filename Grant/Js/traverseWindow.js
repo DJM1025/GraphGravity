@@ -40,7 +40,8 @@ function LoadTraverseWindow(parent) {
             //Determine state of traversal (random, pick-a-start, or data-based)
             switch(type){
                 case "random":
-                    walkers[walkers.length-1].randomStart();
+					for(var i =0; i < walkers.length;i++)
+                      walkers[i].randomStart();
                     break;
             }
         }
@@ -54,9 +55,12 @@ function LoadTraverseWindow(parent) {
 	function moveWalkers() {
 		switch(type){
                 case "random":
-					for(var i=0; i<walkers.length; i++)
-						walkers[i].randomWalk();
-                    break;
+					for(var i=0; i<walkers.length-1; i++)
+					{
+						alert(i);
+						//walkers[i].randomStart();
+					}
+                    //break;
             }
 	}
 	function pause(){
@@ -191,7 +195,7 @@ function LoadTraverseWindow(parent) {
     var pauseBtn = document.createElementNS(xmlns, "g");
 	pauseBtn.setAttributeNS(null,"id","P");
 	
-	pauseBtn.addEventListener("click",changeSpeed);
+	pauseBtn.addEventListener("click",pause);
 
     var pauseBtnA = document.createElementNS(xmlns, "line");
     var x = importWindowX+importWindowWidth*.55;

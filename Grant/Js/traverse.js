@@ -56,8 +56,6 @@ graphWalker.prototype.randomStart = function ()
 		}
 		animateX.setAttributeNS(null,"fill","freeze");
 		
-		
-		
 		var animateY = document.createElementNS(xmlns,"animate");
 		animateY.setAttributeNS(null,"attributeName","cy");
 		animateY.setAttributeNS(null,"attributeType","XML");
@@ -66,7 +64,6 @@ graphWalker.prototype.randomStart = function ()
 		animateY.setAttributeNS(null,"begin","Z.click");
 		animateY.setAttributeNS(null,"dur",this.speed);
 		animateY.setAttributeNS(null,"fill","freeze");
-		
 
 		document.getElementById(this.id).appendChild(animateX);
 		document.getElementById(this.id).appendChild(animateY);
@@ -79,17 +76,36 @@ graphWalker.prototype.randomStart = function ()
 
 function changeDirection(node)
 {
-	alert(node);
+	
+	node.cx = node.element.getAttribute("cx");
+	node.cy = node.element.getAttribute("cy");
+	node.element.setAttributeNS(null,"cx",node.cx);
+	node.element.setAttributeNS(null,"cy",node.cy);
+	node.currentNode = node.destinationNode;
+	
+	var randomAdjacent = Math.floor(Math.random() * Graph.nodes[node.currentNode].edgesList.length);
+	var destinationNode = Graph.nodes[node.currentNode].edgesList[randomAdjacent];
+		
+	var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
+	var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
+		
+	node.destinationNode = destinationNode;
+	node.destinationX = destX;
+	node.destinationY = destY;
+	//remove previous animtate attributes
+	while(node.element.firstChild)
+	{
+		node.element.removeChild(node.element.firstChild);
+	}
+	node.moveTo();
+	
 }
 graphWalker.prototype.updateSpeed = function () {
 
-	//alert(this.element.childNodes[1]);
 	this.pauseTraversal();
 	this.speed = "10s";
 	this.moveTo();
-	//this.element.firstChild.setAttributeNS(null,"dur","2s");
-	
-	//this.element.childNodes[1].setAttributeNS(null,"dur","2s");
+
 }
 
 graphWalker.prototype.moveTo = function () {

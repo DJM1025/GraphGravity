@@ -24,7 +24,7 @@ graphWalker.prototype.init = function(){
 
 graphWalker.prototype.randomStart = function ()
 {
-	if(Graph.numberOfNodes> 1)
+	if(Graph.numberOfNodes > 1)
 	{
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
@@ -65,8 +65,8 @@ graphWalker.prototype.randomStart = function ()
 		animateY.setAttributeNS(null,"dur",this.speed);
 		animateY.setAttributeNS(null,"fill","freeze");
 
-		document.getElementById(this.id).appendChild(animateX);
-		document.getElementById(this.id).appendChild(animateY);
+		this.element.appendChild(animateX);
+		this.element.appendChild(animateY);
 
 
 	}
@@ -135,8 +135,8 @@ graphWalker.prototype.moveTo = function () {
 		animateY.setAttributeNS(null,"fill","freeze");
 		//animateY.setAttributeNS(null,"repeatCount","indefinite");
 
-		document.getElementById(this.id).appendChild(animateX);
-		document.getElementById(this.id).appendChild(animateY);
+		this.element.appendChild(animateX);
+		this.element.appendChild(animateY);
 	
 }
 

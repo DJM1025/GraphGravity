@@ -40,8 +40,7 @@ function LoadTraverseWindow(parent) {
             //Determine state of traversal (random, pick-a-start, or data-based)
             switch(type){
                 case "random":
-					for(var i =0; i < walkers.length;i++)
-                      walkers[i].randomStart();
+					walkers[walkers.length-1].randomStart();
                     break;
             }
         }
@@ -52,22 +51,12 @@ function LoadTraverseWindow(parent) {
         }
     }
 
-	function moveWalkers() {
-		switch(type){
-                case "random":
-					for(var i=0; i<walkers.length-1; i++)
-					{
-						alert(i);
-						//walkers[i].randomStart();
-					}
-                    //break;
-            }
-	}
 	function pause(){
 	
 		for(var i=0; i<walkers.length; i++)
 						walkers[i].pauseTraversal();
 	}
+    
 	function changeSpeed(){
 		for(var i=0; i<walkers.length; i++)
 						walkers[i].updateSpeed();
@@ -183,8 +172,6 @@ function LoadTraverseWindow(parent) {
     playBtn.setAttributeNS(null, "points", points);
     playBtn.setAttributeNS(null, "fill", "#4CBB17");
 	playBtn.setAttributeNS(null, "id", "Z");
-	
-	playBtn.addEventListener("click", moveWalkers);
 
     //Play button title (hover over text)
     var playTxt = document.createElementNS(xmlns, "title");

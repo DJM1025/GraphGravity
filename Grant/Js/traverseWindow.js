@@ -52,14 +52,13 @@ function LoadTraverseWindow(parent) {
     }
 
 	function pause(){
-	
 		for(var i=0; i<walkers.length; i++)
-						walkers[i].pauseTraversal();
+			walkers[i].pauseTraversal();
 	}
     
-	function changeSpeed(){
+	function changeSpeed(mod){
 		for(var i=0; i<walkers.length; i++)
-						walkers[i].updateSpeed();
+			walkers[i].updateSpeed(mod);
 	}
     
     function mouseOverHighlight() {
@@ -271,10 +270,9 @@ function LoadTraverseWindow(parent) {
     scaleGroup.appendChild(scaleBar);
 
     // scaleBar.addEventListener("click", function (event) {
-    //     Graph.clipboard.addToHistory("Scaled nodes");
-    //     scaleSlider.setAttributeNS(null, "x", event.pageX - (scaleSliderWidth / 2));
-    //     percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
-    //     Graph.scaleWindow.scale();
+    //     //scaleSlider.setAttributeNS(null, "x", event.pageX - (scaleSliderWidth / 2));
+    //     //percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
+    //     changeSpeed();
     // }, false);
 
     var scaleSliderY = scaleBarY - (scaleBarHeight * 2);
@@ -302,7 +300,8 @@ function LoadTraverseWindow(parent) {
         root.addEventListener("mouseup", function up(event) {
             root.removeEventListener("mousemove", move, false);
             root.removeEventListener("mouseup", up, false);
-        }, false);
+        //changeSpeed();
+    }, false);
 
         function move(event) {
             if (!moved) {
@@ -321,7 +320,8 @@ function LoadTraverseWindow(parent) {
                 scaleSlider.setAttributeNS(null, "x", event.pageX - offsetX);
                 percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
             }
-            //Graph.scaleWindow.scale();
+            //alert(percentScale);
+            changeSpeed(percentScale);
         }
     }, false);
 

@@ -100,10 +100,10 @@ function changeDirection(node)
 	node.moveTo();
 	
 }
-graphWalker.prototype.updateSpeed = function () {
-
+graphWalker.prototype.updateSpeed = function (modifier) {
 	this.pauseTraversal();
-	this.speed = "10s";
+	this.speed = 5.01 - (5 * modifier);
+	this.speed = this.speed + "s";
 	this.moveTo();
 
 }

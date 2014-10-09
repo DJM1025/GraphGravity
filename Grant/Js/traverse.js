@@ -137,7 +137,9 @@ graphWalker.prototype.moveTo = function () {
 
 		this.element.appendChild(animateX);
 		this.element.appendChild(animateY);
-	
+
+		this.element.firstChild.beginElement();		  //X
+		this.element.childNodes[1].beginElement(); //Y
 }
 
 graphWalker.prototype.pauseTraversal = function () {

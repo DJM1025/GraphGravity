@@ -12,6 +12,7 @@ function LoadTraverseWindow(parent) {
             //Initialize walkers array and add a walker to it 
             type = openTab;
             walkers = new Array();
+            changedNum();
             root.removeEventListener("mousedown", Graph.disableTextHighlight, false);
             //this.openTab(openTab);
             parent.appendChild(importWindowGroup);
@@ -232,7 +233,7 @@ function LoadTraverseWindow(parent) {
     var numInput = document.createElement("input");
     numInput.setAttribute("type", "text");
     numInput.setAttribute("id", "numWalkers");
-    numInput.setAttribute("value", "0");
+    numInput.setAttribute("value", "1");
     numInput.addEventListener("change", changedNum);
     foreign.appendChild(numInput);
 

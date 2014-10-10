@@ -76,7 +76,7 @@ graphWalker.prototype.randomStart = function ()
 
 function changeDirection(node)
 {
-	
+
 	node.cx = node.element.getAttribute("cx");
 	node.cy = node.element.getAttribute("cy");
 	node.element.setAttributeNS(null,"cx",node.cx);
@@ -99,12 +99,21 @@ function changeDirection(node)
 	}
 	node.moveTo();
 	
-}
+}t
 graphWalker.prototype.updateSpeed = function (modifier) {
-	this.pauseTraversal();
+	//this.pauseTraversal();
+	
+	this.cx = this.element.getAttribute("cx");
+	this.cy = this.element.getAttribute("cy");
+	this.element.setAttributeNS(null,"cx",this.cx);
+	this.element.setAttributeNS(null,"cy",this.cy);
+	
 	this.speed = 5.01 - (5 * modifier);
-	this.speed = this.speed + "s";
-	this.moveTo();
+	this.element.firstChild.setAttributeNS(null,"dur",this.speed);
+	this.element.childNodes[1].setAttributeNS(null,"dur",this.speed);
+	
+	
+	//this.moveTo();
 
 }
 

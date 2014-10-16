@@ -103,7 +103,6 @@ function changeDirection(node)
 graphWalker.prototype.updateSpeed = function (modifier) {
 	this.pauseTraversal();
 	this.speed = 5.01 - (5 * modifier);
-	this.speed = this.speed + "s";
 	this.moveTo();
 
 }
@@ -117,6 +116,7 @@ graphWalker.prototype.moveTo = function () {
 		animateX.setAttributeNS(null,"from",this.cx);
 		animateX.setAttributeNS(null,"to",this.destinationX);
 		animateX.setAttributeNS(null,"begin","Z.click");
+		//animateX.setAttributeNS(null, "end", "P.click");
 		animateX.setAttributeNS(null,"dur",this.speed);
 		animateX.onend = function ()
 		{
@@ -131,7 +131,8 @@ graphWalker.prototype.moveTo = function () {
 		animateY.setAttributeNS(null,"from",this.cy);
 		animateY.setAttributeNS(null,"to",this.destinationY);
 		animateY.setAttributeNS(null,"begin","Z.click");
-		animateY.setAttributeNS(null,"dur",this.speed);
+		animateX.setAttributeNS(null, "end", "P.click");
+		//animateY.setAttributeNS(null,"dur",this.speed);
 		animateY.setAttributeNS(null,"fill","freeze");
 		//animateY.setAttributeNS(null,"repeatCount","indefinite");
 
@@ -149,10 +150,13 @@ graphWalker.prototype.pauseTraversal = function () {
 	this.element.setAttributeNS(null,"cx",this.cx);
 	this.element.setAttributeNS(null,"cy",this.cy);
 	
+	/*
 	while(this.element.firstChild)
 	{
 		this.element.removeChild(this.element.firstChild);
 	}
+	*/
+	document.getElementById("graphPlane").pauseAnimations();
 }
 
 //Destroys the graph walker's SVG image that is displayed on the screen 

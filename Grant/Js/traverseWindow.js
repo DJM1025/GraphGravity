@@ -53,8 +53,8 @@ function LoadTraverseWindow(parent) {
     }
 
 	function pause(){
-		for(var i=0; i<walkers.length; i++)
-			walkers[i].pauseTraversal();
+		//for(var i=0; i<walkers.length; i++)
+			walkers[0].pauseTraversal();
 	}
     
 	function changeSpeed(mod){
@@ -182,7 +182,7 @@ function LoadTraverseWindow(parent) {
     var pauseBtn = document.createElementNS(xmlns, "g");
 	pauseBtn.setAttributeNS(null,"id","P");
 	
-	pauseBtn.addEventListener("click",pause);
+	pauseBtn.addEventListener("click", pause);
 
     var pauseBtnA = document.createElementNS(xmlns, "line");
     var x = importWindowX+importWindowWidth*.55;

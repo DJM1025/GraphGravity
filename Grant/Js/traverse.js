@@ -55,6 +55,7 @@ graphWalker.prototype.randomStart = function ()
 			changeDirection(obj);
 		}
 		animateX.setAttributeNS(null,"fill","freeze");
+		animateX.setAttributeNS(null,"restart","never");
 		
 		var animateY = document.createElementNS(xmlns,"animate");
 		animateY.setAttributeNS(null,"attributeName","cy");
@@ -64,10 +65,10 @@ graphWalker.prototype.randomStart = function ()
 		animateY.setAttributeNS(null,"begin","Z.click");
 		animateY.setAttributeNS(null,"dur",this.speed);
 		animateY.setAttributeNS(null,"fill","freeze");
+		animateY.setAttributeNS(null,"restart","never");
 
 		this.element.appendChild(animateX);
 		this.element.appendChild(animateY);
-
 
 	}
 	else
@@ -76,7 +77,6 @@ graphWalker.prototype.randomStart = function ()
 
 function changeDirection(node)
 {
-	
 	node.cx = node.element.getAttribute("cx");
 	node.cy = node.element.getAttribute("cy");
 	node.element.setAttributeNS(null,"cx",node.cx);
@@ -98,8 +98,8 @@ function changeDirection(node)
 		node.element.removeChild(node.element.firstChild);
 	}
 	node.moveTo();
-	
 }
+
 graphWalker.prototype.updateSpeed = function (modifier) {
 	this.pauseTraversal();
 	this.speed = 5.01 - (5 * modifier);
@@ -123,7 +123,7 @@ graphWalker.prototype.moveTo = function () {
 			changeDirection(obj);
 		}
 		animateX.setAttributeNS(null,"fill","freeze");
-		//animateX.setAttributeNS(null,"repeatCount","indefinite");
+		animateX.setAttributeNS(null,"restart","never");
 		
 		var animateY = document.createElementNS(xmlns,"animate");
 		animateY.setAttributeNS(null,"attributeName","cy");
@@ -131,16 +131,16 @@ graphWalker.prototype.moveTo = function () {
 		animateY.setAttributeNS(null,"from",this.cy);
 		animateY.setAttributeNS(null,"to",this.destinationY);
 		animateY.setAttributeNS(null,"begin","Z.click");
-		animateX.setAttributeNS(null, "end", "P.click");
-		//animateY.setAttributeNS(null,"dur",this.speed);
+		//animateX.setAttributeNS(null, "end", "P.click");
+		animateY.setAttributeNS(null,"dur",this.speed);
 		animateY.setAttributeNS(null,"fill","freeze");
-		//animateY.setAttributeNS(null,"repeatCount","indefinite");
+		animateY.setAttributeNS(null,"restart","never");
 
 		this.element.appendChild(animateX);
 		this.element.appendChild(animateY);
 
 		this.element.firstChild.beginElement();		  //X
-		this.element.childNodes[1].beginElement(); //Y
+		this.element.childNodes[1].beginElement();   //Y 
 }
 
 graphWalker.prototype.pauseTraversal = function () {
@@ -149,14 +149,11 @@ graphWalker.prototype.pauseTraversal = function () {
 	this.cy = this.element.getAttribute("cy");
 	this.element.setAttributeNS(null,"cx",this.cx);
 	this.element.setAttributeNS(null,"cy",this.cy);
-	
-	/*
+
 	while(this.element.firstChild)
 	{
 		this.element.removeChild(this.element.firstChild);
 	}
-	*/
-	document.getElementById("graphPlane").pauseAnimations();
 }
 
 //Destroys the graph walker's SVG image that is displayed on the screen 

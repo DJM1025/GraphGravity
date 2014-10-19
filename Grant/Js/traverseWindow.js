@@ -52,9 +52,8 @@ function LoadTraverseWindow(parent) {
         }
     }
 
-	function pause(){
-		//for(var i=0; i<walkers.length; i++)
-			walkers[0].pauseTraversal();
+	function pause(){  
+        document.getElementById("graphPlane").pauseAnimations();
 	}
     
 	function changeSpeed(mod){
@@ -172,6 +171,7 @@ function LoadTraverseWindow(parent) {
     playBtn.setAttributeNS(null, "points", points);
     playBtn.setAttributeNS(null, "fill", "#4CBB17");
 	playBtn.setAttributeNS(null, "id", "Z");
+    playBtn.addEventListener("click", function () { document.getElementById("graphPlane").unpauseAnimations(); });
 
     //Play button title (hover over text)
     var playTxt = document.createElementNS(xmlns, "title");
@@ -185,11 +185,11 @@ function LoadTraverseWindow(parent) {
 	pauseBtn.addEventListener("click", pause);
 
     var pauseBtnA = document.createElementNS(xmlns, "line");
-    var x = importWindowX+importWindowWidth*.55;
+    var x1 = importWindowX+importWindowWidth*.55;
     var y1 = tabBgY+tabBgWidth*.05;
     var y2 = tabBgY+tabBgWidth*.25;
-    pauseBtnA.setAttributeNS(null, "x1", x);
-    pauseBtnA.setAttributeNS(null, "x2", x);
+    pauseBtnA.setAttributeNS(null, "x1", x1);
+    pauseBtnA.setAttributeNS(null, "x2", x1);
     pauseBtnA.setAttributeNS(null, "y1", y1);
     pauseBtnA.setAttributeNS(null, "y2", y2);
     pauseBtnA.setAttributeNS(null, "stroke", "#4CBB17");
@@ -197,14 +197,22 @@ function LoadTraverseWindow(parent) {
     pauseBtn.appendChild(pauseBtnA);
 
     var pauseBtnB = document.createElementNS(xmlns, "line");
-    x = importWindowX+importWindowWidth*.60;
-    pauseBtnB.setAttributeNS(null, "x1", x);
-    pauseBtnB.setAttributeNS(null, "x2", x);
+    var x2 = importWindowX+importWindowWidth*.60;
+    pauseBtnB.setAttributeNS(null, "x1", x2);
+    pauseBtnB.setAttributeNS(null, "x2", x2);
     pauseBtnB.setAttributeNS(null, "y1", y1);
     pauseBtnB.setAttributeNS(null, "y2", y2);
     pauseBtnB.setAttributeNS(null, "stroke", "#4CBB17");
     pauseBtnB.setAttributeNS(null, "stroke-width", "6");
     pauseBtn.appendChild(pauseBtnB);
+
+    var pauseBox = document.createElementNS(xmlns, "rect");
+    pauseBox.setAttributeNS(null, "x", x1);
+    pauseBox.setAttributeNS(null, "y", y1);
+    pauseBox.setAttributeNS(null, "width", (x2-x1)*2);
+    pauseBox.setAttributeNS(null, "height", y2-y1);
+    pauseBox.setAttributeNS(null, "fill-opacity", "0.0");
+    pauseBtn.appendChild(pauseBox);
 
     var pauseTxt = document.createElementNS(xmlns, "title");
     pauseTxt.textContent = "Pause Traversal";
@@ -269,12 +277,6 @@ function LoadTraverseWindow(parent) {
     scaleBar.setAttributeNS(null, "rx", "2.5");
     scaleBar.style.cursor = "pointer";
     scaleGroup.appendChild(scaleBar);
-
-    // scaleBar.addEventListener("click", function (event) {
-    //     //scaleSlider.setAttributeNS(null, "x", event.pageX - (scaleSliderWidth / 2));
-    //     //percentScale = (((event.pageX - scaleBarX) / scaleBarWidth) - .5) * 2;
-    //     changeSpeed();
-    // }, false);
 
     var scaleSliderY = scaleBarY - (scaleBarHeight * 2);
     var scaleSliderWidth = scaleBarWidth / 20;

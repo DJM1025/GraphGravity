@@ -74,7 +74,18 @@ graphWalker.prototype.randomStart = function ()
 	else
 		alert("Please create a graph with at least 2 nodes first!");
 }
-
+function getIndexLocation(node)
+{
+	var iterator;
+	for(var x = 0;x < Graph.nodes[node.currentNode].edgesList.length;x++)
+	{
+		if(node.destinationNode === Graph.nodes[node.currentNode].edgesList[x])
+			iterator = x;
+	}
+	
+	return iterator;
+	
+}
 function changeDirection(node)
 {
 	node.cx = node.element.getAttribute("cx");
@@ -83,8 +94,8 @@ function changeDirection(node)
 	node.element.setAttributeNS(null,"cy",node.cy);
 
 	Graph.nodes[node.destinationNode].timesVisited++;	//increment the number of times the node has been visited
-	Graph.nodes[node.currentNode].edgesVisited++;
-	Graph.nodes[node.destinationNode].edgesVisited++;
+	Graph.nodes[node.currentNode].edgesVisited[getIndexLocation(node)]++;
+	Graph.nodes[node.destinationNode].edgesVisited[getIndexLocation(node)]++;
 	node.updateColors();
 	node.updateEdges();
 	
@@ -109,10 +120,9 @@ function changeDirection(node)
 }
 graphWalker.prototype.updateEdges = function() {
 
-	alert(this.currentNode);
-	alert(Graph.nodes[this.currentNode].edgesVisited[this.destinationNode]);
-	alert(Graph.nodes[this.destinationNode].edgesVisited[this.currentNode]);
-
+	
+	alert(Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this)]);
+	alert(Graph.nodes[this.destinationNode].edgesVisited[getIndexLocation(this)]);
 }
 
 graphWalker.prototype.updateColors = function () {

@@ -69,7 +69,6 @@ graphWalker.prototype.randomStart = function ()
 
 		this.element.appendChild(animateX);
 		this.element.appendChild(animateY);
-
 	}
 	else
 		alert("Please create a graph with at least 2 nodes first!");
@@ -81,7 +80,12 @@ function changeDirection(node)
 	node.cy = node.element.getAttribute("cy");
 	node.element.setAttributeNS(null,"cx",node.cx);
 	node.element.setAttributeNS(null,"cy",node.cy);
+
+	Graph.nodes[node.destinationNode].timesVisited++;	//increment the number of times the node has been visited
+	node.updateColors();
+	
 	node.currentNode = node.destinationNode;
+	
 	
 	var randomAdjacent = Math.floor(Math.random() * Graph.nodes[node.currentNode].edgesList.length);
 	var destinationNode = Graph.nodes[node.currentNode].edgesList[randomAdjacent];
@@ -98,6 +102,16 @@ function changeDirection(node)
 		node.element.removeChild(node.element.firstChild);
 	}
 	node.moveTo();
+}
+graphWalker.prototype.updateColors = function () {
+	
+	//Handles changing colors of nodes -- needs some math to figure out how colors will be changed
+	Graph.nodes[this.destinationNode].color = "rgb(64,64,"+(Graph.nodes[this.destinationNode].timesVisited + 128) + ")";
+	Graph.changeNodeColor(Graph.nodes[this.destinationNode],Graph.nodes[this.destinationNode].color, "black");
+	
+	//Handles changing of edges colors -- also needs math to figure out how colors will be changed
+	
+
 }
 
 graphWalker.prototype.updateSpeed = function (modifier) {

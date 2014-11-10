@@ -26,6 +26,7 @@ graphWalker.prototype.randomStart = function ()
 {
 	if(Graph.numberOfNodes > 1)
 	{
+		//sort the edgesVisited Array
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
@@ -82,7 +83,10 @@ function changeDirection(node)
 	node.element.setAttributeNS(null,"cy",node.cy);
 
 	Graph.nodes[node.destinationNode].timesVisited++;	//increment the number of times the node has been visited
+	Graph.nodes[node.currentNode].edgesVisited++;
+	Graph.nodes[node.destinationNode].edgesVisited++;
 	node.updateColors();
+	node.updateEdges();
 	
 	node.currentNode = node.destinationNode;
 	
@@ -103,6 +107,14 @@ function changeDirection(node)
 	}
 	node.moveTo();
 }
+graphWalker.prototype.updateEdges = function() {
+
+	alert(this.currentNode);
+	alert(Graph.nodes[this.currentNode].edgesVisited[this.destinationNode]);
+	alert(Graph.nodes[this.destinationNode].edgesVisited[this.currentNode]);
+
+}
+
 graphWalker.prototype.updateColors = function () {
 	
 	//Handles changing colors of nodes -- needs some math to figure out how colors will be changed

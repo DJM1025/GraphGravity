@@ -746,6 +746,7 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.image = "";
 		nodeGroup.timesVisited = 0;	//tracks how many times to graphwalker has visited a node
 		nodeGroup.edgesList = new Array();
+		nodeGroup.edgesVisited = new Array();
 		var nodeTextSize = nodeLabel || Graph.numberOfNodes;
 		nodeTextSize = "" + nodeTextSize + "";
 
@@ -798,6 +799,7 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.image = node.image;
 		nodeGroup.timesVisited = 0;
 		nodeGroup.edgesList = node.edges;
+		nodeGroup.edgesVisited = new Array();
 		var nodeTextSize = node.label
 		nodeTextSize = "" + nodeTextSize + "";
 
@@ -1164,7 +1166,9 @@ window.addEventListener("load", function loadGraph() {
         }
 		
 		node1.edgesList.push(node2.nodeNum);
+		node1.edgesVisited.push(0);
 		node2.edgesList.push(node1.nodeNum);
+		node2.edgesVisited.push(0);
 		
 		
         lowNode.edges[highNode.nodeNum] = edge;

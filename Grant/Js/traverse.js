@@ -120,9 +120,19 @@ function changeDirection(node)
 }
 graphWalker.prototype.updateEdges = function() {
 
-	
 	alert(Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this)]);
 	alert(Graph.nodes[this.destinationNode].edgesVisited[getIndexLocation(this)]);
+	var id1 = document.getElementById(this.currentNode + "-" + this.destinationNode
+	var id2 =document.getElementById(this.currentNode + "-" + this.destinationNode
+	if(id1)
+	{
+	}
+	else
+	{
+		
+	}
+	
+	
 }
 
 graphWalker.prototype.updateColors = function () {

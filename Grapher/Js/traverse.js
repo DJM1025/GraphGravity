@@ -26,7 +26,7 @@ graphWalker.prototype.randomStart = function ()
 {
 	if(Graph.numberOfNodes > 1)
 	{
-		//sort the edgesVisited Array
+		defaultColors()   //intializes all of the nodes to there starting colors
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
@@ -74,17 +74,27 @@ graphWalker.prototype.randomStart = function ()
 	else
 		alert("Please create a graph with at least 2 nodes first!");
 }
-function getIndexLocation(node)
+function getIndexLocation(node,flag)
 {
 	var iterator;
-	for(var x = 0;x < Graph.nodes[node.currentNode].edgesList.length;x++)
+	if(flag === 1)
 	{
-		if(node.destinationNode === Graph.nodes[node.currentNode].edgesList[x])
-			iterator = x;
+		for(var x = 0;x < Graph.nodes[node.currentNode].edgesList.length;x++)
+		{
+			if(node.destinationNode === Graph.nodes[node.currentNode].edgesList[x])
+				iterator = x;
+		}
+	}
+	else
+	{
+		for(var x = 0;x < Graph.nodes[node.destinationNode].edgesList.length;x++)
+		{
+			if(node.currentNode === Graph.nodes[node.destinationNode].edgesList[x])
+				iterator = x;
+		}
 	}
 	
 	return iterator;
-	
 }
 function changeDirection(node)
 {
@@ -94,8 +104,9 @@ function changeDirection(node)
 	node.element.setAttributeNS(null,"cy",node.cy);
 
 	Graph.nodes[node.destinationNode].timesVisited++;	//increment the number of times the node has been visited
-	Graph.nodes[node.currentNode].edgesVisited[getIndexLocation(node)]++;
-	Graph.nodes[node.destinationNode].edgesVisited[getIndexLocation(node)]++;
+	Graph.nodes[node.currentNode].edgesVisited[getIndexLocation(node,1)]++;
+	Graph.nodes[node.destinationNode].edgesVisited[getIndexLocation(node,0)]++;
+	
 	node.updateColors();
 	node.updateEdges();
 	
@@ -120,25 +131,35 @@ function changeDirection(node)
 }
 graphWalker.prototype.updateEdges = function() {
 
-	alert(Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this)]);
-	alert(Graph.nodes[this.destinationNode].edgesVisited[getIndexLocation(this)]);
-	var id1 = document.getElementById(this.currentNode + "-" + this.destinationNode
-	var id2 =document.getElementById(this.currentNode + "-" + this.destinationNode
+	var base = 2;
+	var id1 = document.getElementById(this.currentNode + "-" + this.destinationNode);
+	var id2 =document.getElementById(this.destinationNode + "-" + this.currentNode);
 	if(id1)
 	{
+		id1.setAttributeNS(null,"stroke-width", base + (0.3 * Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this,1)]));
 	}
 	else
 	{
-		
+		id2.setAttributeNS(null,"stroke-width", base + (0.3 * Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this,1)]));
 	}
 	
 	
 }
 
+function defaultColors()
+{
+	for(var x=0; x < Graph.numberOfNodes;x++)
+	{
+		Graph.nodes[x].color = "rgb(128,0,0)";
+		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
+	}
+}
 graphWalker.prototype.updateColors = function () {
+	var redBase = 2;
+	var greenBase = 2;
 	
 	//Handles changing colors of nodes -- needs some math to figure out how colors will be changed
-	Graph.nodes[this.destinationNode].color = "rgb(64,64,"+(Graph.nodes[this.destinationNode].timesVisited + 128) + ")";
+	Graph.nodes[this.destinationNode].color = "rgb(" + (128 + Graph.nodes[this.destinationNode].timesVisited ) + ","+(Graph.nodes[this.destinationNode].timesVisited * 2)+",0)";
 	Graph.changeNodeColor(Graph.nodes[this.destinationNode],Graph.nodes[this.destinationNode].color, "black");
 	
 	//Handles changing of edges colors -- also needs math to figure out how colors will be changed

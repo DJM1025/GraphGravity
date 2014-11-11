@@ -73,7 +73,7 @@ window.addEventListener("load", function loadGraph() {
 
     //make a global.js for root, namespaces, etc.
     var root = document.documentElement;
-    var parentSVG = document.getElementById("parentSVG");
+    parentSVG = document.getElementById("parentSVG");
     //prevent text highlighting
     //this disables the text area in import/export window
     //root.addEventListener("mousedown", function (event) { event.preventDefault(); }, false); //only remove when the import window is open    

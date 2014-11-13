@@ -329,7 +329,22 @@ function LoadTraverseWindow(parent) {
         }
     }, false);
 
+	var reset = document.createElementNS(xmlns, "foreignObject");
+    x = importWindowX + importWindowWidth*.07;
+    y = scaleBarY + importWindowHeight*.07;
+    reset.setAttributeNS(null, "x", x);
+    reset.setAttributeNS(null, "y", y);
+    reset.setAttributeNS(null, "width", "120");
+    reset.setAttributeNS(null, "height", "50");
+    var resetBtn = document.createElement("input");
+    resetBtn.setAttribute("type", "button");
+    resetBtn.setAttribute("id", "reset");
+	resetBtn.setAttribute("value", "Reset");
+    resetBtn.addEventListener("click", resetGraph);
+    reset.appendChild(resetBtn);
+	
     //Add everything to the background (tabGroup) 
+	tabGroup.appendChild(reset);
     tabGroup.appendChild(pauseBtn);
     tabGroup.appendChild(playBtn);
     tabGroup.appendChild(numText);

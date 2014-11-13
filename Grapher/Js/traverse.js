@@ -179,7 +179,7 @@ function resetGraph()
 	{
 		Graph.nodes[x].color = "rgb(128,0,0)";
 		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
-		Graph.nodes[x].numberOfVisits = 0;
+		Graph.nodes[x].timesVisited = 0;
 		for(var y =0; y < Graph.nodes[x].edgesVisited.length;y++)
 		{
 			Graph.nodes[x].edgesVisited[y] = 0;

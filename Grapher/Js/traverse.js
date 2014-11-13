@@ -26,6 +26,7 @@ graphWalker.prototype.randomStart = function ()
 {
 	if(Graph.numberOfNodes > 1)
 	{
+		updateColorFlag = 0;
 		defaultColors()   //intializes all of the nodes to there starting colors
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
@@ -107,7 +108,15 @@ function changeDirection(node)
 	Graph.nodes[node.currentNode].edgesVisited[getIndexLocation(node,1)]++;
 	Graph.nodes[node.destinationNode].edgesVisited[getIndexLocation(node,0)]++;
 	
-	node.updateColors();
+	updateColorFlag++;
+	
+	if(updateColorFlag === walkers.length)
+	{
+		//update colors algorithm
+		node.updateColors();
+	}
+	
+	
 	node.updateEdges();
 	
 	node.currentNode = node.destinationNode;
@@ -154,17 +163,29 @@ function defaultColors()
 		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
 	}
 }
+
 graphWalker.prototype.updateColors = function () {
 	var redBase = 2;
 	var greenBase = 2;
+	var sortedArray = new Array();
+	var min = Graph.nodes[0].timesVisited;	//start with live test data for this 
+	var max = Graph.nodes[0].timesVisited;
 	
+	for(var x = 1; x < Graph.numberOfNodes;x++)
+	{
+		if(Graph.nodes[x].timesVisited > max
+			max = Graph.nodes[x].timesVisited;
+		else if(Graph.nodes[x].timesVisited < min)
+			min = Graph.nodes[x].timesVisited;
+		
+	}
 	//Handles changing colors of nodes -- needs some math to figure out how colors will be changed
 	Graph.nodes[this.destinationNode].color = "rgb(" + (128 + Graph.nodes[this.destinationNode].timesVisited ) + ","+(Graph.nodes[this.destinationNode].timesVisited * 2)+",0)";
 	Graph.changeNodeColor(Graph.nodes[this.destinationNode],Graph.nodes[this.destinationNode].color, "black");
 	
 	//Handles changing of edges colors -- also needs math to figure out how colors will be changed
-	
-
+	//set color flag back after global color update
+	updateColorFlag = 0;
 }
 
 graphWalker.prototype.updateSpeed = function (modifier) {

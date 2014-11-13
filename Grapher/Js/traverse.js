@@ -5,7 +5,7 @@ function graphWalker(){
 	this.destinationX = 0;
 	this.destinationY = 0;
 	this.destinationNode = 0;
-	this.speed = "5s";
+	this.speed = 5.01 - (5 * speedMod); //Speed mod is a global variable in the TraverseWindow which controls starting speed for new walkers
 	this.color = "black";
 	this.currentNode = null;
 	this.element = null; 	//Holds the SVG element for the walker (document.getElementBy not needed)

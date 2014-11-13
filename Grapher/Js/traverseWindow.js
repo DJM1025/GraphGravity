@@ -5,6 +5,7 @@ function LoadTraverseWindow(parent) {
     var xlink = "http://www.w3.org/1999/xlink";
     var open = null;
     var type = null;
+    speedMod = 0;    //Used to determine speed of new nodes 
     
     var impExpObj = {
         'openTab': null,
@@ -16,7 +17,6 @@ function LoadTraverseWindow(parent) {
             root.removeEventListener("mousedown", Graph.disableTextHighlight, false);
             //this.openTab(openTab);
             parent.appendChild(importWindowGroup);
-
         },
         'close': function close() {
             //window.removeEventListener("resize", resizeWindow, false);
@@ -57,6 +57,7 @@ function LoadTraverseWindow(parent) {
 	}
     
 	function changeSpeed(mod){
+        speedMod = mod;  //Update speed that new walkers should start at
 		for(var i=0; i<walkers.length; i++)
 			walkers[i].updateSpeed(mod);
 	}

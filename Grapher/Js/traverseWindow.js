@@ -344,6 +344,62 @@ function LoadTraverseWindow(parent) {
     reset.appendChild(resetBtn);
 	
 	
+	y += 70;
+	var keyArea = document.createElementNS(xmlns, "g");
+	keyArea.setAttributeNS(null,"id","keyArea");
+	var fifthKey = document.createElementNS(xmlns, "rect");
+	fifthKey.setAttributeNS(null, "x", importWindowX + importWindowWidth*.07);
+	fifthKey.setAttributeNS(null, "y", y);
+	fifthKey.setAttributeNS(null, "width", importWindowWidth *.172);
+	fifthKey.setAttributeNS(null, "height", "35");
+	fifthKey.setAttributeNS(null,"fill","blue");
+	fifthKey.setAttributeNS(null,"stroke","black");
+	fifthKey.setAttributeNS(null,"stroke-width","1.5");
+	
+	var fourthKey = document.createElementNS(xmlns, "rect");
+	fourthKey.setAttributeNS(null, "x", importWindowX + (importWindowWidth*.07) + importWindowWidth * .172);
+	fourthKey.setAttributeNS(null, "y", y);
+	fourthKey.setAttributeNS(null, "width", importWindowWidth *.172);
+	fourthKey.setAttributeNS(null, "height", "35");
+	fourthKey.setAttributeNS(null,"fill","green");
+	fourthKey.setAttributeNS(null,"stroke","black");
+	fourthKey.setAttributeNS(null,"stroke-width","1.5");
+	
+	var thirdKey = document.createElementNS(xmlns, "rect");
+	thirdKey.setAttributeNS(null, "x", importWindowX + (importWindowWidth*.07) + (importWindowWidth * .172 * 2));
+	thirdKey.setAttributeNS(null, "y", y);
+	thirdKey.setAttributeNS(null, "width", importWindowWidth *.172);
+	thirdKey.setAttributeNS(null, "height", "35");
+	thirdKey.setAttributeNS(null,"fill","purple");
+	thirdKey.setAttributeNS(null,"stroke","black");
+	thirdKey.setAttributeNS(null,"stroke-width","1.5");
+	
+	var secondKey = document.createElementNS(xmlns, "rect");
+	secondKey.setAttributeNS(null, "x", importWindowX + (importWindowWidth*.07) + (importWindowWidth * .172 * 3));
+	secondKey.setAttributeNS(null, "y", y);
+	secondKey.setAttributeNS(null, "width", importWindowWidth *.172);
+	secondKey.setAttributeNS(null, "height", "35");
+	secondKey.setAttributeNS(null,"fill","orange");
+	secondKey.setAttributeNS(null,"stroke","black");
+	secondKey.setAttributeNS(null,"stroke-width","1.5");
+	
+	var firstKey = document.createElementNS(xmlns, "rect");
+	firstKey.setAttributeNS(null, "x", importWindowX + (importWindowWidth*.07) + (importWindowWidth * .172 * 4));
+	firstKey.setAttributeNS(null, "y", y);
+	firstKey.setAttributeNS(null, "width", importWindowWidth *.172);
+	firstKey.setAttributeNS(null, "height", "35");
+	firstKey.setAttributeNS(null,"fill","red");
+	firstKey.setAttributeNS(null,"stroke","black");
+	firstKey.setAttributeNS(null,"stroke-width","1.5");
+	
+	keyArea.appendChild(fifthKey);
+	keyArea.appendChild(fourthKey);
+	keyArea.appendChild(thirdKey);
+	keyArea.appendChild(secondKey);
+	keyArea.appendChild(firstKey);
+	
+	
+	
 	//set up the key area in the traversal options screen
 	
     //Add everything to the background (tabGroup) 
@@ -353,6 +409,7 @@ function LoadTraverseWindow(parent) {
     tabGroup.appendChild(numText);
     tabGroup.appendChild(foreign);
     tabGroup.appendChild(scaleGroup);
+	tabGroup.appendChild(keyArea);
 
     var importHeaderX = tabBgX;
     var importHeaderY = tabBgY - (tabGroupOffsetTop / 2);

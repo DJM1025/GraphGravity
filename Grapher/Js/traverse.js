@@ -26,8 +26,10 @@ graphWalker.prototype.randomStart = function ()
 {
 	if(Graph.numberOfNodes > 1)
 	{
+		choosenColor = 1; //sets the currentlySelected Color
 		updateColorFlag = 0;
-		defaultColors(1)   //intializes all of the nodes to there starting colors
+		defaultColors(choosenColor)   //intializes all of the nodes to there starting colors
+		setKeyColors(choosenColor);
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
@@ -113,7 +115,7 @@ function changeDirection(node)
 	if(updateColorFlag === walkers.length)
 	{
 		//update colors algorithm
-		node.updateColors(1);
+		node.updateColors(choosenColor);
 	}
 	
 	
@@ -188,7 +190,7 @@ function resetGraph()
 	}
 	for(var x = 0;x < Graph.numberOfNodes;x++)
 	{
-		defaultColors(1);
+		defaultColors(choosenColor);
 		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
 		Graph.nodes[x].timesVisited = 0;
 		for(var y =0; y < Graph.nodes[x].edgesVisited.length;y++)
@@ -199,6 +201,28 @@ function resetGraph()
 	
 	document.getElementById("numWalkers").value = 0;
 	
+}
+function setKeyColors(colorChoice)
+{
+	var keyGroup = document.getElementById("keyArea").childNodes;
+	if(colorChoice == 0)
+	{
+		for(var x = 0; x < keyGroup.length;x++)
+		{
+			var redColor = Math.round(128 + (128 * (x/(keyGroup.length-1))));
+			var greenColor =  Math.round((255 * (x/(keyGroup.length-1))));
+			keyGroup[x].setAttributeNS(null,"fill","rgb(" + redColor +","+ greenColor + ",0)");
+		}
+	}
+	else if(colorChoice == 1)
+	{
+		for(var x = 0; x < keyGroup.length;x++)
+		{
+			var redColor = Math.round((255 * (x/(keyGroup.length-1))));
+			var blueColor =	 Math.round(( 255 - (255 * (x/(keyGroup.length-1)))));
+			keyGroup[x].setAttributeNS(null,"fill","rgb("+ redColor + ",0,"+  blueColor+ ")");
+		}
+	}
 }
 graphWalker.prototype.updateColors = function (colorChoice) {
 	var min = Graph.nodes[0].timesVisited;	//start with live test data for this 

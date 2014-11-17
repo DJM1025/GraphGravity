@@ -27,7 +27,7 @@ graphWalker.prototype.randomStart = function ()
 	if(Graph.numberOfNodes > 1)
 	{
 		updateColorFlag = 0;
-		defaultColors()   //intializes all of the nodes to there starting colors
+		defaultColors(1)   //intializes all of the nodes to there starting colors
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
@@ -113,7 +113,7 @@ function changeDirection(node)
 	if(updateColorFlag === walkers.length)
 	{
 		//update colors algorithm
-		node.updateColors();
+		node.updateColors(1);
 	}
 	
 	
@@ -155,12 +155,23 @@ graphWalker.prototype.updateEdges = function() {
 	
 }
 
-function defaultColors()
+function defaultColors(colorChoice)
 {
-	for(var x=0; x < Graph.numberOfNodes;x++)
+	if(colorChoice == 0) //red to yellow scaling color gradient
 	{
-		Graph.nodes[x].color = "rgb(128,0,0)";
-		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
+		for(var x=0; x < Graph.numberOfNodes;x++)
+		{
+			Graph.nodes[x].color = "rgb(128,0,0)";
+			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
+		}
+	}
+	else if(colorChoice == 1) //blue to red heat map gradient
+	{
+		for(var x=0; x < Graph.numberOfNodes;x++)
+		{
+			Graph.nodes[x].color = "rgb(0,0,255)";
+			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "white");
+		}
 	}
 }
 function resetGraph()
@@ -177,7 +188,7 @@ function resetGraph()
 	}
 	for(var x = 0;x < Graph.numberOfNodes;x++)
 	{
-		Graph.nodes[x].color = "rgb(128,0,0)";
+		defaultColors(1);
 		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
 		Graph.nodes[x].timesVisited = 0;
 		for(var y =0; y < Graph.nodes[x].edgesVisited.length;y++)
@@ -189,10 +200,7 @@ function resetGraph()
 	document.getElementById("numWalkers").value = 0;
 	
 }
-graphWalker.prototype.updateColors = function () {
-	var redBase = 128;
-	var greenBase = 0;
-	var sortedArray = new Array();
+graphWalker.prototype.updateColors = function (colorChoice) {
 	var min = Graph.nodes[0].timesVisited;	//start with live test data for this 
 	var max = Graph.nodes[0].timesVisited;
 	var midPoint;
@@ -202,15 +210,33 @@ graphWalker.prototype.updateColors = function () {
 			max = Graph.nodes[x].timesVisited;
 		else if(Graph.nodes[x].timesVisited < min)
 			min = Graph.nodes[x].timesVisited;
-		
 	}
-	
-	for(var x = 1; x < Graph.numberOfNodes;x++)
+	midPoint = (max + min)/2;
+	if(colorChoice == 0)
 	{
-		var nodeRed = Math.round(128 * ((Graph.nodes[x].timesVisited - min) / (max - min)));
-		var nodeGreen = Math.round(256 * ((Graph.nodes[x].timesVisited - min) / (max - min)));
-		Graph.nodes[x].color = "rgb(" + (redBase + nodeRed) + "," + (greenBase + nodeGreen) + ",0)";
-		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color,"black");
+		for(var x = 0; x < Graph.numberOfNodes;x++)
+		{
+			var redBase = 128;
+			var greenBase = 0;
+			var nodeRed = Math.round(128 * ((Graph.nodes[x].timesVisited - min) / (max - min)));
+			var nodeGreen = Math.round(255 * ((Graph.nodes[x].timesVisited - min) / (max - min)));
+			Graph.nodes[x].color = "rgb(" + (redBase + nodeRed) + "," + (greenBase + nodeGreen) + ",0)";
+			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color,"black");
+		}
+	}//end if
+	else if(colorChoice == 1)
+	{
+		var blueBase = 128;
+		var redBase = 0;
+		for(var x = 0; x < Graph.numberOfNodes;x++)
+		{
+			var blueBase = 255;
+			var redBase = 0;
+			var nodeBlue = Math.round(255 * ((Graph.nodes[x].timesVisited - min) / (max - min)));
+			var nodeRed = Math.round(255 * ((Graph.nodes[x].timesVisited - min) / (max - min)));
+			Graph.nodes[x].color = "rgb(" + (redBase + nodeRed) + ",0," + (blueBase - nodeBlue) + ")";
+			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color,"white");
+		}
 	}
 	//set color flag back after global color update
 	updateColorFlag = 0;

@@ -343,6 +343,9 @@ function LoadTraverseWindow(parent) {
     resetBtn.addEventListener("click", resetGraph);
     reset.appendChild(resetBtn);
 	
+	
+	//set up the key area in the traversal options screen
+	
     //Add everything to the background (tabGroup) 
 	tabGroup.appendChild(reset);
     tabGroup.appendChild(pauseBtn);

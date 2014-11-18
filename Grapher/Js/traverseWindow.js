@@ -343,10 +343,50 @@ function LoadTraverseWindow(parent) {
     resetBtn.addEventListener("click", resetGraph);
     reset.appendChild(resetBtn);
 	
+	var colorBoxes = document.createElementNS(xmlns, "g");
+	colorBoxes.setAttributeNS(null,"id","colorBoxes");
+	
+	var blueRed = document.createElementNS(xmlns, "rect");
+	y += 45
+	blueRed.setAttributeNS(null, "x", x);
+	blueRed.setAttributeNS(null,"y", y);
+	blueRed.setAttributeNS(null, "width", 15);
+	blueRed.setAttributeNS(null, "height", 15);
+	blueRed.setAttributeNS(null, "stroke", "black");
+	blueRed.setAttributeNS(null, "fill" , "green");
+	
+	var redYellow = document.createElementNS(xmlns, "rect");
+	
+	redYellow.setAttributeNS(null, "x", (x + importWindowWidth*.4));
+	redYellow.setAttributeNS(null,"y", y);
+	redYellow.setAttributeNS(null, "width", 15);
+	redYellow.setAttributeNS(null, "height", 15);
+	redYellow.setAttributeNS(null, "stroke", "black");
+	redYellow.setAttributeNS(null, "fill" , "green");
+	
+	
+	var blueRedText = document.createElementNS(xmlns, "text");
+	x += 20
+    blueRedText.setAttributeNS(null, "x", x);
+    blueRedText.setAttributeNS(null, "y", (y+12));
+    blueRedText.setAttributeNS(null, "fill", "black");
+    blueRedText.setAttributeNS(null, "font-family", "Arial");
+    blueRedText.setAttributeNS(null, "font-size", /*"30"*/tabGroupOffsetTop / 2.5);
+    blueRedText.setAttributeNS(null, "font-weight", "bold");
+    blueRedText.textContent = "Blue - Red";
+	
+	var redYellowText = document.createElementNS(xmlns, "text");
+    redYellowText.setAttributeNS(null, "x", (x + importWindowWidth*.4));
+    redYellowText.setAttributeNS(null, "y", (y+12));
+    redYellowText.setAttributeNS(null, "fill", "black");
+    redYellowText.setAttributeNS(null, "font-family", "Arial");
+    redYellowText.setAttributeNS(null, "font-size", /*"30"*/tabGroupOffsetTop / 2.5);
+    redYellowText.setAttributeNS(null, "font-weight", "bold");
+    redYellowText.textContent = "Red - Yellow";
 	
 	var keyText = document.createElementNS(xmlns, "text");
     x = importWindowX + importWindowWidth*.46;
-    y += 80
+    y += 35
     keyText.setAttributeNS(null, "x", x);
     keyText.setAttributeNS(null, "y", y);
     keyText.setAttributeNS(null, "fill", "black");
@@ -410,11 +450,16 @@ function LoadTraverseWindow(parent) {
 	keyArea.appendChild(secondKey);
 	keyArea.appendChild(firstKey);
 	
-	
+	colorBoxes.appendChild(blueRed);
+	colorBoxes.appendChild(redYellow);
 	
 	//set up the key area in the traversal options screen
 	
     //Add everything to the background (tabGroup) 
+	
+	tabGroup.appendChild(redYellowText);
+	tabGroup.appendChild(colorBoxes);
+	tabGroup.appendChild(blueRedText);
 	tabGroup.appendChild(reset);
     tabGroup.appendChild(pauseBtn);
     tabGroup.appendChild(playBtn);

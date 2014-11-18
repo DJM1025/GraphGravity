@@ -344,7 +344,19 @@ function LoadTraverseWindow(parent) {
     reset.appendChild(resetBtn);
 	
 	
-	y += 70;
+	var keyText = document.createElementNS(xmlns, "text");
+    x = importWindowX + importWindowWidth*.46;
+    y += 80
+    keyText.setAttributeNS(null, "x", x);
+    keyText.setAttributeNS(null, "y", y);
+    keyText.setAttributeNS(null, "fill", "black");
+    keyText.setAttributeNS(null, "font-family", "Arial");
+    keyText.setAttributeNS(null, "font-size", /*"30"*/tabGroupOffsetTop / 2.5);
+    keyText.setAttributeNS(null, "font-weight", "bold");
+    keyText.textContent = "Key";
+	
+	
+	y += 10;
 	var keyArea = document.createElementNS(xmlns, "g");
 	keyArea.setAttributeNS(null,"id","keyArea");
 	var fifthKey = document.createElementNS(xmlns, "rect");
@@ -410,6 +422,7 @@ function LoadTraverseWindow(parent) {
     tabGroup.appendChild(foreign);
     tabGroup.appendChild(scaleGroup);
 	tabGroup.appendChild(keyArea);
+	tabGroup.appendChild(keyText);
 
     var importHeaderX = tabBgX;
     var importHeaderY = tabBgY - (tabGroupOffsetTop / 2);

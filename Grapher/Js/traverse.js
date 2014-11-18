@@ -243,7 +243,7 @@ graphWalker.prototype.updateColors = function (colorChoice) {
 	if(max == min){
 		if(colorChoice == 0){
 			for(var x = 0; x < Graph.numberOfNodes; x++){
-				Graph.changeNodeColor(Graph.nodes[x],"rgb(255,0,0)","white");
+				Graph.changeNodeColor(Graph.nodes[x],"rgb(128,0,0)","black");
 			}
 		}
 		else if(colorChoice == 1){

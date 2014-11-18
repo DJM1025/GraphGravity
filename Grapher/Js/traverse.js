@@ -240,7 +240,19 @@ graphWalker.prototype.updateColors = function (colorChoice) {
 			min = Graph.nodes[x].timesVisited;
 	}
 	midPoint = (max + min)/2;
-	if(colorChoice == 0)
+	if(max == min){
+		if(colorChoice == 0){
+			for(var x = 0; x < Graph.numberOfNodes; x++){
+				Graph.changeNodeColor(Graph.nodes[x],"rgb(255,0,0)","white");
+			}
+		}
+		else if(colorChoice == 1){
+			for(var x = 0; x < Graph.numberOfNodes; x++){
+				Graph.changeNodeColor(Graph.nodes[x],"rgb(0,0,255)","white");
+			}
+		}
+	}
+	else if(colorChoice == 0)
 	{
 		for(var x = 0; x < Graph.numberOfNodes;x++)
 		{

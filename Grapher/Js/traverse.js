@@ -123,7 +123,6 @@ function changeDirection(node)
 	
 	node.currentNode = node.destinationNode;
 	
-	
 	var randomAdjacent = Math.floor(Math.random() * Graph.nodes[node.currentNode].edgesList.length);
 	var destinationNode = Graph.nodes[node.currentNode].edgesList[randomAdjacent];
 		
@@ -156,7 +155,12 @@ graphWalker.prototype.updateEdges = function() {
 	
 	
 }
-
+function setChoosenColor(colorChoice)
+{
+	choosenColor = colorChoice;
+	setKeyColors(choosenColor);
+	walkers[0].updateColors(choosenColor);
+}
 function defaultColors(colorChoice)
 {
 	if(colorChoice == 0) //red to yellow scaling color gradient

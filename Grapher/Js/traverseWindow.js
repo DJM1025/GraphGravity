@@ -353,8 +353,9 @@ function LoadTraverseWindow(parent) {
 	blueRed.setAttributeNS(null, "width", 15);
 	blueRed.setAttributeNS(null, "height", 15);
 	blueRed.setAttributeNS(null, "stroke", "black");
+	blueRed.setAttributeNS(null,"stroke-width",2);
 	blueRed.setAttributeNS(null, "fill" , "green");
-	blueRed.addEventListener("click",function(){setChoosenColor(1)},false);
+	blueRed.addEventListener("click",function(){setChoosenColor(1,0)},false);
 	
 	var redYellow = document.createElementNS(xmlns, "rect");
 	
@@ -363,8 +364,9 @@ function LoadTraverseWindow(parent) {
 	redYellow.setAttributeNS(null, "width", 15);
 	redYellow.setAttributeNS(null, "height", 15);
 	redYellow.setAttributeNS(null, "stroke", "black");
-	redYellow.setAttributeNS(null, "fill" , "green");
-	redYellow.addEventListener("click",function(){setChoosenColor(0)},false);
+	redYellow.setAttributeNS(null,"stroke-width",2);
+	redYellow.setAttributeNS(null, "fill" , "white");
+	redYellow.addEventListener("click",function(){setChoosenColor(0,1)},false);
 	
 	var blueRedText = document.createElementNS(xmlns, "text");
 	x += 20

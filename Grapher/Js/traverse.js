@@ -1,3 +1,4 @@
+
 function graphWalker(){
 	this.radius = 10;
 	this.cx = 500;
@@ -155,8 +156,16 @@ graphWalker.prototype.updateEdges = function() {
 	
 	
 }
-function setChoosenColor(colorChoice)
+function setChoosenColor(colorChoice,boxSelected)
 {
+	var boxColors = document.getElementById("colorBoxes").childNodes;
+	for(var x = 0;x < boxColors.length;x++)
+	{
+		if(x == boxSelected)
+			boxColors[x].setAttributeNS(null,"fill","green");
+		else
+			boxColors[x].setAttributeNS(null,"fill","white");
+	}//end for
 	choosenColor = colorChoice;
 	setKeyColors(choosenColor);
 	walkers[0].updateColors(choosenColor);
@@ -231,7 +240,7 @@ function setKeyColors(colorChoice)
 graphWalker.prototype.updateColors = function (colorChoice) {
 	var min = Graph.nodes[0].timesVisited;	//start with live test data for this 
 	var max = Graph.nodes[0].timesVisited;
-	var midPoint;
+	var midPoint; //currently not used but may be in the future for calculations
 	for(var x = 1; x < Graph.numberOfNodes;x++)
 	{
 		if(Graph.nodes[x].timesVisited > max)

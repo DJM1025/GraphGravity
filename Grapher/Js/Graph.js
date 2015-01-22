@@ -1657,20 +1657,15 @@ window.addEventListener("load", function loadGraph() {
 			Graph.createNode(Math.floor((Math.random()* (pageWidth - 100)) + 50),Math.floor((Math.random() * (pageHeight- 100)) + 50),i,i);
 		}
 		for(var i = 0; i < numEdges; i++){
-			Graph.selectAllNodes();
-			Graph.calculateAdjMatrix();
 			var rand1 = 0;
 			var rand2 = 0;
-			while(rand1 == rand2){
+			Graph.selectAllNodes();
+			Graph.calculateAdjMatrix();
+			while(rand1 == rand2 || Graph.adjacencyMatrix[rand1][rand2] ){
 				rand1 = Math.floor(Math.random()*numNodes);
 				rand2 = Math.floor(Math.random()*numNodes);
 			}
-			if(Graph.adjacencyMatrix[rand1][rand2] == false){
 				Graph.createEdge(Graph.selectedNodes[rand1],Graph.selectedNodes[rand2]);
-			}
-			else{
-				i--;
-			}
 		}
     };
 

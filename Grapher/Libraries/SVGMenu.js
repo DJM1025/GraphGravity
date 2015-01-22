@@ -464,6 +464,7 @@ window.addEventListener("load", function () {
         menu.addSubItem(["Graph", "Create Random"], "Adjacency Matrix");
         menu.addSubItem(["Graph", "Create Random"], "Visual");
         menu.addSubItem(["Graph", "Create Random"], "Tree");
+		menu.addSubItem(["Graph", "Create Random"], "Graph");
         menu.addSubItem(["Graph", "Create Random"], "Options");
         menu.addSubItem(["Graph"], "Complement");
         menu.addSubItem(["Graph"], "Extrude");
@@ -565,6 +566,7 @@ window.addEventListener("load", function () {
         menu.bindAction(["Graph", "Create Random", "Adjacency Matrix"], function () { temp("Graph -> Create Random -> Adjacency Matrix"); });
         menu.bindAction(["Graph", "Create Random", "Visual"], function () { temp("Graph -> Create Random -> Visual"); });
         menu.bindAction(["Graph", "Create Random", "Tree"], function () { temp("Graph -> Create Random -> Tree"); });
+		menu.bindAction(["Graph", "Create Random", "Graph"], function() {Graph.createRandomGraph();})
         menu.bindAction(["Graph", "Create Random", "Options"], function () { temp("Graph -> Create Random -> Options"); });
 
         //menu.removeSubItem(["File", "Export", "Clipboard"], "No Clippy");

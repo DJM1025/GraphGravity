@@ -1650,23 +1650,50 @@ window.addEventListener("load", function loadGraph() {
 		var pageHeight = window.innerHeight;
 		var numNodes = prompt("How many nodes?"); //using prompt is just an easy way to get the info for now
 		var numEdges = prompt("How many edges?");
+		var rand1, rand2;
 		while((numEdges > numNodes*(numNodes - 1)/2)){
 			numEdges = prompt("Too many edges for this graph! Try again!");
 		}
 		for(var i = 1; i <= numNodes; i++){
 			Graph.createNode(Math.floor((Math.random()* (pageWidth - 100)) + 50),Math.floor((Math.random() * (pageHeight- 100)) + 50),i,i);
 		}
-		for(var i = 0; i < numEdges; i++){
-			var rand1 = 0;
-			var rand2 = 0;
-			Graph.selectAllNodes();
-			Graph.calculateAdjMatrix();
-			while(rand1 == rand2 || Graph.adjacencyMatrix[rand1][rand2] ){
-				rand1 = Math.floor(Math.random()*numNodes);
-				rand2 = Math.floor(Math.random()*numNodes);
+		//First method to generate random edges.
+		// for(var i = 0; i < numEdges; i++){
+			// rand1 = 0;
+			// rand2 = 0;
+			// Graph.selectAllNodes();
+			// Graph.calculateAdjMatrix();
+			// while(rand1 == rand2 || Graph.adjacencyMatrix[rand1][rand2] ){
+				// rand1 = Math.floor(Math.random()*numNodes);
+				// rand2 = Math.floor(Math.random()*numNodes);
+			// }
+				// Graph.createEdge(Graph.selectedNodes[rand1],Graph.selectedNodes[rand2]);
+		// }
+		
+		//Method two for generating random edges
+		var distanceArray = create2DArray(numNodes - 1);
+		var sortedArray = new Array; // this is used to easily sort the distance values
+		var nodeIndex1 = nodeIndex2 = 0;
+		Graph.selectAllNodes();
+		//Get the distance between all nodes and store in a matrix
+		for(var i = 0; i < numNodes; i++){
+			for(var j = i + 1; j < numNodes; j++){
+				distanceArray[i][j] = sortedArray[sortedArray.length] = Math.sqrt(Math.abs(Graph.selectedNodes[i].Y - Graph.selectedNodes[j].Y) + 
+					Math.abs(Graph.selectedNodes[i].X - Graph.selectedNodes[j].X));
 			}
-				Graph.createEdge(Graph.selectedNodes[rand1],Graph.selectedNodes[rand2]);
 		}
+		sortedArray.sort(function(a,b) {return a-b });
+		//find the indices of the closest nodes and create an edge between them.
+		for(var i = 0; i < numEdges; i++){
+			nodeIndex1 = nodeIndex2 = 0;
+			while(distanceArray[nodeIndex1].indexOf(sortedArray[i]) < 0){
+				nodeIndex1++;
+			}
+			nodeIndex2 = distanceArray[nodeIndex1].indexOf(sortedArray[i]);
+			distanceArray[nodeIndex1][nodeIndex2] = 0;
+			Graph.createEdge(Graph.selectedNodes[nodeIndex1], Graph.selectedNodes[nodeIndex2]);
+		}
+		
     };
 
     Graph.breadthFirst = function () {

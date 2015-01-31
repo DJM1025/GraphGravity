@@ -461,7 +461,7 @@ window.addEventListener("load", function () {
 		menu.addSubItem(["Graph", "Traverse the Graph"], "Random Start");
         menu.addSubItem(["Graph", "Traverse the Graph"], "Pick Start Node");
         menu.addSubItem(["Graph", "Traverse the Graph"], "Use Data");
-        menu.addSubItem(["Graph", "Create Random"], "Adjacency Matrix");
+        menu.addSubItem(["Graph", "Create Random"], "Distance Matrix");
         menu.addSubItem(["Graph", "Create Random"], "Visual");
         menu.addSubItem(["Graph", "Create Random"], "Tree");
 		menu.addSubItem(["Graph", "Create Random"], "Graph");
@@ -563,7 +563,7 @@ window.addEventListener("load", function () {
         //menu.bindAction(["Graph", "Traverse the Graph", "Use Data"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("data");});
 
         //GRAPH - CREATE RANDOM
-        menu.bindAction(["Graph", "Create Random", "Adjacency Matrix"], function () { temp("Graph -> Create Random -> Adjacency Matrix"); });
+        menu.bindAction(["Graph", "Create Random", "Distance Matrix"], function () { Graph.createRandomGraphMatrix(); });
         menu.bindAction(["Graph", "Create Random", "Visual"], function () { temp("Graph -> Create Random -> Visual"); });
         menu.bindAction(["Graph", "Create Random", "Tree"], function () { temp("Graph -> Create Random -> Tree"); });
 		menu.bindAction(["Graph", "Create Random", "Graph"], function() {Graph.createRandomGraph();})

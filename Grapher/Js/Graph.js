@@ -1645,7 +1645,9 @@ window.addEventListener("load", function loadGraph() {
     Graph.gravityOptions = function () {
     };
 
-    Graph.createRandomGraph = function () {
+	
+	Graph.createRandomGraph = function () {
+		
 		var pageWidth = window.innerWidth;
 		var pageHeight = window.innerHeight;
 		var numNodes = prompt("How many nodes?"); //using prompt is just an easy way to get the info for now
@@ -1658,17 +1660,32 @@ window.addEventListener("load", function loadGraph() {
 			Graph.createNode(Math.floor((Math.random()* (pageWidth - 100)) + 50),Math.floor((Math.random() * (pageHeight- 100)) + 50),i,i);
 		}
 		//First method to generate random edges.
-		// for(var i = 0; i < numEdges; i++){
-			// rand1 = 0;
-			// rand2 = 0;
-			// Graph.selectAllNodes();
-			// Graph.calculateAdjMatrix();
-			// while(rand1 == rand2 || Graph.adjacencyMatrix[rand1][rand2] ){
-				// rand1 = Math.floor(Math.random()*numNodes);
-				// rand2 = Math.floor(Math.random()*numNodes);
-			// }
-				// Graph.createEdge(Graph.selectedNodes[rand1],Graph.selectedNodes[rand2]);
-		// }
+		for(var i = 0; i < numEdges; i++){
+			 rand1 = 0;
+			 rand2 = 0;
+			 Graph.selectAllNodes();
+			 Graph.calculateAdjMatrix();
+			 while(rand1 == rand2 || Graph.adjacencyMatrix[rand1][rand2] ){
+				 rand1 = Math.floor(Math.random()*numNodes);
+				 rand2 = Math.floor(Math.random()*numNodes);
+			 }
+				 Graph.createEdge(Graph.selectedNodes[rand1],Graph.selectedNodes[rand2]);
+		 }
+		
+		
+	}//end createRandomGraph
+    Graph.createRandomGraphMatrix = function () {
+		var pageWidth = window.innerWidth;
+		var pageHeight = window.innerHeight;
+		var numNodes = prompt("How many nodes?"); //using prompt is just an easy way to get the info for now
+		var numEdges = prompt("How many edges?");
+		var rand1, rand2;
+		while((numEdges > numNodes*(numNodes - 1)/2)){
+			numEdges = prompt("Too many edges for this graph! Try again!");
+		}
+		for(var i = 1; i <= numNodes; i++){
+			Graph.createNode(Math.floor((Math.random()* (pageWidth - 100)) + 50),Math.floor((Math.random() * (pageHeight- 100)) + 50),i,i);
+		}
 		
 		//Method two for generating random edges
 		var distanceArray = create2DArray(numNodes - 1);

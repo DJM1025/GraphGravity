@@ -6,8 +6,25 @@
 
 using namespace std;
 using namespace pugi;
-
+void parseGraph(int ***adjMatrix);
+void printMatrix(int **ary);
+int CheckGravity();
+void Exhaustive();
+void NumberAndTest();
+void Permute();
 int global_nodes;
+
+int main(){
+	
+	int** adjMatrix; 
+
+	parseGraph(&adjMatrix);
+	printMatrix(adjMatrix);
+
+	cout << "-------Normal Termination---------------------" << endl;
+	system("pause");
+}//end main
+
 //parses the graph and creates the adjacency matrix. -- may have to add more to this later
 void parseGraph(int ***adjMatrix ) {
 	
@@ -76,15 +93,3 @@ void printMatrix(int **ary)
 		cout << endl;
 	}
 }
-int main(){
-	
-	int** adjMatrix; 
-
-	parseGraph(&adjMatrix);
-
-	printMatrix(adjMatrix);
-
-
-	cout << "-------Normal Termination---------------------" << endl;
-	system("pause");
-}//end main

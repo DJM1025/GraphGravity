@@ -740,7 +740,7 @@ window.addEventListener("load", function loadGraph() {
         nodeGroup.selected = false;
         //nodeGroup.nodeNum = nodeGroup.gravityValue = Graph.numberOfNodes++;
         nodeGroup.nodeNum = Graph.numberOfNodes++;
-        nodeGroup.gravityValue = gravityValue || Graph.numberOfNodes - 1;
+        nodeGroup.gravityValue = gravityValue || Graph.numberOfNodes;
         nodeGroup.edges = {};
 		nodeGroup.color = "red";
 		nodeGroup.image = "";
@@ -1612,7 +1612,6 @@ window.addEventListener("load", function loadGraph() {
 
     Graph.export = function () {
 		exportClipboard();
-		
     };
 
     Graph.cutPoints = function () {

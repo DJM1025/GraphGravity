@@ -1533,7 +1533,7 @@ window.addEventListener("load", function loadGraph() {
                 used[i] = false;
                 indexLoc--
             }
-        }
+        }//end function permute
         var indexLoc = 0;
         var numNodes = Graph.numberOfSelectedNodes;
         var used = new Array(numNodes);

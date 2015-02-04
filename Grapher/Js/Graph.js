@@ -1332,6 +1332,18 @@ window.addEventListener("load", function loadGraph() {
         }
     };
 
+    Graph.checkFlavoring = function() { 
+        var currentNode;
+        for(var src = 0; src < Graph.numberOfNodes; src++){
+            //Start Node = Graph.nodes[i] -- Graph.nodes[i].edgesList
+            for(var dest = 0; dest < Graph.numberofNodes; dest++){
+                if(src == dest)
+                    continue;
+            }
+        }
+            
+    };
+
     Graph.checkCurrentFlavoring = function () {
         //do a warning here instead
         if (Graph.numberOfSelectedNodes === 0) {

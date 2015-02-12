@@ -1,0 +1,209 @@
+<html>
+<script language="javascript">
+var xmlns="http://www.w3.org/2000/svg";
+var S = document.getElementById("svg");
+//node object to hold all of the information
+nodeArray = new Array()
+totalTime = 0
+//taken from an online answer to a question on stackoverflow
+//I have no clue how this works but it's awsome, I did remove the hours from the output because it is most likely unneccassary for out tests
+String.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second parm
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = minutes+':'+seconds;
+    return time;
+}
+function Node(word,color,id)
+{
+	this.color = color
+	this.word = word
+	this.id = id
+	this.timesVisited = 0
+	this.timeSpent = 0
+	this.connectingNodes= new Array()
+	this.nextNodeClicked = new Array()
+}
+function scanDirectory()
+{
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET","http://cs.sru.edu/~gravity/botzer/gravity/scanDir.php",true);
+	xmlhttp.onreadystatechange=function(){
+		if(xmlhttp.readyState==4)
+		{
+		    var graphString = xmlhttp.responseText;
+			graphNames = graphString.split(",");
+			selectGraph();
+		}
+	}
+	xmlhttp.send();
+}//end scanDirectory();
+function parseInfo(data)
+{
+     parser = new DOMParser();                          //creates a DOMParser object to parse the xml that is given
+	 xmlDoc = parser.parseFromString(data,"text/xml");  //parses the xml file so so we can access it using the tree structure
+	 nodes = xmlDoc.getElementsByTagName("node").length; //gets the total number of nodes that the given graph has - global variable
+	
+	 initalizeArray(nodes);                             //initalize's our Array based on the number of nodes
+}//end parseData()
+function getData(graph)
+{	
+        xmlhttp.open("GET","../testGraphs/"+graph,true);
+     	xmlhttp.onreadystatechange=function(){
+		if(xmlhttp.readyState==4)
+		{
+			data = xmlhttp.responseText;
+			parseInfo(data);
+		}
+	}
+    xmlhttp.send()
+}
+function initalizeArray(nodes)
+{
+	 N = xmlDoc.getElementsByTagName("node");  //shortcut for referencing XML nodes
+	for(var x = 0; x < nodes;x++)
+	{
+		numberOfEdges = xmlDoc.getElementsByTagName("node")[x].getElementsByTagName("edge").length; //gets the number of edges to a given node
+		value = N[x].getAttribute("id"); //gets the value of the id attribute
+		value = parseInt(value.substring(1,value.length));  //parses out the unecassary g and changes it to and Int
+		word = N[x].getAttribute("label");
+		color = N[x].getAttribute("color");
+		nodeArray[x] = new Node(word,color,value);
+		for(var y = 0; y < numberOfEdges;y++)
+		{
+			connectedEdge = xmlDoc.getElementsByTagName("node")[x].getElementsByTagName("edge")[y].getAttribute("to"); //gets which node the edge connects to
+			nodeArray[x].connectingNodes[y] = parseInt(connectedEdge.substring(1,connectedEdge.length)); //stores the connecting edge with just the value of the node
+		}
+	}
+
+}//end function initalizeArray(nodes)
+function selectGraph()
+{
+	for(x =0; x < graphNames.length;x++)
+	{
+		var text = document.createElementNS(xmlns,"text")
+		text.setAttributeNS(null,"x",x*150);
+		text.setAttributeNS(null,"y",50);
+		text.setAttributeNS(null,"font-size","16");
+		text.setAttributeNS(null,"width",60);
+		text.setAttributeNS(null,"fill","black");
+		text.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'fill','blue')");
+		text.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'fill','black')");
+		var textNode = document.createTextNode(graphNames[x]);
+		text.appendChild(textNode);
+		function addEventHandeler(x){
+			text.addEventListener("click",function(){getGraphData(graphNames[x])},false);
+		}
+		addEventHandeler(x);
+		
+		document.getElementById("svg").appendChild(text);
+		
+	}//end for x
+}//end selectGraph()
+function getGraphData(graph)
+{
+	xmlhttp.open("POST","http://cs.sru.edu/~gravity/botzer/gravity/dataAnalysis/dataParser.php",true);
+	xmlhttp.onreadystatechange=function(){
+		if(xmlhttp.readyState==4)
+		{
+			graphData = xmlhttp.responseText;
+			getData(graph);
+			setTimeout("parseData()",3000)
+		}
+	}
+	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.send("graph="+graph+"");
+}//end getGraphData(graph)
+function parseData()
+{
+	testResults = graphData.split("$")
+	for(var j=0; j < testResults.length; j++)
+	{
+		individualVisits = testResults[j].split(";")
+		previousTime = 0
+		for(var i=0;i < individualVisits.length - 1; i++)
+		{
+			currentData = individualVisits[i].split(",")
+			nextData = individualVisits[i+1].split(",")
+			currentNode = currentData[0]
+			currentTime = parseFloat(currentData[1])
+			nodeArray[currentNode-1].timesVisited += 1
+			nodeArray[currentNode-1].timeSpent += (currentTime - previousTime)
+			nodeArray[currentNode-1].nextNodeClicked = nextData[0]
+			previousTime = currentTime
+		}//end for i 
+	}//end for j
+	createTable()
+}//end parseData(graphData)
+function createTable()
+{
+	totalTime = 0
+	string = "<table cellpadding='0' border='1'>"
+	for(var x = 0; x <= nodeArray.length;x++)
+	{
+		string += "<tr>"
+		for(var y =0;  y < 7;y++)
+		{
+			if(x == 0 && y == 0)
+				string += "<td>Node Number</td>";
+			else if(x == 0 && y == 1)
+				string += "<td>Node Label</td>";
+			else if(x == 0 && y == 2)
+				string += "<td>Times Visited</td>";
+			else if(x == 0 && y == 3)
+				string += "<td>Total Time Spent</td>";
+			else if(x == 0 && y == 4)
+				string += "<td>Average Number of Visits</td>";
+			else if(x == 0 && y == 5)
+				string += "<td>Average Time Spent</td>";
+			
+			
+			if(x > 0)
+			{
+				if(y == 0)
+					string += "<td>"+(x)+"</td>"
+				else if(y == 1)
+					string += "<td>"+nodeArray[x-1].word+"</td>"
+				else if(y == 2)
+					string += "<td>"+nodeArray[x-1].timesVisited+"</td>"
+				else if(y == 3)
+					string += "<td>"+(nodeArray[x-1].timeSpent).toFixed(1)+"</td>"
+				else if(y == 4)
+					string += "<td>"+(nodeArray[x-1].timesVisited / testResults.length).toFixed(1)+"</td>";
+				else if(y == 5)
+					string += "<td>"+(nodeArray[x-1].timeSpent / nodeArray[x-1].timesVisited).toFixed(1)+"</td>";
+			}
+		}//end for y
+		if(x > 0)
+			totalTime += nodeArray[x-1].timeSpent
+		string += "</tr>"
+	}//end for x
+	string += "</table>"
+	string +="<br>"
+	outputTime = ""+(totalTime / testResults.length).toFixed(1)+""
+	string += "Average Completion Time:  " + outputTime.toHHMMSS()
+	string += "<br>"
+	document.getElementById("Q").innerHTML = string
+}
+</script>
+<head>
+<style>
+#Q {
+	width: 100%;
+	height: 79%;
+}
+</style>
+</head>
+<body onload="scanDirectory()">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" id="svg" width="100%" height="20%">
+
+</svg>
+<div id="Q">
+</div>
+</body>
+</html>

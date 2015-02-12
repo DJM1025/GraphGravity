@@ -28,7 +28,7 @@ int main(){
 	system("pause");
 }//end main
 
-void findGravity(int **adjMatrix)
+void findGravity(int **adjMatrix,int *gravityValues)
 {
 	int minimum = 0;
 	int nextVertex;
@@ -54,13 +54,27 @@ void findGravity(int **adjMatrix)
 				while(nextVertex != destination && nextVertex != -1)
 				{
 					vertex = nextAdjacent(nextVertex,-1,adjMatrix,currentGravityPath);
-					//minimum = abs(
+					minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+					temp = vertex;
+					vertex = nextAdjacent(nextVertex,vertex,adjMatrix,currentGravityPath);
+					while(vertex != -1)
+					{
+						if(abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
+						{
+							minimum = abs(gravityValues[destination] - gravityValues[destination]);
+							temp = vertex;
+						}//end if
+						vertex = nextAdjacent(nextVertex, vertex,adjMatrix,currentGravityPath);
+					}//end inner while
+					nextVertex = temp;
+					x++;
+					currentGravityPath[x] = temp;
 
-				}
 
-			}//end  if for the source destination check
+				}//end outer while
+
+			}//end  if the source destination check
 			
-
 
 
 

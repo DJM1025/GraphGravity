@@ -6,9 +6,10 @@
 
 using namespace std;
 using namespace pugi;
-void parseGraph(int ***adjMatrix,int **gravityValues);
+void parseGraph(int ***adjMatrix,int **gravityValues,int ***pathLengths);
 void printMatrix(int **ary);
 int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath);
+void Exhaustive(int **adjMatrix, int **pathLengths);
 int findGravity();
 void Permute();
 int global_nodes;
@@ -16,10 +17,12 @@ int global_nodes;
 int main(){
 	
 	int** adjMatrix;
+	int** pathLengths;
 	int* gravityValues;
 
-	parseGraph(&adjMatrix,&gravityValues);
-	printMatrix(adjMatrix);
+	parseGraph(&adjMatrix,&gravityValues,&pathLengths);
+	Exhaustive(adjMatrix,pathLengths);
+	printMatrix(pathLengths);
 
 	for(int x = 0; x < global_nodes;x++)
 		cout << "Gravity Value:  " << gravityValues[x] << " " << endl;
@@ -74,6 +77,9 @@ void findGravity(int **adjMatrix,int *gravityValues)
 				}//end outer while
 
 			}//end  if the source destination check
+
+
+			//begin checking for the paths
 			
 
 
@@ -83,6 +89,36 @@ void findGravity(int **adjMatrix,int *gravityValues)
 
 
 }//end function findGravity()
+void Exhaustive(int **adjMatrix, int **pathLengths)
+{
+	for(int i =0; i < global_nodes;i++)
+	{
+		for(int j=0; j < global_nodes;j++)
+		{
+			if(adjMatrix[i][j] == 0)
+				pathLengths[i][j]=99999;
+			else
+			{
+				pathLengths[i][j] =1;
+			}//end else
+		}// end for j
+		pathLengths[i][i] =1;
+	}//end for i
+
+	for(int x=0; x < global_nodes;x++)
+	{
+		for(int y=0; y < global_nodes;y++)
+		{
+			for(int z=0; z < global_nodes;z++)
+			{
+				if(pathLengths[y][x] + pathLengths[x][z] < pathLengths[y][z])
+				{
+					pathLengths[y][z] = pathLengths[y][x] + pathLengths[x][z];
+				}
+			}//end for z
+		}//end for y
+	}//end for x
+}
 
 int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath)
 {
@@ -113,7 +149,7 @@ int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath)
 
 
 //parses the graph and creates the adjacency matrix. -- may have to add more to this later
-void parseGraph(int ***adjMatrix,int **gravityValues) {
+void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
@@ -133,9 +169,11 @@ void parseGraph(int ***adjMatrix,int **gravityValues) {
 	global_nodes = nodeCounter;
 	*gravityValues = new int [nodeCounter];
 	*adjMatrix = new int *[nodeCounter];
+	*pathLengths = new int *[nodeCounter];
 	for(int x=0;x < nodeCounter;x++)
 	{
 		(*adjMatrix)[x] = new int[nodeCounter];
+		(*pathLengths)[x] = new int[nodeCounter];
 	}//end for x
 
 	for(int r=0; r < nodeCounter;r++)
@@ -143,6 +181,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues) {
 		for(int c=0; c < nodeCounter;c++)
 		{
 			(*adjMatrix)[r][c] = 0;
+			(*pathLengths)[r][c] = 0;
 		}//end for c
 	}//end for r
 	int count = 0;

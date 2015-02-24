@@ -1723,6 +1723,39 @@ window.addEventListener("load", function loadGraph() {
 		}
 		
     };
+    
+    // Function to create a random Tree
+	Graph.createRandomTree = function() {
+		var pageWidth = window.innerWidth;
+		var pageHeight = window.innerHeight;
+		var numBranches = prompt("How many Branches?"); //using prompt is just an easy way to get the info for now
+		var numMaxSubBranches = 5;
+		//var numEdges = prompt("How many edges?");
+		//var rand1, rand2;
+		//while((numEdges > numNodes*(numNodes - 1)/2)){
+		//	numEdges = prompt("Too many edges for this graph! Try again!");
+		//}
+		//Graph.createNode(Math.floor((Math.random()* (pageWidth - 100)) + 50),Math.floor((Math.random() * (pageHeight- 100)) + 50),1,1);
+		
+		// Create Vantage Point Node
+		Graph.createNode((pageWidth - 100)/2,100,1,1);
+		
+		//Create Branches
+		for(i = 1; i <= numBranches; i++)
+		{
+			Graph.createNode(((i* (pageWidth - 100)) + 50)/numBranches,Math.floor((Math.random() * (pageHeight- 100)) + 50),1,1);
+		}
+		
+		Graph.selectAllNodes();
+		
+		for(i=1; i <= numBranches; i++)
+		{
+			Graph.createEdge(Graph.selectedNodes[0], Graph.selectedNodes[i]);
+		}
+		
+		
+		
+	}
 
     Graph.breadthFirst = function () {
     };

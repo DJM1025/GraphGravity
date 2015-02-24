@@ -565,7 +565,7 @@ window.addEventListener("load", function () {
         //GRAPH - CREATE RANDOM
         menu.bindAction(["Graph", "Create Random", "Distance Matrix"], function () { Graph.createRandomGraphMatrix(); });
         menu.bindAction(["Graph", "Create Random", "Visual"], function () { temp("Graph -> Create Random -> Visual"); });
-        menu.bindAction(["Graph", "Create Random", "Tree"], function () { temp("Graph -> Create Random -> Tree"); });
+        menu.bindAction(["Graph", "Create Random", "Tree"], function () { Graph.createRandomTree(); });
 		menu.bindAction(["Graph", "Create Random", "Graph"], function() {Graph.createRandomGraph();})
         menu.bindAction(["Graph", "Create Random", "Options"], function () { temp("Graph -> Create Random -> Options"); });
 

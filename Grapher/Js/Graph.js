@@ -1718,45 +1718,53 @@ window.addEventListener("load", function loadGraph() {
 				nodeIndex1++;
 			}
 			nodeIndex2 = distanceArray[nodeIndex1].indexOf(sortedArray[i]);
-			distanceArray[nodeIndex1][nodeIndex2] = 0;
+			distanceArray[nodeIndex1][nodeIndzex2] = 0;
 			Graph.createEdge(Graph.selectedNodes[nodeIndex1], Graph.selectedNodes[nodeIndex2]);
 		}
 		
     };
-    
-    // Function to create a random Tree
-	Graph.createRandomTree = function() {
-		var pageWidth = window.innerWidth;
-		var pageHeight = window.innerHeight;
-		var numBranches = prompt("How many Branches?"); //using prompt is just an easy way to get the info for now
-		var numMaxSubBranches = 5;
-		//var numEdges = prompt("How many edges?");
-		//var rand1, rand2;
-		//while((numEdges > numNodes*(numNodes - 1)/2)){
-		//	numEdges = prompt("Too many edges for this graph! Try again!");
-		//}
-		//Graph.createNode(Math.floor((Math.random()* (pageWidth - 100)) + 50),Math.floor((Math.random() * (pageHeight- 100)) + 50),1,1);
-		
-		// Create Vantage Point Node
-		Graph.createNode((pageWidth - 100)/2,100,1,1);
-		
-		//Create Branches
-		for(i = 1; i <= numBranches; i++)
-		{
-			Graph.createNode(((i* (pageWidth - 100)) + 50)/numBranches,Math.floor((Math.random() * (pageHeight- 100)) + 50),1,1);
-		}
-		
-		Graph.selectAllNodes();
-		
-		for(i=1; i <= numBranches; i++)
-		{
-			Graph.createEdge(Graph.selectedNodes[0], Graph.selectedNodes[i]);
-		}
-		
-		
-		
-	}
 
+	Graph.createRandomTree = function(){
+		var numNodes = prompt("How many nodes?");
+		var middleWidth = window.innerWidth/2;
+		var startHeight = 100;
+		var currentNumNodes = 0;
+		var usedArray = [];
+		var numUsed = 0;
+		//create first root node
+		if(numNodes > 1){
+			currentNumNodes++;
+			Graph.createNode(middleWidth,startHeight,currentNumNodes,currentNumNodes);
+			Graph.selectAllNodes();
+			while(currentNumNodes < numNodes){
+				var randNode = Math.floor(Math.random()*currentNumNodes);
+				var numNewNodes = (1 + Math.floor(Math.random()*((numNodes - currentNumNodes))/4));
+				var used = false;
+				
+				//check to see if the node picked has already been used as a root
+				for(var i = 0; i < numUsed; i++){
+					if(usedArray[i] == randNode){
+						used = true;
+					}
+				}
+				if(used == false){
+					usedArray[numUsed] = randNode;
+					numUsed++;
+					for(var i = 0; i < numNewNodes; i++){
+						var nodeOffset = (-40*(numNewNodes - 1)) + (120*i);
+						var nodeY = Graph.selectedNodes[randNode].Y + 100;
+						currentNumNodes++;
+						Graph.createNode((Graph.selectedNodes[randNode].X + nodeOffset),nodeY,currentNumNodes,currentNumNodes);
+						Graph.selectAllNodes();
+						Graph.createEdge(Graph.selectedNodes[randNode],Graph.selectedNodes[currentNumNodes - 1]);
+					}
+				}
+			}
+		}
+		else{
+			alert("Not enough nodes!");
+		}
+	};
     Graph.breadthFirst = function () {
     };
 

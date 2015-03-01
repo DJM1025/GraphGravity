@@ -1718,7 +1718,7 @@ window.addEventListener("load", function loadGraph() {
 				nodeIndex1++;
 			}
 			nodeIndex2 = distanceArray[nodeIndex1].indexOf(sortedArray[i]);
-			distanceArray[nodeIndex1][nodeIndzex2] = 0;
+			distanceArray[nodeIndex1][nodeIndex2] = 0;
 			Graph.createEdge(Graph.selectedNodes[nodeIndex1], Graph.selectedNodes[nodeIndex2]);
 		}
 		

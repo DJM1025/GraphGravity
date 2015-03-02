@@ -113,3 +113,52 @@ function importClipboard(code)
 	Graph.connectNodes(false);
 	
 }
+
+function importClipboardLegacy(code)
+{
+	var parser = new DOMParser();
+	if(code == null) 
+		var data = window.prompt("Please enter your Grapher data!");
+	else 
+		var data = code;
+	xmlDoc = parser.parseFromString(data,"text/xml");
+	
+	var numNodes = xmlDoc.getElementsByTagName("node");
+	for(var i =0; i < numNodes.length;i++)
+	{
+		var x = parseInt(numNodes[i].getAttribute("x"));
+		var y = parseInt(numNodes[i].getAttribute("y"));
+		var nodeLabel = numNodes[i].getAttribute("label");
+		var idString = numNodes[i].getAttribute("id");
+		var id = parseInt(idString.substring(1,idString.length));
+		var color = numNodes[i].getAttribute("color");
+		var img;
+		var gravity;
+		try{
+			img = xmlDoc.getElementsByTagName("img")[i].getAttribute("src");
+		}
+		catch(err){
+			img = null;
+		}
+		try{
+			gravity = parseInt(numNodes[i].getAttribute("gravityValue"));
+		}
+		catch(err){
+			gravity = null;
+		}
+		var edges = new Array();
+		var numEdges = numNodes[i].getElementsByTagName("edge");
+		for(var j =0; j < numEdges.length;j++)
+		{
+			var edgeNum = numEdges[j].getAttribute("to");
+			edges.push(parseInt(edgeNum.substring(1,edgeNum.length))-1);
+			
+		}
+		
+		var node = new Node(x,y,nodeLabel,id,color,null,null,edges);
+		Graph.createImportedNode(node);
+	}
+	
+	Graph.connectNodes(false);
+	
+}

@@ -958,7 +958,7 @@ window.addEventListener("load", function loadGraph() {
         for (var node in Graph.selectedNodes) {
             var nextNode = Graph.selectedNodes[node];
             var nextText = nextNode.text;
-            initialCoords[node] = { 'x': nextNode.X, 'y': nextNode.Y };
+            initialCoords[node] = { 'x': nextNode.X, 'y': nextNode.Y, 'tx': nextText.X, 'ty': nextText.Y };
         }
         var nodeRect = nodeGroup.rect;
         var nodeText = nodeGroup.text;
@@ -1002,8 +1002,8 @@ window.addEventListener("load", function loadGraph() {
                         var coords = initialCoords[node]
                         nextRect.setAttributeNS(null, "x", nextNode.X = coords.x + changeX + rectXOffset);
                         nextRect.setAttributeNS(null, "y", nextNode.Y = coords.y + changeY + rectYOffset);
-                        nextText.setAttributeNS(null, "x", nextText.X = coords.x + changeX + rectXOffset + (Graph.nodeWidth / 2));
-                        nextText.setAttributeNS(null, "y", nextText.Y = coords.y + changeY + rectYOffset + (Graph.nodeHeight / 2));
+                        nextText.setAttributeNS(null, "x", nextText.X = coords.tx + changeX + rectXOffset);// + (Graph.nodeWidth / 2));
+                        nextText.setAttributeNS(null, "y", nextText.Y = coords.ty + changeY + rectYOffset);// + (Graph.nodeHeight / 2));
 
                     }
                     var nextNodeMP = findNodeMidpoint(nextNode);
@@ -2275,4 +2275,12 @@ window.addEventListener("load", function loadGraph() {
 
         parentSVG.appendChild(errorGroup);
     };
+	
+	Graph.deleteGraph = function deleteGraph() {
+		Graph.deselectAllNodes();
+		for (var i = Graph.numberOfNodes-1; i >= 0; i--) {
+			Graph.deleteNode(Graph.nodes[i]);
+		}
+		
+	};
 }, false);

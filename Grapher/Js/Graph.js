@@ -679,7 +679,7 @@ window.addEventListener("load", function loadGraph() {
 
     Graph.plane.background.addEventListener("mouseup", function (event) {
         Graph.scaleWindow.reset()
-        if (Graph.numberOfSelectedNodes === 0) {
+        if (Graph.numberOfSelectedNodes === 0 && event.which == 1) {
             Graph.clipboard.addToHistory("Created node");
             var createdNode = Graph.createNode(event.pageX, event.pageY);
             if (Graph.autoConnect || Graph.branchConnect) {

@@ -25,12 +25,12 @@ graphWalker.prototype.init = function(){
 
 graphWalker.prototype.randomStart = function ()
 {
+	choosenColor = 1; //sets the currentlySelected Color
+	updateColorFlag = 0;
+	defaultColors(choosenColor)   //intializes all of the nodes to there starting colors
+	setKeyColors(choosenColor);
 	if(Graph.numberOfNodes > 1)
 	{
-		choosenColor = 1; //sets the currentlySelected Color
-		updateColorFlag = 0;
-		defaultColors(choosenColor)   //intializes all of the nodes to there starting colors
-		setKeyColors(choosenColor);
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
@@ -76,7 +76,7 @@ graphWalker.prototype.randomStart = function ()
 		this.element.appendChild(animateY);
 	}
 	else
-		alert("Please create a graph with at least 2 nodes first!");
+		//alert("Please create a graph with at least 2 nodes first!");
 }
 function getIndexLocation(node,flag)
 {
@@ -349,5 +349,8 @@ graphWalker.prototype.pauseTraversal = function () {
 
 //Destroys the graph walker's SVG image that is displayed on the screen 
 graphWalker.prototype.removeWalker = function () {
-	this.element.parentNode.removeChild(this.element);
+	try {
+		this.element.parentNode.removeChild(this.element);
+	}
+	catch (err) {/* Do nothing */}
 }

@@ -560,7 +560,7 @@ window.addEventListener("load", function () {
 
 		menu.bindAction(["Graph", "Traverse the Graph", "Random Start"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("random");});
         //menu.bindAction(["Graph", "Traverse the Graph", "Pick Start Node"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("pick");});
-        //menu.bindAction(["Graph", "Traverse the Graph", "Use Data"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("data");});
+        menu.bindAction(["Graph", "Traverse the Graph", "Use Data"], function () {var traverseWin = LoadUserDataWindow(parentSVG); userDataWin.open("data");});
 
         //GRAPH - CREATE RANDOM
         menu.bindAction(["Graph", "Create Random", "Distance Matrix"], function () { Graph.createRandomGraphMatrix(); });

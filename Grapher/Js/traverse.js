@@ -23,14 +23,11 @@ graphWalker.prototype.init = function(){
 	this.element = circle;
 }
 
-graphWalker.prototype.randomStart = function ()
-{
+graphWalker.prototype.randomStart = function (){
 	choosenColor = 1; //sets the currentlySelected Color
-	updateColorFlag = 0;
 	defaultColors(choosenColor)   //intializes all of the nodes to there starting colors
 	setKeyColors(choosenColor);
-	if(Graph.numberOfNodes > 1)
-	{
+	if(Graph.numberOfNodes > 1)	{
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
 		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
@@ -55,8 +52,7 @@ graphWalker.prototype.randomStart = function ()
 		animateX.setAttributeNS(null,"to",destX);
 		animateX.setAttributeNS(null,"begin","Z.click");
 		animateX.setAttributeNS(null,"dur",this.speed);
-		animateX.onend = function ()
-		{
+		animateX.onend = function ()	{
 			changeDirection(obj);
 		}
 		animateX.setAttributeNS(null,"fill","freeze");
@@ -75,33 +71,24 @@ graphWalker.prototype.randomStart = function ()
 		this.element.appendChild(animateX);
 		this.element.appendChild(animateY);
 	}
-	else
-		//alert("Please create a graph with at least 2 nodes first!");
 }
-function getIndexLocation(node,flag)
-{
+function getIndexLocation(node,flag){
 	var iterator;
-	if(flag === 1)
-	{
-		for(var x = 0;x < Graph.nodes[node.currentNode].edgesList.length;x++)
-		{
+	if(flag === 1)	{
+		for(var x = 0;x < Graph.nodes[node.currentNode].edgesList.length;x++)		{
 			if(node.destinationNode === Graph.nodes[node.currentNode].edgesList[x])
 				iterator = x;
 		}
 	}
-	else
-	{
-		for(var x = 0;x < Graph.nodes[node.destinationNode].edgesList.length;x++)
-		{
+	else	{
+		for(var x = 0;x < Graph.nodes[node.destinationNode].edgesList.length;x++)		{
 			if(node.currentNode === Graph.nodes[node.destinationNode].edgesList[x])
 				iterator = x;
 		}
 	}
-	
 	return iterator;
 }
-function changeDirection(node)
-{
+function changeDirection(node){
 	node.cx = node.element.getAttribute("cx");
 	node.cy = node.element.getAttribute("cy");
 	node.element.setAttributeNS(null,"cx",node.cx);
@@ -111,14 +98,7 @@ function changeDirection(node)
 	Graph.nodes[node.currentNode].edgesVisited[getIndexLocation(node,1)]++;
 	Graph.nodes[node.destinationNode].edgesVisited[getIndexLocation(node,0)]++;
 	
-	updateColorFlag++;
-	
-	if(updateColorFlag === walkers.length)
-	{
-		//update colors algorithm
-		node.updateColors(choosenColor);
-	}
-	
+	node.updateColors(choosenColor);
 	
 	node.updateEdges();
 	
@@ -134,33 +114,25 @@ function changeDirection(node)
 	node.destinationX = destX;
 	node.destinationY = destY;
 	//remove previous animtate attributes
-	while(node.element.firstChild)
-	{
+	while(node.element.firstChild)	{
 		node.element.removeChild(node.element.firstChild);
 	}
 	node.moveTo();
 }
 graphWalker.prototype.updateEdges = function() {
-
 	var base = 2;
 	var id1 = document.getElementById(this.currentNode + "-" + this.destinationNode);
 	var id2 =document.getElementById(this.destinationNode + "-" + this.currentNode);
-	if(id1)
-	{
+	if(id1)	{
 		id1.setAttributeNS(null,"stroke-width", base + (0.3 * Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this,1)]));
 	}
-	else
-	{
+	else	{
 		id2.setAttributeNS(null,"stroke-width", base + (0.3 * Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this,1)]));
 	}
-	
-	
 }
-function setChoosenColor(colorChoice,boxSelected)
-{
+function setChoosenColor(colorChoice,boxSelected){
 	var boxColors = document.getElementById("colorBoxes").childNodes;
-	for(var x = 0;x < boxColors.length;x++)
-	{
+	for(var x = 0;x < boxColors.length;x++)	{
 		if(x == boxSelected)
 			boxColors[x].setAttributeNS(null,"fill","green");
 		else
@@ -170,67 +142,51 @@ function setChoosenColor(colorChoice,boxSelected)
 	setKeyColors(choosenColor);
 	walkers[0].updateColors(choosenColor);
 }
-function defaultColors(colorChoice)
-{
-	if(colorChoice == 0) //red to yellow scaling color gradient
-	{
-		for(var x=0; x < Graph.numberOfNodes;x++)
-		{
+function defaultColors(colorChoice){
+	if(colorChoice == 0) //red to yellow scaling color gradient	{
+		for(var x=0; x < Graph.numberOfNodes;x++)		{
 			Graph.nodes[x].color = "rgb(128,0,0)";
 			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
 		}
 	}
-	else if(colorChoice == 1) //blue to red heat map gradient
-	{
-		for(var x=0; x < Graph.numberOfNodes;x++)
-		{
+	else if(colorChoice == 1) //blue to red heat map gradient	{
+		for(var x=0; x < Graph.numberOfNodes;x++)		{
 			Graph.nodes[x].color = "rgb(0,0,255)";
 			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "white");
 		}
 	}
 }
-function resetGraph()
-{
+function resetGraph(){
 	
-	for(var x=0; x < Graph.edgesGroup.childNodes.length;x++)
-	{
+	for(var x=0; x < Graph.edgesGroup.childNodes.length;x++)	{
 		Graph.edgesGroup.children[x].setAttributeNS(null,"stroke-width","2");
 	}
-	while(walkers.length > 0)
-	{
+	while(walkers.length > 0)	{
 		walkers[walkers.length - 1].removeWalker();
 		walkers.pop();
 	}
-	for(var x = 0;x < Graph.numberOfNodes;x++)
-	{
+	for(var x = 0;x < Graph.numberOfNodes;x++)	{
 		defaultColors(choosenColor);
 		Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
 		Graph.nodes[x].timesVisited = 0;
-		for(var y =0; y < Graph.nodes[x].edgesVisited.length;y++)
-		{
+		for(var y =0; y < Graph.nodes[x].edgesVisited.length;y++)		{
 			Graph.nodes[x].edgesVisited[y] = 0;
 		}
 	}
 	
 	document.getElementById("numWalkers").value = 0;
-	
 }
-function setKeyColors(colorChoice)
-{
+function setKeyColors(colorChoice){
 	var keyGroup = document.getElementById("keyArea").childNodes;
-	if(colorChoice == 0)
-	{
-		for(var x = 0; x < keyGroup.length;x++)
-		{
+	if(colorChoice == 0)	{
+		for(var x = 0; x < keyGroup.length;x++)		{
 			var redColor = Math.round(128 + (128 * (x/(keyGroup.length-1))));
 			var greenColor =  Math.round((255 * (x/(keyGroup.length-1))));
 			keyGroup[x].setAttributeNS(null,"fill","rgb(" + redColor +","+ greenColor + ",0)");
 		}
 	}
-	else if(colorChoice == 1)
-	{
-		for(var x = 0; x < keyGroup.length;x++)
-		{
+	else if(colorChoice == 1)	{
+		for(var x = 0; x < keyGroup.length;x++)	{
 			var redColor = Math.round((255 * (x/(keyGroup.length-1))));
 			var blueColor =	 Math.round(( 255 - (255 * (x/(keyGroup.length-1)))));
 			keyGroup[x].setAttributeNS(null,"fill","rgb("+ redColor + ",0,"+  blueColor+ ")");
@@ -241,8 +197,7 @@ graphWalker.prototype.updateColors = function (colorChoice) {
 	var min = Graph.nodes[0].timesVisited;	//start with live test data for this 
 	var max = Graph.nodes[0].timesVisited;
 	var midPoint; //currently not used but may be in the future for calculations
-	for(var x = 1; x < Graph.numberOfNodes;x++)
-	{
+	for(var x = 1; x < Graph.numberOfNodes;x++)	{
 		if(Graph.nodes[x].timesVisited > max)
 			max = Graph.nodes[x].timesVisited;
 		else if(Graph.nodes[x].timesVisited < min)
@@ -261,8 +216,7 @@ graphWalker.prototype.updateColors = function (colorChoice) {
 			}
 		}
 	}
-	else if(colorChoice == 0)
-	{
+	else if(colorChoice == 0)	{
 		for(var x = 0; x < Graph.numberOfNodes;x++)
 		{
 			var redBase = 128;
@@ -273,12 +227,10 @@ graphWalker.prototype.updateColors = function (colorChoice) {
 			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color,"black");
 		}
 	}//end if
-	else if(colorChoice == 1)
-	{
+	else if(colorChoice == 1)	{
 		var blueBase = 128;
 		var redBase = 0;
-		for(var x = 0; x < Graph.numberOfNodes;x++)
-		{
+		for(var x = 0; x < Graph.numberOfNodes;x++)	{
 			var blueBase = 255;
 			var redBase = 0;
 			var nodeBlue = Math.round(255 * ((Graph.nodes[x].timesVisited - min) / (max - min)));
@@ -288,18 +240,15 @@ graphWalker.prototype.updateColors = function (colorChoice) {
 		}
 	}
 	//set color flag back after global color update
-	updateColorFlag = 0;
 }
 
 graphWalker.prototype.updateSpeed = function (modifier) {
 	this.pauseTraversal();
 	this.speed = 5.01 - (5 * modifier);
 	this.moveTo();
-
 }
 
 graphWalker.prototype.moveTo = function () {
-
 	var obj = this;
 	var animateX = document.createElementNS(xmlns,"animate");
 		animateX.setAttributeNS(null,"attributeName","cx");
@@ -309,8 +258,7 @@ graphWalker.prototype.moveTo = function () {
 		animateX.setAttributeNS(null,"begin","Z.click");
 		//animateX.setAttributeNS(null, "end", "P.click");
 		animateX.setAttributeNS(null,"dur",this.speed);
-		animateX.onend = function ()
-		{
+		animateX.onend = function ()	{
 			changeDirection(obj);
 		}
 		animateX.setAttributeNS(null,"fill","freeze");
@@ -335,14 +283,12 @@ graphWalker.prototype.moveTo = function () {
 }
 
 graphWalker.prototype.pauseTraversal = function () {
-
 	this.cx = this.element.getAttribute("cx");
 	this.cy = this.element.getAttribute("cy");
 	this.element.setAttributeNS(null,"cx",this.cx);
 	this.element.setAttributeNS(null,"cy",this.cy);
 
-	while(this.element.firstChild)
-	{
+	while(this.element.firstChild)	{
 		this.element.removeChild(this.element.firstChild);
 	}
 }

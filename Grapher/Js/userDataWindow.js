@@ -66,10 +66,13 @@ function LoadUserDataWindow(parent) {
             //window.removeEventListener("resize", resizeWindow, false);
             //reset first
             //Remove all walkers
-            for(var i=0; i<walkers.length; i++){
-                walkers[i].removeWalker();
-                //Array will be reset when the window is re-opened (no need to remove the elements from the array)
+            try {
+	            for(var i=0; i<walkers.length; i++){
+	                walkers[i].removeWalker();
+	                //Array will be reset when the window is re-opened (no need to remove the elements from the array)
+	            }
             }
+            catch (err) {/* Do nothing */}
             root.addEventListener("mousedown", Graph.disableTextHighlight, false);
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke");
             closeButtonGroup.firstChild.removeAttributeNS(null, "stroke-width");

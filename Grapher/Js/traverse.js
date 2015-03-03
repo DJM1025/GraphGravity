@@ -143,13 +143,13 @@ function setChoosenColor(colorChoice,boxSelected){
 	walkers[0].updateColors(choosenColor);
 }
 function defaultColors(colorChoice){
-	if(colorChoice == 0) //red to yellow scaling color gradient	{
+	if(colorChoice == 0){ //red to yellow scaling color gradient	
 		for(var x=0; x < Graph.numberOfNodes;x++)		{
 			Graph.nodes[x].color = "rgb(128,0,0)";
 			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "black");
 		}
 	}
-	else if(colorChoice == 1) //blue to red heat map gradient	{
+	else if(colorChoice == 1){ //blue to red heat map gradient
 		for(var x=0; x < Graph.numberOfNodes;x++)		{
 			Graph.nodes[x].color = "rgb(0,0,255)";
 			Graph.changeNodeColor(Graph.nodes[x],Graph.nodes[x].color, "white");

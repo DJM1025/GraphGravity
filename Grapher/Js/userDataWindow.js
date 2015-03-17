@@ -20,6 +20,14 @@ function changedGraph(){
 	var userData = fetchUserData(document.getElementById("graphType").value);
 }
 
+function createWalkers (userDataArray) {
+	for (var x=0; x < userDataArray.length;x++) {
+		walkers.push(new graphWalker());
+		walkers[x].specifyStart(userDataArray[x]);
+	}
+	
+}
+
 function fetchUserData(graphType) {
 	var userDataArray = new Array();
 	if (window.XMLHttpRequest)      {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -32,7 +40,10 @@ function fetchUserData(graphType) {
 		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
 			userDataArray = xmlhttp.responseText;
 			userDataArray = userDataArray.split("!");
-			alert(userDataArray);
+			
+			createWalkers(userDataArray);
+			
+			
 		}
 	}
 	sendString = "graphName="+document.getElementById("graphType").value;
@@ -81,7 +92,7 @@ function LoadUserDataWindow(parent) {
     };
 
     function changedGraph(){
-	Graph.deleteGraph();
+		Graph.deleteGraph();
     }
 
 	function pause(){  

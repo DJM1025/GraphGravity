@@ -854,7 +854,6 @@ window.addEventListener("load", function loadGraph() {
 					var pair = Graph.sortNodePair(node1,node2);
 					var lowNode = pair.lowNode;
 					var highNode = pair.highNode;
-	t
 					var lowNodeMP = lowNode.findMidpoint();
 					var highNodeMP = highNode.findMidpoint();
 					var edge = document.createElementNS(xmlns, "path");

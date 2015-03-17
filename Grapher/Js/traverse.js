@@ -10,6 +10,9 @@ function graphWalker(){
 	this.color = "black";
 	this.currentNode = null;
 	this.element = null; 	//Holds the SVG element for the walker (document.getElementBy not needed)
+	this.nodeDestArray = new Array();
+	this.nodeTimeArray = new Array();
+	this.currentNodeIndex = 0;
 }
 
 graphWalker.prototype.init = function(){
@@ -36,7 +39,6 @@ graphWalker.prototype.randomStart = function (){
 
 		var randomAdjacent = Math.floor(Math.random() * Graph.nodes[randomNode].edgesList.length);
 		var destinationNode = Graph.nodes[randomNode].edgesList[randomAdjacent];
-		
 		var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
 		var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
 		
@@ -54,6 +56,66 @@ graphWalker.prototype.randomStart = function (){
 		animateX.setAttributeNS(null,"dur",this.speed);
 		animateX.onend = function ()	{
 			changeDirection(obj);
+		}
+		animateX.setAttributeNS(null,"fill","freeze");
+		animateX.setAttributeNS(null,"restart","never");
+		
+		var animateY = document.createElementNS(xmlns,"animate");
+		animateY.setAttributeNS(null,"attributeName","cy");
+		animateY.setAttributeNS(null,"attributeType","XML");
+		animateY.setAttributeNS(null,"from",this.cy);
+		animateY.setAttributeNS(null,"to",destY);
+		animateY.setAttributeNS(null,"begin","Z.click");
+		animateY.setAttributeNS(null,"dur",this.speed);
+		animateY.setAttributeNS(null,"fill","freeze");
+		animateY.setAttributeNS(null,"restart","never");
+
+		this.element.appendChild(animateX);
+		this.element.appendChild(animateY);
+	}
+}
+graphWalker.prototype.specifyStart = function (pathArray){
+	choosenColor = 1; //sets the currentlySelected Color
+	defaultColors(choosenColor)   //intializes all of the nodes to there starting colors
+	setKeyColors(choosenColor);
+	
+	if(Graph.numberOfNodes > 1)	{
+		var tempArray = pathArray.split(";");
+		for (var x=0; x< tempArray.length; x++) {
+			var singleNode = tempArray[x].split(",")
+			this.nodeDestArray[x] = singleNode[0]
+			this.nodeTimeArray[x] = singleNode[1]
+		}
+		
+		var startNode = this.nodeDestArray[this.currentNodeIndex] -1
+		//alert(this.nodeDestArray[this.currentNodeIndex] -1);
+		this.cx = Graph.nodes[startNode].X + Graph.nodeWidth / 2; //may need fixed in the future
+		this.cy = Graph.nodes[startNode].Y + Graph.nodeHeight / 2;
+		this.currentNode = startNode;
+		this.init();
+		this.currentNodeIndex ++;
+
+		var destinationNode = Graph.nodes[this.nodeDestArray[this.currentNodeIndex]-1].nodeNum;
+		//alert(destinationNode)
+		var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
+		var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
+		
+		this.destinationNode = destinationNode;
+	//	alert(this.destinationNode)
+		this.destinationX = destX;
+		this.destinationY = destY;
+		var obj = this;
+		
+		var animateX = document.createElementNS(xmlns,"animate");
+		animateX.setAttributeNS(null,"attributeName","cx");
+		animateX.setAttributeNS(null,"attributeType","XML");
+		animateX.setAttributeNS(null,"from",this.cx);
+		animateX.setAttributeNS(null,"to",destX);
+		animateX.setAttributeNS(null,"begin","Z.click");
+		animateX.setAttributeNS(null,"dur",this.speed);
+		animateX.onend = function ()	{
+			this.currentNodeIndex ++;
+			specifyDirection(obj);
 		}
 		animateX.setAttributeNS(null,"fill","freeze");
 		animateX.setAttributeNS(null,"restart","never");
@@ -119,10 +181,42 @@ function changeDirection(node){
 	}
 	node.moveTo();
 }
+function specifyDirection (node) {
+	node.cx = node.element.getAttribute("cx");
+	node.cy = node.element.getAttribute("cy");
+	node.element.setAttributeNS(null,"cx",node.cx);
+	node.element.setAttributeNS(null,"cy",node.cy);
+
+	Graph.nodes[node.destinationNode].timesVisited++;	//increment the number of times the node has been visited
+	Graph.nodes[node.currentNode].edgesVisited[getIndexLocation(node,1)]++;
+	Graph.nodes[node.destinationNode].edgesVisited[getIndexLocation(node,0)]++;
+	
+	node.updateColors(choosenColor);
+	
+	//node.updateEdges();
+	
+	node.currentNode = node.destinationNode;
+	
+	var nextNode = Graph.nodes[node.nodeDestArray[node.currentNodeIndex]-1];
+	node.currentNodeIndex ++;
+		
+	var destX = nextNode.X + Graph.nodeWidth / 2;
+	var destY = nextNode.Y + Graph.nodeHeight /2;
+		
+	node.destinationNode = nextNode.nodeNum;
+	node.destinationX = destX;
+	node.destinationY = destY;
+	//remove previous animate attributes
+	while(node.element.firstChild)	{
+		node.element.removeChild(node.element.firstChild);
+	}
+	node.moveTo();
+
+}
 graphWalker.prototype.updateEdges = function() {
 	var base = 2;
 	var id1 = document.getElementById(this.currentNode + "-" + this.destinationNode);
-	var id2 =document.getElementById(this.destinationNode + "-" + this.currentNode);
+	var id2 = document.getElementById(this.destinationNode + "-" + this.currentNode);
 	if(id1)	{
 		id1.setAttributeNS(null,"stroke-width", base + (0.3 * Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this,1)]));
 	}

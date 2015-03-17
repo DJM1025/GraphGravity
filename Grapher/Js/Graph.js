@@ -1690,6 +1690,12 @@ window.addEventListener("load", function loadGraph() {
 		var numNodes = prompt("How many nodes?"); //using prompt is just an easy way to get the info for now
 		var numEdges = prompt("How many edges?");
 		var rand1, rand2;
+		
+		Graph.selectAllNodes();
+		for(var node in Graph.selectedNodes){
+			Graph.deleteNode(Graph.selectedNodes[node]);
+		}
+		
 		while((numEdges > numNodes*(numNodes - 1)/2)){
 			numEdges = prompt("Too many edges for this graph! Try again!");
 		}

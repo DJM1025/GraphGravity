@@ -450,8 +450,62 @@ window.addEventListener("load", function loadGraph() {
         var scaleBarY = pageHeight * .49;
         var scaleBarWidth = pageWidth * .16;
         var scaleBarHeight = pageHeight * .01;
+		var scaleBoxX = pageWidth * .4;
+		var scaleBoxY = pageHeight * .44;
+		var scaleBoxWidth = pageWidth * .22;
+		var scaleBoxHeight = pageHeight * .1;
 
         var percentScale;
+		
+		var scaleBox = document.createElementNS(xmlns, "rect");
+		scaleBox.setAttributeNS(null, "x", scaleBoxX);
+		scaleBox.setAttributeNS(null, "y", scaleBoxY);
+		scaleBox.setAttributeNS(null, "width", scaleBoxWidth);
+		scaleBox.setAttributeNS(null, "height", scaleBoxHeight);
+		scaleBox.setAttributeNS(null, "fill", "black");
+		scaleBox.setAttributeNS(null, "stroke", "white");
+		scaleBox.setAttributeNS(null, "stroke-width", "2");
+		scaleBox.setAttributeNS(null, "rx", "2.5");
+		
+		scaleBox.addEventListener("mousedown", function down(event) {
+			Graph.clipboard.addToHistory("relocated Scale Box");
+			scaleBox.addEventListener("mousemove", move, false);
+			scaleBox.addEventListener("mouseup", function up(){
+				scaleBox.removeEventListener("mousemove", move, false);
+				scaleBox.removeEventListener("mouseup", up, false);
+			}, false);
+			
+			var initialX = event.pageX;
+			var initialY = event.pageY;
+			var initialBoxX=scaleBoxX;
+			var initialBoxY=scaleBoxY;
+			var initialBarX=scaleBarX;
+			var initialBarY= scaleBarY;
+			var initialSliderX = scaleSliderX;
+			var initialSliderY = scaleSliderY;
+			function move(event){
+				var offsetX = event.pageX - initialX;
+				var offsetY = event.pageY - initialY;
+				scaleBoxX = initialBoxX + offsetX;
+				scaleBoxY = initialBoxY + offsetY;
+				scaleBarX = initialBarX + offsetX;
+				scaleBarY = initialBarY + offsetY;
+				scaleSliderX = initialSliderX + offsetX;
+				scaleSliderY = initialSliderY + offsetY;
+				
+				scaleBox.setAttributeNS(null, "x", scaleBoxX);
+				scaleBox.setAttributeNS(null, "y", scaleBoxY);
+				scaleBar.setAttributeNS(null, "x", scaleBarX);
+				scaleBar.setAttributeNS(null, "y", scaleBarY);
+				scaleSlider.setAttributeNS(null, "x", scaleSliderX);
+				scaleSlider.setAttributeNS(null, "y", scaleSliderY);
+				scaleExit.setAttributeNS(null, "x", scaleBarX+scaleBarWidth);
+				scaleExit.setAttributeNS(null, "y", scaleBarY-Graph.nodeHeight);
+			}
+			
+		}, false);
+		
+		scaleGroup.appendChild(scaleBox);
 
         var scaleBar = document.createElementNS(xmlns, "rect");
         scaleBar.setAttributeNS(null, "x", scaleBarX);
@@ -488,7 +542,28 @@ window.addEventListener("load", function loadGraph() {
         scaleSlider.setAttributeNS(null, "rx", "2.5");
         scaleSlider.style.cursor = "pointer";
         scaleGroup.appendChild(scaleSlider);
-
+		
+		//append exit button
+		var scaleExit = document.createElementNS(xmlns, "rect");
+		scaleExit.setAttributeNS(null, "x", scaleBarX+scaleBarWidth);
+		scaleExit.setAttributeNS(null, "y", scaleBarY-Graph.nodeHeight);
+		scaleExit.setAttributeNS(null, "width", Graph.nodeWidth);
+		scaleExit.setAttributeNS(null, "height", Graph.nodeHeight);
+		scaleExit.setAttributeNS(null, "fill", "red");
+		scaleExit.setAttributeNS(null, "stroke", "white");
+		scaleExit.setAttributeNS(null, "stroke-width", "2");
+		scaleExit.setAttributeNS(null, "rx", "2.5");
+        scaleExit.style.cursor = "pointer";
+		
+		scaleExit.addEventListener("click", function down(event) {
+			if (event.which == 1){
+				//scaleExit.removeEventListener("click", down, false);
+				parentSVG.removeChild(scaleGroup);
+				hidden=true;
+			}
+			}, false);
+			
+		scaleGroup.appendChild(scaleExit);
 
         scaleSlider.addEventListener("mousedown", function down(event) {
             var moved = false;
@@ -707,7 +782,7 @@ window.addEventListener("load", function loadGraph() {
                 }
             }
             else if (!Graph.multipleSelect) {
-                Graph.clipboard.addToHistory("Deselected all nodes");
+                Graph.clipboard.addToHistory("Deselec.ed all nodes");
                 Graph.deselectAllNodes();
             }
         }
@@ -2290,4 +2365,4 @@ window.addEventListener("load", function loadGraph() {
 		}
 		
 	};
-}, false);
+}, false);

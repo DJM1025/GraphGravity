@@ -1,5 +1,6 @@
 function changedGraph(){
 	Graph.deleteGraph();
+	deleteWalkers();
 	var xmlhttp;
 	if (window.XMLHttpRequest)      {// code for IE7+, Firefox, Chrome, Opera, Safari
 		xmlhttp=new XMLHttpRequest();
@@ -25,7 +26,11 @@ function createWalkers (userDataArray) {
 		walkers.push(new graphWalker());
 		walkers[x].specifyStart(userDataArray[x]);
 	}
-	
+}
+function deleteWalkers () {
+	for (var x = walkers.length-1; x>=0 ;x--) {
+		walkers[x].removeWalker();
+	}
 }
 
 function fetchUserData(graphType) {
@@ -42,8 +47,6 @@ function fetchUserData(graphType) {
 			userDataArray = userDataArray.split("!");
 			
 			createWalkers(userDataArray);
-			
-			
 		}
 	}
 	sendString = "graphName="+document.getElementById("graphType").value;
@@ -61,7 +64,7 @@ function LoadUserDataWindow(parent) {
     var open = null;
     var type = null;
     speedMod = 0;    //Used to determine speed of new nodes 
-    
+
     var impExpObj = {
         'openTab': null,
         'open': function open(/*importExport,*/ openTab) {

@@ -1,5 +1,6 @@
 
 function graphWalker(){
+	this.id = "traversalWalker";
 	this.radius = 10;
 	this.cx = 500;
 	this.cy = 500;
@@ -89,49 +90,50 @@ graphWalker.prototype.specifyStart = function (pathArray){
 		
 		var startNode = this.nodeDestArray[this.currentNodeIndex] -1
 		//alert(this.nodeDestArray[this.currentNodeIndex] -1);
-		this.cx = Graph.nodes[startNode].X + Graph.nodeWidth / 2; //may need fixed in the future
-		this.cy = Graph.nodes[startNode].Y + Graph.nodeHeight / 2;
-		this.currentNode = startNode;
-		this.init();
-		this.currentNodeIndex ++;
-
-		var destinationNode = Graph.nodes[this.nodeDestArray[this.currentNodeIndex]-1].nodeNum;
-		//alert(destinationNode)
-		var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
-		var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
-		
-		this.destinationNode = destinationNode;
-	//	alert(this.destinationNode)
-		this.destinationX = destX;
-		this.destinationY = destY;
-		var obj = this;
-		
-		var animateX = document.createElementNS(xmlns,"animate");
-		animateX.setAttributeNS(null,"attributeName","cx");
-		animateX.setAttributeNS(null,"attributeType","XML");
-		animateX.setAttributeNS(null,"from",this.cx);
-		animateX.setAttributeNS(null,"to",destX);
-		animateX.setAttributeNS(null,"begin","Z.click");
-		animateX.setAttributeNS(null,"dur",this.speed);
-		animateX.onend = function ()	{
+		if (startNode >=0){
+			this.cx = Graph.nodes[startNode].X + Graph.nodeWidth / 2; //may need fixed in the future
+			this.cy = Graph.nodes[startNode].Y + Graph.nodeHeight / 2;
+			this.currentNode = startNode;
+			this.init();
 			this.currentNodeIndex ++;
-			specifyDirection(obj);
-		}
-		animateX.setAttributeNS(null,"fill","freeze");
-		animateX.setAttributeNS(null,"restart","never");
-		
-		var animateY = document.createElementNS(xmlns,"animate");
-		animateY.setAttributeNS(null,"attributeName","cy");
-		animateY.setAttributeNS(null,"attributeType","XML");
-		animateY.setAttributeNS(null,"from",this.cy);
-		animateY.setAttributeNS(null,"to",destY);
-		animateY.setAttributeNS(null,"begin","Z.click");
-		animateY.setAttributeNS(null,"dur",this.speed);
-		animateY.setAttributeNS(null,"fill","freeze");
-		animateY.setAttributeNS(null,"restart","never");
 
-		this.element.appendChild(animateX);
-		this.element.appendChild(animateY);
+			var destinationNode = Graph.nodes[this.nodeDestArray[this.currentNodeIndex]-1].nodeNum;
+			//alert(destinationNode)
+			var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
+			var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
+			
+			this.destinationNode = destinationNode;
+		//	alert(this.destinationNode)
+			this.destinationX = destX;
+			this.destinationY = destY;
+			var obj = this;
+			
+			var animateX = document.createElementNS(xmlns,"animate");
+			animateX.setAttributeNS(null,"attributeName","cx");
+			animateX.setAttributeNS(null,"attributeType","XML");
+			animateX.setAttributeNS(null,"from",this.cx);
+			animateX.setAttributeNS(null,"to",destX);
+			animateX.setAttributeNS(null,"begin","Z.click");
+			animateX.setAttributeNS(null,"dur",this.speed);
+			animateX.onend = function ()	{
+				specifyDirection(obj);
+			}
+			animateX.setAttributeNS(null,"fill","freeze");
+			animateX.setAttributeNS(null,"restart","never");
+			
+			var animateY = document.createElementNS(xmlns,"animate");
+			animateY.setAttributeNS(null,"attributeName","cy");
+			animateY.setAttributeNS(null,"attributeType","XML");
+			animateY.setAttributeNS(null,"from",this.cy);
+			animateY.setAttributeNS(null,"to",destY);
+			animateY.setAttributeNS(null,"begin","Z.click");
+			animateY.setAttributeNS(null,"dur",this.speed);
+			animateY.setAttributeNS(null,"fill","freeze");
+			animateY.setAttributeNS(null,"restart","never");
+
+			this.element.appendChild(animateX);
+			this.element.appendChild(animateY);
+		}
 	}
 }
 function getIndexLocation(node,flag){
@@ -179,9 +181,10 @@ function changeDirection(node){
 	while(node.element.firstChild)	{
 		node.element.removeChild(node.element.firstChild);
 	}
-	node.moveTo();
+	node.moveTo("random");
 }
 function specifyDirection (node) {
+	node.currentNodeIndex ++;
 	node.cx = node.element.getAttribute("cx");
 	node.cy = node.element.getAttribute("cy");
 	node.element.setAttributeNS(null,"cx",node.cx);
@@ -192,36 +195,43 @@ function specifyDirection (node) {
 	Graph.nodes[node.destinationNode].edgesVisited[getIndexLocation(node,0)]++;
 	
 	node.updateColors(choosenColor);
-	
-	//node.updateEdges();
+	node.updateEdges();
 	
 	node.currentNode = node.destinationNode;
 	
 	var nextNode = Graph.nodes[node.nodeDestArray[node.currentNodeIndex]-1];
 	node.currentNodeIndex ++;
-		
-	var destX = nextNode.X + Graph.nodeWidth / 2;
-	var destY = nextNode.Y + Graph.nodeHeight /2;
-		
-	node.destinationNode = nextNode.nodeNum;
-	node.destinationX = destX;
-	node.destinationY = destY;
-	//remove previous animate attributes
-	while(node.element.firstChild)	{
-		node.element.removeChild(node.element.firstChild);
+	
+	if (node.currentNodeIndex < node.nodeDestArray.length) {	
+		var destX = nextNode.X + Graph.nodeWidth / 2;
+		var destY = nextNode.Y + Graph.nodeHeight /2;
+			
+		node.destinationNode = nextNode.nodeNum;
+		node.destinationX = destX;
+		node.destinationY = destY;
+		//remove previous animate attributes
+		while(node.element.firstChild)	{
+			node.element.removeChild(node.element.firstChild);
+		}
+		node.moveTo("specified");
 	}
-	node.moveTo();
-
+	else {
+		node.color = "brown"
+		node.element.setAttributeNS(null, "color", node.color);
+	}
 }
 graphWalker.prototype.updateEdges = function() {
 	var base = 2;
 	var id1 = document.getElementById(this.currentNode + "-" + this.destinationNode);
 	var id2 = document.getElementById(this.destinationNode + "-" + this.currentNode);
+	
 	if(id1)	{
 		id1.setAttributeNS(null,"stroke-width", base + (0.3 * Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this,1)]));
+		//id1.setAttributeNS(null,"stroke-width", id1.getAttributeNS(null, "stroke-width") +.2);
 	}
-	else	{
+	else if(id2)	{
 		id2.setAttributeNS(null,"stroke-width", base + (0.3 * Graph.nodes[this.currentNode].edgesVisited[getIndexLocation(this,1)]));
+		//id2.setAttributeNS(null,"stroke-width", id2.getAttributeNS(null, "stroke-width") +.2);
 	}
 }
 function setChoosenColor(colorChoice,boxSelected){
@@ -342,7 +352,7 @@ graphWalker.prototype.updateSpeed = function (modifier) {
 	this.moveTo();
 }
 
-graphWalker.prototype.moveTo = function () {
+graphWalker.prototype.moveTo = function (movementType) {
 	var obj = this;
 	var animateX = document.createElementNS(xmlns,"animate");
 		animateX.setAttributeNS(null,"attributeName","cx");
@@ -353,7 +363,10 @@ graphWalker.prototype.moveTo = function () {
 		//animateX.setAttributeNS(null, "end", "P.click");
 		animateX.setAttributeNS(null,"dur",this.speed);
 		animateX.onend = function ()	{
-			changeDirection(obj);
+			if (movementType == "random")
+				changeDirection(obj);
+			else
+				specifyDirection(obj);
 		}
 		animateX.setAttributeNS(null,"fill","freeze");
 		animateX.setAttributeNS(null,"restart","never");

@@ -26,7 +26,7 @@ function getXML()
 		{
 			s += "<edge to=\"g";
 			s += Graph.nodes[i].edgesList[j];
-			s += "\" id=\""+i+"-"+j;
+			//s += "\" id=\""+i+"-"+j;
 			s += "\" />\n";
 		}
 		s+= "</node>\n";

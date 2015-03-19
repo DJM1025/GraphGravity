@@ -859,6 +859,8 @@ window.addEventListener("load", function loadGraph() {
 					var edge = document.createElementNS(xmlns, "path");
 					edge.selected = false; //edge.parentNode === selectedEdgesGroup?
 					edge.setAttributeNS(null, "d", "M " + (lowNodeMP.x) + " " + (lowNodeMP.y) + " " + highNodeMP.x + " " + highNodeMP.y);
+					edge.setAttributeNS(null, "id", node1.nodeNum+"-"+node2.nodeNum);
+					edge.setAttributeNS(null, "stroke-width", "2");
 					Graph.edgesGroup.appendChild(edge);
 				
 					if (node1.selected && node2.selected) {
@@ -1092,7 +1094,7 @@ window.addEventListener("load", function loadGraph() {
         }
     };
 
-    //select all nodest
+    //select all nodes
     Graph.selectAllNodes = function () {
         for (var node in Graph.nodes) {
             Graph.selectNode(Graph.nodes[node]);

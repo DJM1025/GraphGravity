@@ -952,6 +952,9 @@ window.addEventListener("load", function loadGraph() {
 						'edgesList': edgesList
 						});
 					}
+					
+					node1.edgesVisited.push(0);
+					node2.edgesVisited.push(0);
 				}//end if
 				
 			}//end for y

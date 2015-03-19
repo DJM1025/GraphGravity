@@ -89,7 +89,6 @@ graphWalker.prototype.specifyStart = function (pathArray){
 		}
 		
 		var startNode = this.nodeDestArray[this.currentNodeIndex] -1
-		//alert(this.nodeDestArray[this.currentNodeIndex] -1);
 		if (startNode >=0){
 			this.cx = Graph.nodes[startNode].X + Graph.nodeWidth / 2; //may need fixed in the future
 			this.cy = Graph.nodes[startNode].Y + Graph.nodeHeight / 2;
@@ -98,12 +97,10 @@ graphWalker.prototype.specifyStart = function (pathArray){
 			this.currentNodeIndex ++;
 
 			var destinationNode = Graph.nodes[this.nodeDestArray[this.currentNodeIndex]-1].nodeNum;
-			//alert(destinationNode)
 			var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
 			var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
 			
 			this.destinationNode = destinationNode;
-		//	alert(this.destinationNode)
 			this.destinationX = destX;
 			this.destinationY = destY;
 			var obj = this;

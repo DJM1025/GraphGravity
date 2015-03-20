@@ -126,8 +126,16 @@ function LoadTraverseWindow(parent) {
             parent.removeEventListener("mouseup", releaseImportWindow, false);
         }, false);
 
+		var initialX = event.pageX;
+		var initialY = event.pageY;
+		var initialBarX = scaleBarX;
+		var initialBarY = scaleBarY;
         function moveImportWindow(event) {
             importWindowGroup.setAttributeNS(null, "transform", "translate(" + (event.pageX - startX) + "," + (event.pageY - startY) + ")");
+			var offsetX = event.pageX - initialX;
+			var offsetY = event.pageY - initialY;
+			scaleBarX = initialBarX + offsetX;
+			scaleBarY = initialBarY + offsetY;
         }
 
     }, false);

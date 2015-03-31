@@ -197,7 +197,6 @@ function specifyDirection (node) {
 	node.currentNode = node.destinationNode;
 	
 	var nextNode = Graph.nodes[node.nodeDestArray[node.currentNodeIndex]-1];
-	node.currentNodeIndex ++;
 	
 	if (node.currentNodeIndex < node.nodeDestArray.length) {	
 		var destX = nextNode.X + Graph.nodes[nextNode].nodeWidth / 2;

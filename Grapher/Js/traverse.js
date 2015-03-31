@@ -33,14 +33,14 @@ graphWalker.prototype.randomStart = function (){
 	setKeyColors(choosenColor);
 	if(Graph.numberOfNodes > 1)	{
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
-		this.cx = Graph.nodes[randomNode].X + Graph.nodeWidth / 2; //may need fixed in the future
+		this.cx = Graph.nodes[randomNode].X + Graph.nodes[randomNode].nodeWidth / 2; //may need fixed in the future
 		this.cy = Graph.nodes[randomNode].Y + Graph.nodeHeight / 2;
 		this.currentNode = randomNode;
 		this.init();
 
 		var randomAdjacent = Math.floor(Math.random() * Graph.nodes[randomNode].edgesList.length);
 		var destinationNode = Graph.nodes[randomNode].edgesList[randomAdjacent];
-		var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
+		var destX = Graph.nodes[destinationNode].X + Graph.nodes[destinationNode].nodeWidth / 2;
 		var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
 		
 		this.destinationNode = destinationNode;
@@ -90,14 +90,14 @@ graphWalker.prototype.specifyStart = function (pathArray){
 		
 		var startNode = this.nodeDestArray[this.currentNodeIndex] -1
 		if (startNode >=0){
-			this.cx = Graph.nodes[startNode].X + Graph.nodeWidth / 2; //may need fixed in the future
+			this.cx = Graph.nodes[startNode].X + Graph.nodes[startNode].nodeWidth / 2; //may need fixed in the future
 			this.cy = Graph.nodes[startNode].Y + Graph.nodeHeight / 2;
 			this.currentNode = startNode;
 			this.init();
 			this.currentNodeIndex ++;
 
 			var destinationNode = Graph.nodes[this.nodeDestArray[this.currentNodeIndex]-1].nodeNum;
-			var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
+			var destX = Graph.nodes[destinationNode].X + Graph.nodes[destinationNode].nodeWidth / 2;
 			var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
 			
 			this.destinationNode = destinationNode;
@@ -168,7 +168,7 @@ function changeDirection(node){
 	var randomAdjacent = Math.floor(Math.random() * Graph.nodes[node.currentNode].edgesList.length);
 	var destinationNode = Graph.nodes[node.currentNode].edgesList[randomAdjacent];
 		
-	var destX = Graph.nodes[destinationNode].X + Graph.nodeWidth / 2;
+	var destX = Graph.nodes[destinationNode].X + Graph.nodes[destinationNode].nodeWidth / 2;
 	var destY = Graph.nodes[destinationNode].Y + Graph.nodeHeight /2;
 		
 	node.destinationNode = destinationNode;
@@ -200,7 +200,7 @@ function specifyDirection (node) {
 	node.currentNodeIndex ++;
 	
 	if (node.currentNodeIndex < node.nodeDestArray.length) {	
-		var destX = nextNode.X + Graph.nodeWidth / 2;
+		var destX = nextNode.X + Graph.nodes[nextNode].nodeWidth / 2;
 		var destY = nextNode.Y + Graph.nodeHeight /2;
 			
 		node.destinationNode = nextNode.nodeNum;

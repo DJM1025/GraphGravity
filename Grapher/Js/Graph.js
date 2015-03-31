@@ -824,16 +824,17 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.edgesVisited = new Array();
 		var nodeTextSize = nodeLabel || Graph.numberOfNodes;
 		nodeTextSize = "" + nodeTextSize + "";
+		nodeGroup.nodeWidth=Graph.nodeWidth;
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
         nodeRect.setAttributeNS(null, "fill", "red");
         nodeRect.setAttributeNS(null, "stroke", "black");
         nodeRect.setAttributeNS(null, "stroke-width", "2.5");
-        nodeRect.setAttributeNS(null, "x", nodeGroup.X = (x - (Graph.nodeWidth / 2)));
+        nodeRect.setAttributeNS(null, "x", nodeGroup.X = (x - (nodeGroup.nodeWidth / 2)));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (y - (Graph.nodeHeight / 2)));
         nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
-        nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
+        nodeRect.setAttributeNS(null, "width", nodeGroup.nodeWidth);
         nodeGroup.appendChild(nodeRect);
 
         var nodeText = nodeGroup.text = document.createElementNS(xmlns, "text");
@@ -877,6 +878,7 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.edgesVisited = new Array();
 		var nodeTextSize = node.label
 		nodeTextSize = "" + nodeTextSize + "";
+		nodeGroup.nodeWidth = node.nodeWidth;
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
@@ -886,7 +888,7 @@ window.addEventListener("load", function loadGraph() {
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y));
         nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
-        //nodeRect.setAttributeNS(null, "width", Graph.nodeWidth);
+        nodeRect.setAttributeNS(null, "width", node.nodeWidth);
 		nodeRect.setAttributeNS(null, "width", nodeTextSize.length * 5 + 20);
         nodeGroup.appendChild(nodeRect);
 

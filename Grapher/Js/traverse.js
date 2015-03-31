@@ -29,7 +29,7 @@ graphWalker.prototype.init = function(){
 
 graphWalker.prototype.randomStart = function (){
 	choosenColor = 1; //sets the currentlySelected Color
-	defaultColors(choosenColor)   //intializes all of the nodes to there starting colors
+	defaultColors(choosenColor)   //initializes all of the nodes to there starting colors
 	setKeyColors(choosenColor);
 	if(Graph.numberOfNodes > 1)	{
 		var randomNode = Math.floor(Math.random() * Graph.numberOfNodes);
@@ -199,7 +199,8 @@ function specifyDirection (node) {
 	var nextNode = Graph.nodes[node.nodeDestArray[node.currentNodeIndex]-1];
 	
 	if (node.currentNodeIndex < node.nodeDestArray.length) {	
-		var destX = nextNode.X + Graph.nodes[nextNode].nodeWidth / 2;
+		//alert(nextNode)
+		var destX = nextNode.X + nextNode.nodeWidth / 2;
 		var destY = nextNode.Y + Graph.nodeHeight /2;
 			
 		node.destinationNode = nextNode.nodeNum;

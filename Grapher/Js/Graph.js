@@ -294,7 +294,7 @@ window.addEventListener("load", function loadGraph() {
             for (var n = 0; n < Graph.numberOfNodes; n++) {
                 var nextNode = Graph.selectedNodes[n] || Graph.nodes[n];
                 nodeInfoArray.push({
-                    'x': nextNode.X + (Graph.nodeWidth / 2),
+                    'x': nextNode.X + (nextNode.nodeWidth / 2),
                     'y': nextNode.Y + (Graph.nodeHeight / 2),
                     'nodeNum': nextNode.nodeNum,
                     'nodeLabel': nextNode.nodeLabel,
@@ -651,7 +651,7 @@ window.addEventListener("load", function loadGraph() {
                     nextNode = nodes[node];
                     nodeInfo.push({
                         'nodeNum': nextNode.nodeNum,
-                        'x': midPoint.x - nextNode.X - (Graph.nodeWidth / 2),
+                        'x': midPoint.x - nextNode.X - (nextNode.nodeWidth / 2),
                         'y': midPoint.y - nextNode.Y - (Graph.nodeHeight / 2),
                         'origX': nextNode.X,
                         'origY': nextNode.Y,
@@ -878,7 +878,7 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.edgesVisited = new Array();
 		var nodeTextSize = node.label
 		nodeTextSize = "" + nodeTextSize + "";
-		nodeGroup.nodeWidth = node.nodeWidth;
+		nodeGroup.nodeWidth = nodeTextSize.length * 5 + 20;
 
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
@@ -888,7 +888,7 @@ window.addEventListener("load", function loadGraph() {
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y));
         nodeRect.setAttributeNS(null, "height", Graph.nodeHeight);
-        nodeRect.setAttributeNS(null, "width", node.nodeWidth);
+        nodeRect.setAttributeNS(null, "width", nodeGroup.nodeWidth);
 		nodeRect.setAttributeNS(null, "width", nodeTextSize.length * 5 + 20);
         nodeGroup.appendChild(nodeRect);
 
@@ -1052,7 +1052,7 @@ window.addEventListener("load", function loadGraph() {
 
         function findNodeMidpoint(node) {
             return {
-                'x': node.X + (Graph.nodeWidth / 2),
+                'x': node.X + (nextNode.nodeWidth / 2),
                 'y': node.Y + (Graph.nodeHeight / 2)
             };
         }

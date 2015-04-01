@@ -53,8 +53,7 @@ void findGravity(int **adjMatrix,int *gravityValues)
 				int x = 0;
 				currentGravityPath[x] = source;
 				nextVertex = source;
-
-				while(nextVertex != destination && nextVertex != -1)
+				while(nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
 				{
 					vertex = nextAdjacent(nextVertex,-1,adjMatrix,currentGravityPath);
 					minimum = abs(gravityValues[vertex] - gravityValues[destination]);
@@ -64,22 +63,19 @@ void findGravity(int **adjMatrix,int *gravityValues)
 					{
 						if(abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
 						{
-							minimum = abs(gravityValues[destination] - gravityValues[destination]);
+							minimum = abs(gravityValues[vertex] - gravityValues[destination]);
 							temp = vertex;
 						}//end if
 						vertex = nextAdjacent(nextVertex, vertex,adjMatrix,currentGravityPath);
 					}//end inner while
 					nextVertex = temp;
 					x++;
-					currentGravityPath[x] = temp;
-
+					currentGravityPath[x] = temp;//holds the destination node position for the gravity path
 
 				}//end outer while
 
 			}//end  if the source destination check
-
-
-			//begin checking for the paths
+			//begin checking for the paths by comparing them
 			
 
 
@@ -89,6 +85,7 @@ void findGravity(int **adjMatrix,int *gravityValues)
 
 
 }//end function findGravity()
+//this function sets the path length distances for all nodes
 void Exhaustive(int **adjMatrix, int **pathLengths)
 {
 	for(int i =0; i < global_nodes;i++)
@@ -104,7 +101,6 @@ void Exhaustive(int **adjMatrix, int **pathLengths)
 		}// end for j
 		pathLengths[i][i] =1;
 	}//end for i
-
 	for(int x=0; x < global_nodes;x++)
 	{
 		for(int y=0; y < global_nodes;y++)
@@ -120,6 +116,15 @@ void Exhaustive(int **adjMatrix, int **pathLengths)
 	}//end for x
 }
 
+void Permute()
+{
+	if(global_nodes == 1)
+		cout << "Gravitational there is only a single node... " <<  endl;
+	else
+	{
+
+	}
+}
 int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath)
 {
 	int i = last + 1;

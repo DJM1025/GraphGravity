@@ -198,7 +198,7 @@ function specifyDirection (node) {
 	
 	var nextNode = Graph.nodes[node.nodeDestArray[node.currentNodeIndex]-1];
 	
-	if (node.currentNodeIndex < node.nodeDestArray.length) {	
+	if (node.currentNodeIndex < node.nodeDestArray.length -1) {	// -1 is because the data has an extra field at the end
 		//alert(nextNode)
 		var destX = nextNode.X + nextNode.nodeWidth / 2;
 		var destY = nextNode.Y + Graph.nodeHeight /2;
@@ -212,9 +212,24 @@ function specifyDirection (node) {
 		}
 		node.moveTo("specified");
 	}
-	else {
+	else{
+		var startNode = node.nodeDestArray[0]-1
+		var destX = Graph.nodes[startNode].X + Graph.nodes[startNode].nodeWidth / 2;
+		var destY = Graph.nodes[startNode].Y + Graph.nodeHeight /2;
+			
+		node.destinationNode = startNode.nodeNum;
+		node.destinationX = destX;
+		node.destinationY = destY;
+		//remove previous animate attributes
+		while(node.element.firstChild)	{
+			node.element.removeChild(node.element.firstChild);
+		}
+		node.moveTo("specified");
+		
 		node.color = "brown"
-		node.element.setAttributeNS(null, "color", node.color);
+		node.element.setAttributeNS(null, "fill", node.color);
+		node.element.setAttributeNS(null, "stroke", "black");
+		node.element.setAttributeNS(null, "stroke-width", 4);
 	}
 }
 graphWalker.prototype.updateEdges = function() {

@@ -24,7 +24,8 @@ function changedGraph(){
 function createWalkers (userDataArray) {
 	for (var x=0; x < userDataArray.length;x++) {
 		walkers.push(new graphWalker());
-		walkers[x].specifyStart(userDataArray[x]);
+		walkers[x].parseUserData(userDataArray[x]);
+		walkers[x].specifyStart();
 	}
 }
 function deleteWalkers () {
@@ -47,6 +48,19 @@ function fetchUserData(graphType) {
 			userDataArray = userDataArray.split("!");
 			
 			createWalkers(userDataArray);
+			// loop to find lowest Time
+			var lowestTime = walkers[0].findLowestTime()
+			for (var x=1; x < walkers.length; x++) {
+				var time = walkers[x].findLowestTime();
+				if (time < lowestTime)
+					lowestTime = time;
+			}
+			
+			// send lowest time to all walkers
+			for (var x=0; x < walkers.length; x++) {
+				walkers[x].setMinTravelTime(time);
+				//walkers[x].pauseTraversal();
+			}
 		}
 	}
 	sendString = "graphName="+document.getElementById("graphType").value;

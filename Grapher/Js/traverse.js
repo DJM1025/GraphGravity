@@ -11,9 +11,47 @@ function graphWalker(){
 	this.color = "black";
 	this.currentNode = null;
 	this.element = null; 	//Holds the SVG element for the walker (document.getElementBy not needed)
+	
+	this.userData = false;
 	this.nodeDestArray = new Array();
 	this.nodeTimeArray = new Array();
 	this.currentNodeIndex = 0;
+	this.minTravelTime = .1
+}
+
+/******
+* parseUserData - takes traversal data and splits it into 2 separate arrays
+* User data is missing the last move and includes an empty field at the end
+*****/
+graphWalker.prototype.parseUserData = function (pathArray) {
+	var tempArray = pathArray.split(";");
+	for (var x=0; x< tempArray.length; x++) {
+		var singleNode = tempArray[x].split(",")
+		this.nodeDestArray[x] = singleNode[0]
+		this.nodeTimeArray[x] = singleNode[1]
+	}
+}
+
+graphWalker.prototype.findLowestTime = function () {
+	var lowestTime = this.nodeTimeArray[0];
+	var time;
+	for (var x=1; x<this.nodeTimeArray.length-1; x++) {
+		time = this.nodeTimeArray[x]-this.nodeTimeArray[x-1]
+		if ( time < lowestTime  && time > 0)
+			lowestTime = time;
+	}
+	
+	return lowestTime;
+}
+
+graphWalker.prototype.setMinTravelTime = function (time) {
+	this.userData = true;
+	if (time > 0)
+		this.minTravelTime = time;
+	else
+		this.minTravelTime = .1;
+		
+	this.updateSpeed(0)
 }
 
 graphWalker.prototype.init = function(){
@@ -75,19 +113,12 @@ graphWalker.prototype.randomStart = function (){
 		this.element.appendChild(animateY);
 	}
 }
-graphWalker.prototype.specifyStart = function (pathArray){
+graphWalker.prototype.specifyStart = function (){
 	choosenColor = 1; //sets the currentlySelected Color
 	defaultColors(choosenColor)   //intializes all of the nodes to there starting colors
 	setKeyColors(choosenColor);
 	
 	if(Graph.numberOfNodes > 1)	{
-		var tempArray = pathArray.split(";");
-		for (var x=0; x< tempArray.length; x++) {
-			var singleNode = tempArray[x].split(",")
-			this.nodeDestArray[x] = singleNode[0]
-			this.nodeTimeArray[x] = singleNode[1]
-		}
-		
 		var startNode = this.nodeDestArray[this.currentNodeIndex] -1
 		if (startNode >=0){
 			this.cx = Graph.nodes[startNode].X + Graph.nodes[startNode].nodeWidth / 2; //may need fixed in the future
@@ -199,18 +230,20 @@ function specifyDirection (node) {
 	var nextNode = Graph.nodes[node.nodeDestArray[node.currentNodeIndex]-1];
 	
 	if (node.currentNodeIndex < node.nodeDestArray.length -1) {	// -1 is because the data has an extra field at the end
-		//alert(nextNode)
-		var destX = nextNode.X + nextNode.nodeWidth / 2;
-		var destY = nextNode.Y + Graph.nodeHeight /2;
-			
-		node.destinationNode = nextNode.nodeNum;
-		node.destinationX = destX;
-		node.destinationY = destY;
-		//remove previous animate attributes
-		while(node.element.firstChild)	{
-			node.element.removeChild(node.element.firstChild);
-		}
-		node.moveTo("specified");
+		setTimeout(function(){  
+			var destX = nextNode.X + nextNode.nodeWidth / 2;
+			var destY = nextNode.Y + Graph.nodeHeight /2;
+				
+			node.destinationNode = nextNode.nodeNum;
+			node.destinationX = destX;
+			node.destinationY = destY;
+			//remove previous animate attributes
+			while(node.element.firstChild)	{
+				node.element.removeChild(node.element.firstChild);
+			}
+			node.moveTo("specified");		
+		}, (node.nodeTimeArray[node.currentNodeIndex] - node.nodeTimeArray[node.currentNodeIndex-1] - node.minTravelTime) * (node.speed * 500));
+		//alert(node.nodeTimeArray[node.currentNodeIndex] - node.nodeTimeArray[node.currentNodeIndex-1])
 	}
 	else{
 		var startNode = node.nodeDestArray[0]-1
@@ -360,8 +393,14 @@ graphWalker.prototype.updateColors = function (colorChoice) {
 
 graphWalker.prototype.updateSpeed = function (modifier) {
 	this.pauseTraversal();
-	this.speed = 5.01 - (5 * modifier);
-	this.moveTo();
+	if (this.userData) {
+		this.speed = (5.01 - (5*modifier)) * this.minTravelTime * 10
+	}
+	else {
+		this.speed = 5.01 - (5 * modifier);
+	}
+	//this.moveTo();
+	document.getElementById("graphPlane").unpauseAnimations();
 }
 
 graphWalker.prototype.moveTo = function (movementType) {
@@ -401,15 +440,8 @@ graphWalker.prototype.moveTo = function (movementType) {
 		this.element.childNodes[1].beginElement();   //Y 
 }
 
-graphWalker.prototype.pauseTraversal = function () {
-	this.cx = this.element.getAttribute("cx");
-	this.cy = this.element.getAttribute("cy");
-	this.element.setAttributeNS(null,"cx",this.cx);
-	this.element.setAttributeNS(null,"cy",this.cy);
-
-	while(this.element.firstChild)	{
-		this.element.removeChild(this.element.firstChild);
-	}
+graphWalker.prototype.pauseTraversal = function () { 
+	document.getElementById("graphPlane").pauseAnimations();
 }
 
 //Destroys the graph walker's SVG image that is displayed on the screen 

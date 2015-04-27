@@ -15,6 +15,7 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths);
 void Permute(int *gravityValues,int **adjMatrix,int **pathLengths);
 void writeXML(int **adjMatrix, int *gravityValues);
 int global_nodes;
+int *xmlInfo;
 
 int main(){
 	
@@ -101,11 +102,13 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 
 void writeXML(int **adjMatrix, int *gravityValues){
 	ofstream myfile ("output.xml");
+	myfile << "<graph>";
 	if (myfile.is_open())
 	{
 		for(int i = 0; i < global_nodes; i++) {
 			//cout << gravityValues[i] << endl;
-			cout << adjMatrix[0][i] << endl;
+			//cout << adjMatrix[0][i] << endl;
+			myfile << "<node id='";
 		}
 		myfile.close();
 	}
@@ -227,6 +230,11 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 		cout << endl;
 	}//end for
 	global_nodes = nodeCounter;
+	xmlInfo = new int[nodeCounter];
+	//0 = ID, 1 = X, 2 = Y, 3 = Label, 4 = Color, 5 = Img
+	for (int i = 0; i < nodeCounter; i++){
+		//xmlInfo[i] = new int[5]
+	}
 	*gravityValues = new int [nodeCounter];
 	*adjMatrix = new int *[nodeCounter];
 	*pathLengths = new int *[nodeCounter];

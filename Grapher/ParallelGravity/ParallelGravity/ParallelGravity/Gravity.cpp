@@ -11,7 +11,7 @@ void printMatrix(int **ary);
 int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath);
 void Exhaustive(int **adjMatrix, int **pathLengths);
 void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths);
-void Permute();
+void Permute(int *gravityValues,int **adjMatrix,int **pathLengths);
 int global_nodes;
 
 int main(){
@@ -22,7 +22,7 @@ int main(){
 
 	parseGraph(&adjMatrix,&gravityValues,&pathLengths);
 	Exhaustive(adjMatrix,pathLengths);
-	findGravity(adjMatrix,gravityValues,pathLengths);
+	Permute(gravityValues,adjMatrix,pathLengths);
 	printMatrix(pathLengths);
 
 	cout << "-------Normal Termination---------------------" << endl;
@@ -31,6 +31,7 @@ int main(){
 
 void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 {
+	bool flag = true;
 	int minimum = 0;
 	int nextVertex;
 	int vertex;
@@ -78,11 +79,22 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 				if(currentPathLength != pathLengths[source][destination])
 				{
 					cout << "This graph is improperly flavored" << endl;
+					flag = false;
 				}
 			
 			}//end  if the source destination check
 		}//end for destination node
 	}//end for source node
+
+	if(flag)
+	{
+		//need to print to xml the valid permuation
+		cout << " This is a valid permuation: ";
+		for(int x = 0; x < global_nodes;x++)
+			cout << gravityValues[x] << " ";
+
+		cout << endl;
+	}
 
 
 }//end function findGravity()
@@ -117,15 +129,42 @@ void Exhaustive(int **adjMatrix, int **pathLengths)
 	}//end for x
 }
 
-void Permute()
+void Permute(int *gravityValues,int **adjMatrix,int **pathLengths)
 {
-	if(global_nodes == 1)
-		cout << "Gravitational there is only a single node... " <<  endl;
-	else
-	{
+	int *permute = new int[global_nodes];
+	int count = 1;
+	int temp;
+	for(int x = 0; x < global_nodes;x++)
+		permute[x] = x;
 
-	}
-}
+	int i = 1;
+	int j;
+	findGravity(adjMatrix,gravityValues,pathLengths); //need to call with initial setup and then do all the permutations
+	while(i < global_nodes)
+	{
+		
+		permute[i]--;
+		if(i % 2 == 0)
+			j = 0;
+		else
+			j = permute[i];
+		//swap
+		temp = gravityValues[j];
+		gravityValues[j] = gravityValues[i];
+		gravityValues[i] = temp;
+
+		findGravity(adjMatrix,gravityValues,pathLengths);
+
+		i = 1;
+		while(permute[i] == 0)
+		{
+			permute[i] = i;
+			i++;
+		}//end while
+		count++;
+
+	}//end outer while
+}//end function permute
 int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath)
 {
 	int i = last + 1;
@@ -161,7 +200,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
-	xml_parse_result result = doc.load_file("test.xml");
+	xml_parse_result result = doc.load_file("test2.xml");
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{

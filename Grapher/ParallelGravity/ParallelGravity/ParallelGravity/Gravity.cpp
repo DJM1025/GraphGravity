@@ -42,52 +42,58 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int *currentGravityPath = new int [global_nodes];
 	int currentPathLength = 0;
 
-	for(int source=0; source < global_nodes; source++)
+#pragma omp parallel num_threads(4)
 	{
-		for(int destination=0; destination < global_nodes; destination++)
+		#pragma omp for  
+		for (int source = 0; source < global_nodes; source++)
 		{
-			for(int i = 0; i < global_nodes;i++)
+			#pragma omp for
+			for (int destination = 0; destination < global_nodes; destination++)
 			{
-				currentGravityPath[i] = -1;
-			}//end for i
-			currentPathLength = 0;
-			if(source != destination)
-			{
-				int x = 0;
-				currentGravityPath[x] = source;
-				nextVertex = source;
-				while(nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
+				#pragma omp for
+				for (int i = 0; i < global_nodes; i++)
 				{
-					vertex = nextAdjacent(nextVertex,-1,adjMatrix,currentGravityPath);
-					minimum = abs(gravityValues[vertex] - gravityValues[destination]);
-					temp = vertex;
-					vertex = nextAdjacent(nextVertex,vertex,adjMatrix,currentGravityPath);
-					while(vertex != -1)
+					currentGravityPath[i] = -1;
+				}//end for i
+				currentPathLength = 0;
+				if (source != destination)
+				{
+					int x = 0;
+					currentGravityPath[x] = source;
+					nextVertex = source;
+					while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
 					{
-						if(abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
+						vertex = nextAdjacent(nextVertex, -1, adjMatrix, currentGravityPath);
+						minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+						temp = vertex;
+						vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
+						while (vertex != -1)
 						{
-							minimum = abs(gravityValues[vertex] - gravityValues[destination]);
-							temp = vertex;
-						}//end if
-						vertex = nextAdjacent(nextVertex, vertex,adjMatrix,currentGravityPath);
-					}//end inner while
-					nextVertex = temp;
-					x++;
-					currentGravityPath[x] = temp;//holds the destination node position for the gravity path
-				}//end outer while
-				currentPathLength++;
-			
-			//begin checking for the paths by comparing them
-			
-				if(currentPathLength != pathLengths[source][destination])
-				{
-					cout << "This graph is improperly flavored" << endl;
-					flag = false;
-				}
-			
-			}//end  if the source destination check
-		}//end for destination node
-	}//end for source node
+							if (abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
+							{
+								minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+								temp = vertex;
+							}//end if
+							vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
+						}//end inner while
+						nextVertex = temp;
+						x++;
+						currentGravityPath[x] = temp;//holds the destination node position for the gravity path
+					}//end outer while
+					currentPathLength++;
+
+					//begin checking for the paths by comparing them
+
+					if (currentPathLength != pathLengths[source][destination])
+					{
+						cout << "This graph is improperly flavored" << endl;
+						flag = false;
+					}
+
+				}//end  if the source destination check
+			}//end for destination node
+		}//end for source node
+	}//end omp parallel region
 
 	if(flag)
 	{

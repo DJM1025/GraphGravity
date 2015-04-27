@@ -1,1 +1,10 @@
-<graph><node id='<node id='<node id='
+<graph>
+<node id='g2' gravityValue='3' x='629.5' y='173' label='3' color='green'>
+ <edge to = 'g0' />
+<edge to = 'g1' />
+<node id='g1' gravityValue='2' x='755.5' y='319' label='2' color='red'>
+ <edge to = 'g0' />
+<edge to = 'g2' />
+<node id='g0' gravityValue='1' x='515.5' y='333' label='1' color='blue'>
+ <edge to = 'g1' />
+<edge to = 'g2' />

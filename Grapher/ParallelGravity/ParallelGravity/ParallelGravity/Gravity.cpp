@@ -1,8 +1,8 @@
 #include <iostream>
-#include <string>
 #include <sstream>
 #include <math.h>
 #include <fstream>
+#include <string>
 #include "pugixml-1.5\src\pugixml.hpp"
 
 using namespace std;
@@ -15,7 +15,7 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths);
 void Permute(int *gravityValues,int **adjMatrix,int **pathLengths);
 void writeXML(int **adjMatrix, int *gravityValues);
 int global_nodes;
-int *xmlInfo;
+string **xmlInfo;
 
 int main(){
 	
@@ -106,15 +106,35 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	}
 }//end function findGravity()
 
+int findNode(int gravity){
+	for (int i = 0; i < global_nodes; i++){
+		if (gravity == stoi(xmlInfo[i][5]))
+			return i;
+	}
+}
+
 void writeXML(int **adjMatrix, int *gravityValues){
 	ofstream myfile ("output.xml");
-	myfile << "<graph>";
+	myfile << "<graph>\n";
 	if (myfile.is_open())
 	{
+		int gravityValue;
+		int nodeNum; 
 		for(int i = 0; i < global_nodes; i++) {
-			//cout << gravityValues[i] << endl;
-			//cout << adjMatrix[0][i] << endl;
-			myfile << "<node id='";
+			gravityValue = gravityValues[i];
+			nodeNum = findNode(gravityValue);
+			myfile << "<node id='" << xmlInfo[nodeNum][0] << "' ";
+			myfile << "gravityValue='" << gravityValue << "' ";
+			myfile << "x='" << xmlInfo[nodeNum][1] << "' ";
+			myfile << "y='" << xmlInfo[nodeNum][2] << "' ";
+			myfile << "label='" << xmlInfo[nodeNum][3] << "' ";
+			myfile << "color='" << xmlInfo[nodeNum][4] << "'>\n ";
+			//Images
+			
+			for (int j = 0; j < global_nodes; j++){
+				if (adjMatrix[nodeNum][j] == 1)
+					myfile << "<edge to = '" << xmlInfo[j][0] << "' />\n";
+			}
 		}
 		myfile.close();
 	}
@@ -222,7 +242,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
-	xml_parse_result result = doc.load_file("test2.xml");
+	xml_parse_result result = doc.load_file("test.xml");
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{
@@ -236,11 +256,8 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 		cout << endl;
 	}//end for
 	global_nodes = nodeCounter;
-	xmlInfo = new int[nodeCounter];
-	//0 = ID, 1 = X, 2 = Y, 3 = Label, 4 = Color, 5 = Img
-	for (int i = 0; i < nodeCounter; i++){
-		//xmlInfo[i] = new int[5]
-	}
+
+	xmlInfo = new string *[nodeCounter];
 	*gravityValues = new int [nodeCounter];
 	*adjMatrix = new int *[nodeCounter];
 	*pathLengths = new int *[nodeCounter];
@@ -248,6 +265,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	{
 		(*adjMatrix)[x] = new int[nodeCounter];
 		(*pathLengths)[x] = new int[nodeCounter];
+		xmlInfo[x] = new string[6];  //0 = ID, 1 = X, 2 = Y, 3 = Label, 4 = Color, 5 = Img
 	}//end for x
 
 	for(int r=0; r < nodeCounter;r++)
@@ -263,6 +281,15 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{
 		(*gravityValues)[count] = node.attribute("gravityValue").as_int();
+		//Store node info in XML-Info Array
+		//0 = ID, 1 = X, 2 = Y, 3 = Label, 4 = Color, 5 = Img
+		xmlInfo[count][0] = node.attribute("id").as_string();
+		xmlInfo[count][1] = node.attribute("x").as_string();
+		xmlInfo[count][2] = node.attribute("y").as_string();
+		xmlInfo[count][3] = node.attribute("label").as_string();
+		xmlInfo[count][4] = node.attribute("color").as_string();
+		xmlInfo[count][5] = node.attribute("gravityValue").as_string();
+		//xmlInfo[count][5] = node.child("img").attribute.as_string();
 		for(xml_node edge = node.child("edge"); edge; edge = edge.next_sibling("edge"))
 		{
 			string str = edge.attribute("to").as_string();

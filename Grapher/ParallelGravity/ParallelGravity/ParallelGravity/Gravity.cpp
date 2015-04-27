@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <math.h>
+#include <fstream>
 #include "pugixml-1.5\src\pugixml.hpp"
 
 using namespace std;
@@ -9,9 +10,10 @@ using namespace pugi;
 void parseGraph(int ***adjMatrix,int **gravityValues,int ***pathLengths);
 void printMatrix(int **ary);
 int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath);
-void Exhaustive(int **adjMatrix, int **pathLengths);
+void floyd_warshall(int **adjMatrix, int **pathLengths);
 void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths);
 void Permute(int *gravityValues,int **adjMatrix,int **pathLengths);
+void writeXML(int **adjMatrix, int *gravityValues);
 int global_nodes;
 
 int main(){
@@ -21,7 +23,7 @@ int main(){
 	int* gravityValues;
 
 	parseGraph(&adjMatrix,&gravityValues,&pathLengths);
-	Exhaustive(adjMatrix,pathLengths);
+	floyd_warshall(adjMatrix,pathLengths);
 	Permute(gravityValues,adjMatrix,pathLengths);
 	printMatrix(pathLengths);
 
@@ -92,14 +94,25 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 		cout << " This is a valid permuation: ";
 		for(int x = 0; x < global_nodes;x++)
 			cout << gravityValues[x] << " ";
-
 		cout << endl;
+		writeXML(adjMatrix, gravityValues);
 	}
-
-
 }//end function findGravity()
+
+void writeXML(int **adjMatrix, int *gravityValues){
+	ofstream myfile ("output.xml");
+	if (myfile.is_open())
+	{
+		for(int i = 0; i < global_nodes; i++) {
+			//cout << gravityValues[i] << endl;
+			cout << adjMatrix[0][i] << endl;
+		}
+		myfile.close();
+	}
+}
+
 //this function sets the path length distances for all nodes
-void Exhaustive(int **adjMatrix, int **pathLengths)
+void floyd_warshall(int **adjMatrix, int **pathLengths)
 {
 	for(int i =0; i < global_nodes;i++)
 	{

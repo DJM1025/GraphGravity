@@ -108,7 +108,7 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 
 int findNode(int gravity){
 	for (int i = 0; i < global_nodes; i++){
-		if (gravity == stoi(xmlInfo[i][5]))
+		if (gravity == stoi(xmlInfo[i][6]))
 			return i;
 	}
 }
@@ -129,13 +129,14 @@ void writeXML(int **adjMatrix, int *gravityValues){
 			myfile << "y='" << xmlInfo[nodeNum][2] << "' ";
 			myfile << "label='" << xmlInfo[nodeNum][3] << "' ";
 			myfile << "color='" << xmlInfo[nodeNum][4] << "'>\n ";
-			//Images
+			myfile << "<img src='" << xmlInfo[nodeNum][5] << "' />\n";
 			
 			for (int j = 0; j < global_nodes; j++){
 				if (adjMatrix[nodeNum][j] == 1)
 					myfile << "<edge to = '" << xmlInfo[j][0] << "' />\n";
 			}
 		}
+		myfile << "</graph>\n";
 		myfile.close();
 	}
 }
@@ -242,7 +243,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
-	xml_parse_result result = doc.load_file("test.xml");
+	xml_parse_result result = doc.load_file("test2.xml");
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{
@@ -265,7 +266,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	{
 		(*adjMatrix)[x] = new int[nodeCounter];
 		(*pathLengths)[x] = new int[nodeCounter];
-		xmlInfo[x] = new string[6];  //0 = ID, 1 = X, 2 = Y, 3 = Label, 4 = Color, 5 = Img
+		xmlInfo[x] = new string[7];  //0 = ID, 1 = X, 2 = Y, 3 = Label, 4 = Color, 5 = Img
 	}//end for x
 
 	for(int r=0; r < nodeCounter;r++)
@@ -288,8 +289,8 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 		xmlInfo[count][2] = node.attribute("y").as_string();
 		xmlInfo[count][3] = node.attribute("label").as_string();
 		xmlInfo[count][4] = node.attribute("color").as_string();
-		xmlInfo[count][5] = node.attribute("gravityValue").as_string();
-		//xmlInfo[count][5] = node.child("img").attribute.as_string();
+		xmlInfo[count][6] = node.attribute("gravityValue").as_string();
+		xmlInfo[count][5] = node.child("img").attribute("src").as_string();
 		for(xml_node edge = node.child("edge"); edge; edge = edge.next_sibling("edge"))
 		{
 			string str = edge.attribute("to").as_string();

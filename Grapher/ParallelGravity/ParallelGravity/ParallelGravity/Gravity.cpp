@@ -125,17 +125,16 @@ void writeXML(int **adjMatrix, int *gravityValues){
 		int nodeNum; 
 		for(int i = 0; i < global_nodes; i++) {
 			gravityValue = gravityValues[i];
-			nodeNum = findNode(gravityValue);
-			myfile << "<node id='" << xmlInfo[nodeNum][0] << "' ";
+			myfile << "<node id='" << xmlInfo[i][0] << "' ";
 			myfile << "gravityValue='" << gravityValue << "' ";
-			myfile << "x='" << xmlInfo[nodeNum][1] << "' ";
-			myfile << "y='" << xmlInfo[nodeNum][2] << "' ";
-			myfile << "label='" << xmlInfo[nodeNum][3] << "' ";
-			myfile << "color='" << xmlInfo[nodeNum][4] << "'>\n ";
-			myfile << "<img src='" << xmlInfo[nodeNum][5] << "' />\n";
+			myfile << "x='" << xmlInfo[i][1] << "' ";
+			myfile << "y='" << xmlInfo[i][2] << "' ";
+			myfile << "label='" <<  gravityValue << "' ";
+			myfile << "color='" << xmlInfo[i][4] << "'>\n ";
+			myfile << "<img src='" << xmlInfo[i][5] << "' />\n";
 			
 			for (int j = 0; j < global_nodes; j++){
-				if (adjMatrix[nodeNum][j] == 1)
+				if (adjMatrix[i][j] == 1)
 					myfile << "<edge to = '" << xmlInfo[j][0] << "' />\n";
 			}
 		}

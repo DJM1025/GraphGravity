@@ -1,0 +1,221 @@
+<graph>
+<node id="g0" gravityValue="1" x="589.5" y="199" label="1" color="red">
+<img src="" />
+<edge to="g1" />
+<edge to="g3" />
+<edge to="g4" />
+<edge to="g7" />
+<edge to="g10" />
+<edge to="g2" />
+</node>
+<node id="g1" gravityValue="2" x="457.5" y="371" label="2" color="red">
+<img src="" />
+<edge to="g0" />
+<edge to="g2" />
+<edge to="g9" />
+<edge to="g10" />
+<edge to="g19" />
+</node>
+<node id="g2" gravityValue="3" x="673.5" y="439" label="3" color="red">
+<img src="" />
+<edge to="g1" />
+<edge to="g3" />
+<edge to="g8" />
+<edge to="g9" />
+<edge to="g0" />
+</node>
+<node id="g3" gravityValue="4" x="775.5" y="263" label="4" color="red">
+<img src="" />
+<edge to="g2" />
+<edge to="g0" />
+<edge to="g6" />
+<edge to="g7" />
+<edge to="g8" />
+<edge to="g15" />
+</node>
+<node id="g4" gravityValue="5" x="749.5" y="113" label="5" color="red">
+<img src="" />
+<edge to="g0" />
+<edge to="g5" />
+</node>
+<node id="g5" gravityValue="6" x="939.5" y="163" label="6" color="red">
+<img src="" />
+<edge to="g4" />
+<edge to="g6" />
+<edge to="g17" />
+</node>
+<node id="g6" gravityValue="7" x="961.5" y="279" label="7" color="red">
+<img src="" />
+<edge to="g5" />
+<edge to="g3" />
+<edge to="g15" />
+<edge to="g16" />
+</node>
+<node id="g7" gravityValue="8" x="977.5" y="499" label="8" color="red">
+<img src="" />
+<edge to="g3" />
+<edge to="g8" />
+<edge to="g14" />
+<edge to="g15" />
+<edge to="g0" />
+<edge to="g13" />
+</node>
+<node id="g8" gravityValue="9" x="769.5" y="613" label="9" color="red">
+<img src="" />
+<edge to="g7" />
+<edge to="g2" />
+<edge to="g12" />
+<edge to="g13" />
+<edge to="g10" />
+<edge to="g3" />
+<edge to="g14" />
+</node>
+<node id="g9" gravityValue="10" x="507.5" y="611" label="10" color="red">
+<img src="" />
+<edge to="g2" />
+<edge to="g1" />
+<edge to="g11" />
+<edge to="g12" />
+<edge to="g10" />
+<edge to="g22" />
+</node>
+<node id="g10" gravityValue="11" x="239.5" y="391" label="11" color="red">
+<img src="" />
+<edge to="g1" />
+<edge to="g11" />
+<edge to="g18" />
+<edge to="g19" />
+<edge to="g8" />
+<edge to="g0" />
+<edge to="g9" />
+<edge to="g25" />
+<edge to="g24" />
+</node>
+<node id="g11" gravityValue="12" x="259.5" y="627" label="12" color="red">
+<img src="" />
+<edge to="g10" />
+<edge to="g9" />
+<edge to="g23" />
+<edge to="g24" />
+<edge to="g27" />
+<edge to="g28" />
+</node>
+<node id="g12" gravityValue="13" x="625.5" y="731" label="13" color="red">
+<img src="" />
+<edge to="g9" />
+<edge to="g8" />
+<edge to="g22" />
+<edge to="g13" />
+<edge to="g30" />
+</node>
+<node id="g13" gravityValue="14" x="927.5" y="749" label="14" color="red">
+<img src="" />
+<edge to="g8" />
+<edge to="g14" />
+<edge to="g12" />
+<edge to="g30" />
+<edge to="g7" />
+</node>
+<node id="g14" gravityValue="15" x="1151.5" y="553" label="15" color="red">
+<img src="" />
+<edge to="g13" />
+<edge to="g7" />
+<edge to="g8" />
+</node>
+<node id="g15" gravityValue="16" x="1147.5" y="327" label="16" color="red">
+<img src="" />
+<edge to="g7" />
+<edge to="g6" />
+<edge to="g3" />
+</node>
+<node id="g16" gravityValue="17" x="1167.5" y="109" label="17" color="red">
+<img src="" />
+<edge to="g6" />
+<edge to="g17" />
+</node>
+<node id="g17" gravityValue="18" x="983.5" y="87" label="18" color="red">
+<img src="" />
+<edge to="g16" />
+<edge to="g5" />
+</node>
+<node id="g18" gravityValue="19" x="267.5" y="121" label="19" color="red">
+<img src="" />
+<edge to="g10" />
+<edge to="g19" />
+<edge to="g20" />
+<edge to="g25" />
+</node>
+<node id="g19" gravityValue="20" x="387.5" y="209" label="20" color="red">
+<img src="" />
+<edge to="g10" />
+<edge to="g18" />
+<edge to="g21" />
+<edge to="g1" />
+</node>
+<node id="g20" gravityValue="21" x="473.5" y="75" label="21" color="red">
+<img src="" />
+<edge to="g18" />
+<edge to="g21" />
+</node>
+<node id="g21" gravityValue="22" x="535.5" y="137" label="22" color="red">
+<img src="" />
+<edge to="g20" />
+<edge to="g19" />
+</node>
+<node id="g22" gravityValue="23" x="443.5" y="739" label="23" color="red">
+<img src="" />
+<edge to="g9" />
+<edge to="g23" />
+<edge to="g30" />
+<edge to="g12" />
+</node>
+<node id="g23" gravityValue="24" x="219.5" y="747" label="24" color="red">
+<img src="" />
+<edge to="g22" />
+<edge to="g11" />
+<edge to="g26" />
+<edge to="g27" />
+</node>
+<node id="g24" gravityValue="25" x="79.5" y="477" label="25" color="red">
+<img src="" />
+<edge to="g11" />
+<edge to="g25" />
+<edge to="g10" />
+<edge to="g26" />
+</node>
+<node id="g25" gravityValue="26" x="61.5" y="219" label="26" color="red">
+<img src="" />
+<edge to="g24" />
+<edge to="g10" />
+<edge to="g18" />
+</node>
+<node id="g26" gravityValue="27" x="83.5" y="661" label="27" color="red">
+<img src="" />
+<edge to="g24" />
+<edge to="g23" />
+</node>
+<node id="g27" gravityValue="28" x="359.5" y="677" label="28" color="red">
+<img src="" />
+<edge to="g23" />
+<edge to="g11" />
+<edge to="g28" />
+<edge to="g29" />
+</node>
+<node id="g28" gravityValue="29" x="373.5" y="523" label="29" color="red">
+<img src="" />
+<edge to="g11" />
+<edge to="g27" />
+</node>
+<node id="g29" gravityValue="30" x="363.5" y="815" label="30" color="red">
+<img src="" />
+<edge to="g27" />
+<edge to="g30" />
+</node>
+<node id="g30" gravityValue="31" x="517.5" y="811" label="31" color="red">
+<img src="" />
+<edge to="g29" />
+<edge to="g22" />
+<edge to="g13" />
+<edge to="g12" />
+</node>
+</graph>

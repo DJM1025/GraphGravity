@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 #include <sstream>
 #include <math.h>
 #include <fstream>
@@ -22,11 +23,18 @@ int main(){
 	int** adjMatrix;
 	int** pathLengths;
 	int* gravityValues;
+	clock_t startT,stopT;
+
+
+	startT = clock();
 
 	parseGraph(&adjMatrix,&gravityValues,&pathLengths);
 	floyd_warshall(adjMatrix,pathLengths);
 	Permute(gravityValues,adjMatrix,pathLengths);
-	printMatrix(pathLengths);
+	stopT = clock();
+	float seconds = (float)(stopT - startT)/CLOCKS_PER_SEC;
+
+
 
 	cout << "-------Normal Termination---------------------" << endl;
 	system("pause");
@@ -105,8 +113,10 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 		cout << endl;
 		writeXML(adjMatrix, gravityValues);
 	}
-	else
-		cout << "Invalid Permutation." << endl;
+	//else
+		//cout << "Invalid Permutation." << endl;
+
+	delete currentGravityPath;
 }//end function findGravity()
 
 int findNode(int gravity){
@@ -245,7 +255,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
-	xml_parse_result result = doc.load_file("test.xml");
+	xml_parse_result result = doc.load_file("14nodes.xml");
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{

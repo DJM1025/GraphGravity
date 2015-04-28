@@ -79,14 +79,15 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 						nextVertex = temp;
 						x++;
 						currentGravityPath[x] = temp;//holds the destination node position for the gravity path
+						currentPathLength++;
 					}//end outer while
-					currentPathLength++;
+
 
 					//begin checking for the paths by comparing them
 
 					if (currentPathLength != pathLengths[source][destination])
 					{
-						cout << "This graph is improperly flavored" << endl;
+						//cout << "This graph is improperly flavored" << endl;
 						flag = false;
 					}
 
@@ -98,12 +99,14 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	if(flag)
 	{
 		//need to print to xml the valid permuation
-		cout << " This is a valid permuation: ";
+		cout << " This is a valid permutation: ";
 		for(int x = 0; x < global_nodes;x++)
 			cout << gravityValues[x] << " ";
 		cout << endl;
 		writeXML(adjMatrix, gravityValues);
 	}
+	else
+		cout << "Invalid Permutation." << endl;
 }//end function findGravity()
 
 int findNode(int gravity){
@@ -243,7 +246,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
-	xml_parse_result result = doc.load_file("test2.xml");
+	xml_parse_result result = doc.load_file("test.xml");
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{

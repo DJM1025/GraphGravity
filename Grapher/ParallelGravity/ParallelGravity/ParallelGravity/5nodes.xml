@@ -1,0 +1,33 @@
+<graph>
+<node id="g0" gravityValue="1" x="518.5" y="179" label="1" color="red">
+<img src="" />
+<edge to="g1" />
+<edge to="g3" />
+<edge to="g4" />
+<edge to="g2" />
+</node>
+<node id="g1" gravityValue="2" x="366.5" y="355" label="2" color="red">
+<img src="" />
+<edge to="g0" />
+<edge to="g2" />
+<edge to="g3" />
+</node>
+<node id="g2" gravityValue="3" x="624.5" y="439" label="3" color="red">
+<img src="" />
+<edge to="g1" />
+<edge to="g3" />
+<edge to="g4" />
+<edge to="g0" />
+</node>
+<node id="g3" gravityValue="4" x="718.5" y="245" label="4" color="red">
+<img src="" />
+<edge to="g2" />
+<edge to="g0" />
+<edge to="g1" />
+</node>
+<node id="g4" gravityValue="5" x="432.5" y="639" label="5" color="red">
+<img src="" />
+<edge to="g0" />
+<edge to="g2" />
+</node>
+</graph>

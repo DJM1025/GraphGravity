@@ -61,6 +61,23 @@ function exportToSite(site)
 	//setTimeout(function () {w.loadXML(s);}, 100);
 }
 
+function sendToC() 
+{
+	var graph = getXML();
+	xmlhttp=new XMLHttpRequest();
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4)
+		{
+			alert("Solution Found");
+			importClipboard((xmlhttp.responseText).replace(/&lt/g,'<').replace(/&gt/g,'>'));
+		}
+	}
+	xmlhttp.open("POST","./ParallelGravity/ParallelGravity/ParallelGravity/gravityAlg.php");
+	xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlhttp.send("graph=" + graph);
+}
+
 function exportClipboard()
 {
 	var s = getXML();

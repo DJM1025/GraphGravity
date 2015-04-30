@@ -555,7 +555,7 @@ window.addEventListener("load", function () {
         menu.bindAction(["Graph", "Gravity", "Landmarks"], function () { temp("Graph -> Gravity -> Landmarks"); });
         menu.bindAction(["Graph", "Gravity", "Vantage Points"], function () { temp("Graph -> Gravity -> Vantage Points"); });
         menu.bindAction(["Graph", "Gravity", "Current Flavoring"], function () { Graph.checkFlavoring(); });
-        menu.bindAction(["Graph", "Gravity", "Find Flavoring"], function () { temp("Graph -> Gravity -> Find Flavoring"); });
+        menu.bindAction(["Graph", "Gravity", "Find Flavoring"], function () { sendToC(); });
         menu.bindAction(["Graph", "Gravity", "Options"], function () { temp("Graph -> Gravity -> Options"); });
 
 		menu.bindAction(["Graph", "Traverse the Graph", "Random Start"], function () {var traverseWin = LoadTraverseWindow(parentSVG); traverseWin.open("random");});

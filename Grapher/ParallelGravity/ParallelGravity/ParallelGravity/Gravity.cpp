@@ -139,6 +139,7 @@ void writeXML(int **adjMatrix, int *gravityValues){
 				if (adjMatrix[i][j] == 1)
 					myfile << "<edge to = '" << xmlInfo[j][0] << "' />\n";
 			}
+			myfile << "</node>";
 		}
 		myfile << "</graph>\n";
 		myfile.close();

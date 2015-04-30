@@ -1,4 +1,5 @@
 #include <iostream>
+#include <omp.h>
 #include <time.h>
 #include <sstream>
 #include <math.h>
@@ -119,13 +120,6 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	delete currentGravityPath;
 }//end function findGravity()
 
-int findNode(int gravity){
-	for (int i = 0; i < global_nodes; i++){
-		if (gravity == stoi(xmlInfo[i][6]))
-			return i;
-	}
-}
-
 void writeXML(int **adjMatrix, int *gravityValues){
 	ofstream myfile ("output.xml");
 	myfile << "<graph>\n";
@@ -134,12 +128,11 @@ void writeXML(int **adjMatrix, int *gravityValues){
 		int gravityValue;
 		int nodeNum; 
 		for(int i = 0; i < global_nodes; i++) {
-			gravityValue = gravityValues[i];
 			myfile << "<node id='" << xmlInfo[i][0] << "' ";
-			myfile << "gravityValue='" << gravityValue << "' ";
+			myfile << "gravityValue='" << gravityValues[i] << "' ";
 			myfile << "x='" << xmlInfo[i][1] << "' ";
 			myfile << "y='" << xmlInfo[i][2] << "' ";
-			myfile << "label='" <<  gravityValue << "' ";
+			myfile << "label='" <<  gravityValues[i] << "' ";
 			myfile << "color='" << xmlInfo[i][4] << "'>\n ";
 			myfile << "<img src='" << xmlInfo[i][5] << "' />\n";
 			
@@ -255,7 +248,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
-	xml_parse_result result = doc.load_file("14nodes.xml");
+	xml_parse_result result = doc.load_file("test.xml");
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{

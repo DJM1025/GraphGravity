@@ -51,8 +51,13 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int temp;
 	int *currentGravityPath = new int [global_nodes];
 	int currentPathLength = 0;
+	int x=0;
+	for (int i = 0; i < global_nodes; i++)
+	{
+		currentGravityPath[i] = -1;
+	}//end for i
 
-#pragma omp parallel num_threads(4) private(adjMatrix,gravityValues,pathLengths,currentGravityPath)
+#pragma omp parallel num_threads(4) shared(adjMatrix) firstprivate(currentGravityPath,gravityValues,pathLengths,currentPathLength,minimum,x) private(vertex,nextVertex,temp) 
 	{
 		#pragma omp for  
 		for (int source = 0; source < global_nodes; source++)
@@ -66,7 +71,7 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 				currentPathLength = 0;
 				if (source != destination)
 				{
-					int x = 0;
+					x = 0;
 					currentGravityPath[x] = source;
 					nextVertex = source;
 					while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
@@ -85,8 +90,9 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 							vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
 						}//end inner while
 						nextVertex = temp;
-						x++;
 						currentGravityPath[x] = temp;//holds the destination node position for the gravity path
+						x++;
+						
 						currentPathLength++;
 					}//end outer while
 

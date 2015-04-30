@@ -69,8 +69,13 @@ function sendToC()
 	{
 		if (xmlhttp.readyState==4)
 		{
-			alert("Solution Found");
-			importClipboard((xmlhttp.responseText).replace(/&lt/g,'<').replace(/&gt/g,'>'));
+			var response = xmlhttp.responseText.replace(/&lt/g,'<').replace(/&gt/g,'>');
+			if(response != "<graph>\n</graph>\n"){
+				alert("Solution Found");
+				importClipboard(response);
+			}
+			else 
+				alert("No Solution");
 		}
 	}
 	xmlhttp.open("POST","./ParallelGravity/ParallelGravity/ParallelGravity/gravityAlg.php");
@@ -99,6 +104,8 @@ function Node(x, y, nodeLabel, id, color, gravityValue, image,edgesArray)
 
 function importClipboard(code)
 {
+	Graph.deleteGraph();
+	console.log(code);
 	var parser = new DOMParser();
 	if(code == null) 
 		var data = window.prompt("Please enter your Grapher data!");
@@ -134,6 +141,7 @@ function importClipboard(code)
 
 function importClipboardLegacy(code)
 {
+	Graph.deleteGraph();
 	var parser = new DOMParser();
 	if(code == null) 
 		var data = window.prompt("Please enter your Grapher data!");

@@ -2,6 +2,7 @@
 #include <omp.h>
 #include <time.h>
 #include <sstream>
+#include <omp.h>
 #include <math.h>
 #include <fstream>
 #include <string>
@@ -36,7 +37,7 @@ int main(){
 	float seconds = (float)(stopT - startT)/CLOCKS_PER_SEC;
 
 
-
+	cout << "Total Run Time: " << seconds << endl;
 	cout << "-------Normal Termination---------------------" << endl;
 	system("pause");
 }//end main
@@ -51,15 +52,13 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int *currentGravityPath = new int [global_nodes];
 	int currentPathLength = 0;
 
-#pragma omp parallel num_threads(4)
+#pragma omp parallel num_threads(4) private(adjMatrix,gravityValues,pathLengths,currentGravityPath)
 	{
 		#pragma omp for  
 		for (int source = 0; source < global_nodes; source++)
 		{
-			#pragma omp for
 			for (int destination = 0; destination < global_nodes; destination++)
 			{
-				#pragma omp for
 				for (int i = 0; i < global_nodes; i++)
 				{
 					currentGravityPath[i] = -1;
@@ -108,10 +107,10 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	if(flag)
 	{
 		//need to print to xml the valid permuation
-		cout << " This is a valid permutation: ";
-		for(int x = 0; x < global_nodes;x++)
-			cout << gravityValues[x] << " ";
-		cout << endl;
+		//cout << " This is a valid permutation: ";
+		//for(int x = 0; x < global_nodes;x++)
+			//cout << gravityValues[x] << " ";
+		//cout << endl;
 		writeXML(adjMatrix, gravityValues);
 	}
 	//else
@@ -248,7 +247,9 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
+
 	xml_parse_result result = doc.load_file("test.xml");
+
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())
 	{

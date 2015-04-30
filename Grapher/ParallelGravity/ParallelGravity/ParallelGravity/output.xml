@@ -1,18 +1,34 @@
 <graph>
-<node id='g0' gravityValue='4' x='387.5' y='175' label='4' color='red'>
+<node id='g0' gravityValue='3' x='546.5' y='183' label='3' color='red'>
  <img src='' />
 <edge to = 'g1' />
 <edge to = 'g2' />
 <edge to = 'g3' />
-<node id='g1' gravityValue='1' x='263.5' y='353' label='1' color='red'>
+<edge to = 'g4' />
+<edge to = 'g5' />
+<node id='g1' gravityValue='1' x='376.5' y='405' label='1' color='red'>
  <img src='' />
 <edge to = 'g0' />
 <edge to = 'g2' />
-<node id='g2' gravityValue='2' x='571.5' y='351' label='2' color='red'>
+<edge to = 'g5' />
+<node id='g2' gravityValue='6' x='664.5' y='593' label='6' color='red'>
  <img src='' />
 <edge to = 'g0' />
 <edge to = 'g1' />
-<node id='g3' gravityValue='3' x='531.5' y='95' label='3' color='red'>
+<edge to = 'g3' />
+<edge to = 'g5' />
+<node id='g3' gravityValue='4' x='952.5' y='311' label='4' color='red'>
  <img src='' />
 <edge to = 'g0' />
+<edge to = 'g2' />
+<node id='g4' gravityValue='2' x='842.5' y='529' label='2' color='red'>
+ <img src='' />
+<edge to = 'g0' />
+<edge to = 'g5' />
+<node id='g5' gravityValue='5' x='852.5' y='155' label='5' color='red'>
+ <img src='' />
+<edge to = 'g0' />
+<edge to = 'g1' />
+<edge to = 'g2' />
+<edge to = 'g4' />
 </graph>

@@ -53,6 +53,7 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int *currentGravityPath;
 	int currentPathLength = 0;
 	int x=0;
+	int absCheck;
 	flag = true;
 
 //#pragma omp parallel num_threads(4) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
@@ -83,12 +84,17 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 						while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
 						{
 							vertex = nextAdjacent(nextVertex, -1, adjMatrix, currentGravityPath);
-							minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+							minimum = gravityValues[vertex] - gravityValues[destination];
+							if(minimum < 0)
+								minimum = minimum*(-1);
 							temp = vertex;
 							vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
 							while (vertex != -1)
 							{
-								if (abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
+								absCheck = gravityValues[vertex] - gravityValues[destination];
+								if(absCheck < 0)
+									absCheck = absCheck *(-1);
+								if (absCheck < minimum)
 								{
 									minimum = abs(gravityValues[vertex] - gravityValues[destination]);
 									temp = vertex;
@@ -259,7 +265,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
 
-	xml_parse_result result = doc.load_file("7nodes.xml");
+	xml_parse_result result = doc.load_file("10nodes.xml");
 
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())

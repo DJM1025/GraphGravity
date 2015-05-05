@@ -1,0 +1,60 @@
+<graph>
+<node id='g0' gravityValue='3' x='516.5' y='141' label='1' color='red'>
+ <img src='' />
+<edge to = 'g1' />
+<edge to = 'g3' />
+<edge to = 'g4' />
+<edge to = 'g7' />
+<edge to = 'g8' />
+</node><node id='g1' gravityValue='1' x='278.5' y='539' label='4' color='red'>
+ <img src='' />
+<edge to = 'g0' />
+<edge to = 'g2' />
+<edge to = 'g5' />
+<edge to = 'g7' />
+<edge to = 'g8' />
+<edge to = 'g9' />
+</node><node id='g2' gravityValue='1' x='674.5' y='657' label='1' color='red'>
+ <img src='' />
+<edge to = 'g1' />
+<edge to = 'g3' />
+<edge to = 'g6' />
+<edge to = 'g7' />
+</node><node id='g3' gravityValue='3' x='924.5' y='237' label='3' color='red'>
+ <img src='' />
+<edge to = 'g0' />
+<edge to = 'g2' />
+<edge to = 'g5' />
+<edge to = 'g6' />
+</node><node id='g4' gravityValue='5' x='1034.5' y='695' label='5' color='red'>
+ <img src='' />
+<edge to = 'g0' />
+<edge to = 'g5' />
+</node><node id='g5' gravityValue='6' x='1270.5' y='263' label='6' color='red'>
+ <img src='' />
+<edge to = 'g1' />
+<edge to = 'g3' />
+<edge to = 'g4' />
+</node><node id='g6' gravityValue='2' x='854.5' y='723' label='2' color='red'>
+ <img src='' />
+<edge to = 'g2' />
+<edge to = 'g3' />
+<edge to = 'g9' />
+</node><node id='g7' gravityValue='8' x='456.5' y='283' label='8' color='red'>
+ <img src='' />
+<edge to = 'g0' />
+<edge to = 'g1' />
+<edge to = 'g2' />
+<edge to = 'g8' />
+</node><node id='g8' gravityValue='9' x='114.5' y='231' label='9' color='red'>
+ <img src='' />
+<edge to = 'g0' />
+<edge to = 'g1' />
+<edge to = 'g7' />
+<edge to = 'g9' />
+</node><node id='g9' gravityValue='10' x='54.5' y='695' label='10' color='red'>
+ <img src='' />
+<edge to = 'g1' />
+<edge to = 'g6' />
+<edge to = 'g8' />
+</node></graph>

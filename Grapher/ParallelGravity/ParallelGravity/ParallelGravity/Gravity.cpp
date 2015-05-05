@@ -19,6 +19,7 @@ void Permute(int *gravityValues,int **adjMatrix,int **pathLengths);
 void writeXML(int **adjMatrix, int *gravityValues);
 int global_nodes;
 string **xmlInfo;
+bool flag = true;
 
 int main(){
 		int** adjMatrix;
@@ -27,11 +28,10 @@ int main(){
 		clock_t startT, stopT;
 
 		startT = clock();
-
-#pragma omp parallel num_threads(4)
+		parseGraph(&adjMatrix, &gravityValues, &pathLengths);
+	 	floyd_warshall(adjMatrix, pathLengths);
+#pragma omp parallel num_threads(4) shared(flag,adjMatrix,pathLengths,gravityValues)
 		{
-			parseGraph(&adjMatrix, &gravityValues, &pathLengths);
-			floyd_warshall(adjMatrix, pathLengths);
 			Permute(gravityValues, adjMatrix, pathLengths);
 		}
 		stopT = clock();
@@ -44,7 +44,7 @@ int main(){
 
 bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 {
-	bool flag = true;
+	//bool flag = true;
 	int minimum = 0;
 	int nextVertex;
 	int vertex;
@@ -53,6 +53,7 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int *currentGravityPath;
 	int currentPathLength = 0;
 	int x=0;
+	flag = true;
 
 //#pragma omp parallel num_threads(4) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
 	//{
@@ -62,7 +63,7 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 			currentGravityPath[i] = -1;
 		}//end for i
 		//cout << "Thread NUM = " << omp_get_thread_num() << " Location of variable = " << &currentGravityPath << endl;
-		#pragma omp for  
+		#pragma omp parallel for  
 		for (int source = 0; source < global_nodes; source++)
 		{
 			for (int destination = 0; destination < global_nodes; destination++)
@@ -72,44 +73,45 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 					currentGravityPath[i] = -1;
 				}//end for i
 				currentPathLength = 0;
-				if (source != destination)
-				{
-					x = 0;
-					currentGravityPath[x] = source;
-					nextVertex = source;
-					while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
+
+				if (flag){
+					if (source != destination)
 					{
-						vertex = nextAdjacent(nextVertex, -1, adjMatrix, currentGravityPath);
-						minimum = abs(gravityValues[vertex] - gravityValues[destination]);
-						temp = vertex;
-						vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
-						while (vertex != -1)
+						x = 0;
+						currentGravityPath[x] = source;
+						nextVertex = source;
+						while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
 						{
-							if (abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
-							{
-								minimum = abs(gravityValues[vertex] - gravityValues[destination]);
-								temp = vertex;
-							}//end if
+							vertex = nextAdjacent(nextVertex, -1, adjMatrix, currentGravityPath);
+							minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+							temp = vertex;
 							vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
-						}//end inner while
-						nextVertex = temp;
-						currentGravityPath[x] = temp;//holds the destination node position for the gravity path
-						x++;
-						currentPathLength++;
-					}//end outer while
+							while (vertex != -1)
+							{
+								if (abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
+								{
+									minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+									temp = vertex;
+								}//end if
+								vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
+							}//end inner while
+							nextVertex = temp;
+							currentGravityPath[x] = temp;//holds the destination node position for the gravity path
+							x++;
+							currentPathLength++;
+						}//end outer while
 
-					//begin checking for the paths by comparing them
+						//begin checking for the paths by comparing them
 
-					if (currentPathLength != pathLengths[source][destination])
-					{
-						//cout << "This graph is improperly flavored" << endl;
-						#pragma omp critical 
+						#pragma omp critical
+						if (currentPathLength != pathLengths[source][destination])
 						{
+							//cout << "This graph is improperly flavored" << endl;
 							flag = false;
 						}
-					}
 
-				}//end  if the source destination check
+					}//end  if the source destination check
+				}
 			}//end for destination node
 		}//end for source node
 		delete[]currentGravityPath;
@@ -117,11 +119,7 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 
 	if (flag)
 	{
-		//need to print to xml the valid permuation
 		//cout << " This is a valid permutation: ";
-		//for(int x = 0; x < global_nodes;x++)
-		//cout << gravityValues[x] << " ";
-		//cout << endl;
 		#pragma omp critical 
 		writeXML(adjMatrix, gravityValues);
 		return true;
@@ -200,8 +198,8 @@ void Permute(int *gravityValues,int **adjMatrix,int **pathLengths)
 
 	int i = 1;
 	int j;
-	findGravity(adjMatrix, gravityValues, pathLengths); //need to call with initial setup and then do all the permutations
-	while (i < global_nodes)
+	bool check = findGravity(adjMatrix, gravityValues, pathLengths); //need to call with initial setup and then do all the permutations
+	while (i < global_nodes && !check)
 	{
 
 		permute[i]--;
@@ -214,7 +212,7 @@ void Permute(int *gravityValues,int **adjMatrix,int **pathLengths)
 		gravityValues[j] = gravityValues[i];
 		gravityValues[i] = temp;
 
-		findGravity(adjMatrix, gravityValues, pathLengths);
+		check = findGravity(adjMatrix, gravityValues, pathLengths);
 
 		i = 1;
 		while (permute[i] == 0)

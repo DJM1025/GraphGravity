@@ -30,10 +30,11 @@ int main(){
 		startT = clock();
 		parseGraph(&adjMatrix, &gravityValues, &pathLengths);
 	 	floyd_warshall(adjMatrix, pathLengths);
-#pragma omp parallel num_threads(4) shared(flag,adjMatrix,pathLengths,gravityValues)
-		{
-			Permute(gravityValues, adjMatrix, pathLengths);
-		}
+		bool check = findGravity(adjMatrix, gravityValues, pathLengths); //need to call with initial setup and then do all the permutations
+//#pragma omp parallel num_threads(4) shared(flag,adjMatrix,pathLengths,gravityValues)
+		//{
+			//Permute(gravityValues, adjMatrix, pathLengths);
+		//}
 		stopT = clock();
 		float seconds = (float)(stopT - startT) / CLOCKS_PER_SEC;
 
@@ -56,8 +57,8 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int absCheck;
 	flag = true;
 
-//#pragma omp parallel num_threads(4) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
-	//{
+#pragma omp parallel num_threads(4) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
+	{
 		currentGravityPath = new int[global_nodes];
 		for (int i = 0; i < global_nodes; i++)
 		{
@@ -74,7 +75,6 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 					currentGravityPath[i] = -1;
 				}//end for i
 				currentPathLength = 0;
-
 				if (flag){
 					if (source != destination)
 					{
@@ -92,7 +92,7 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 							while (vertex != -1)
 							{
 								absCheck = gravityValues[vertex] - gravityValues[destination];
-								if(absCheck < 0)
+								if(absCheck < 0) //check and swap for absolute values
 									absCheck = absCheck *(-1);
 								if (absCheck < minimum)
 								{
@@ -121,7 +121,7 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 			}//end for destination node
 		}//end for source node
 		delete[]currentGravityPath;
-	//}//end omp parallel region
+	}//end omp parallel region
 
 	if (flag)
 	{
@@ -265,7 +265,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
 
-	xml_parse_result result = doc.load_file("10nodes.xml");
+	xml_parse_result result = doc.load_file("400nodes.xml");
 
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())

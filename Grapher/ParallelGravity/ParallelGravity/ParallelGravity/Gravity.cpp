@@ -49,16 +49,11 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int nextVertex;
 	int vertex;
 	int temp;
-	//int *currentGravityPath = new int [global_nodes];
 	int *currentGravityPath;
 	int currentPathLength = 0;
 	int x=0;
-	/*for (int i = 0; i < global_nodes; i++)
-	{
-		currentGravityPath[i] = -1;
-	}//end for i*/
 
-#pragma omp parallel num_threads(4) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
+#pragma omp parallel num_threads(2) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
 	{
 		currentGravityPath = new int[global_nodes];
 		for (int i = 0; i < global_nodes; i++)
@@ -76,45 +71,47 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 					currentGravityPath[i] = -1;
 				}//end for i
 				currentPathLength = 0;
-				if (source != destination)
+				if(flag)
 				{
-					x = 0;
-					currentGravityPath[x] = source;
-					nextVertex = source;
-					while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
+					if (source != destination)
 					{
-						vertex = nextAdjacent(nextVertex, -1, adjMatrix, currentGravityPath);
-						minimum = abs(gravityValues[vertex] - gravityValues[destination]);
-						temp = vertex;
-						vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
-						while (vertex != -1)
+						x = 0;
+						currentGravityPath[x] = source;
+						nextVertex = source;
+						while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
 						{
-							if (abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
-							{
-								minimum = abs(gravityValues[vertex] - gravityValues[destination]);
-								temp = vertex;
-							}//end if
+							vertex = nextAdjacent(nextVertex, -1, adjMatrix, currentGravityPath);
+							minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+							temp = vertex;
 							vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
-						}//end inner while
-						nextVertex = temp;
-						currentGravityPath[x] = temp;//holds the destination node position for the gravity path
-						//if (x > 3)
-							//cout << "Problem encountered. X = " << x << endl;
-						x++;
-						currentPathLength++;
-					}//end outer while
+							while (vertex != -1)
+							{
+								if (abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
+								{
+									minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+									temp = vertex;
+								}//end if
+								vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
+							}//end inner while
+							nextVertex = temp;
+							currentGravityPath[x] = temp;//holds the destination node position for the gravity path
+							//if (x > 3)
+								//cout << "Problem encountered. X = " << x << endl;
+							x++;
+							currentPathLength++;
+						}//end outer while
 
-					//begin checking for the paths by comparing them
+						//begin checking for the paths by comparing them
 
-					if (currentPathLength != pathLengths[source][destination])
-					{
-						//cout << "This graph is improperly flavored" << endl;
-						#pragma omp critical 
+						if (currentPathLength != pathLengths[source][destination])
 						{
-							flag = false;
+							//cout << "This graph is improperly flavored" << endl;
+							#pragma omp critical 
+							{
+								flag = false;
+							}
 						}
-					}
-
+				}//end if flag
 				}//end  if the source destination check
 			}//end for destination node
 		}//end for source node
@@ -130,8 +127,6 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 		//cout << endl;
 		writeXML(adjMatrix, gravityValues);
 	}
-	//else
-		//cout << "Invalid Permutation." << endl;
 }//end function findGravity()
 
 void writeXML(int **adjMatrix, int *gravityValues){
@@ -196,37 +191,110 @@ void Permute(int *gravityValues,int **adjMatrix,int **pathLengths)
 {
 	int *permute = new int[global_nodes];
 	int count = 1;
-	int temp;
+	int tempPermute;
 	for(int x = 0; x < global_nodes;x++)
 		permute[x] = x;
 
 	int i = 1;
 	int j;
 	findGravity(adjMatrix,gravityValues,pathLengths); //need to call with initial setup and then do all the permutations
-	while(i < global_nodes)
+
+	bool flag = true;
+	int minimum = 0;
+	int nextVertex;
+	int vertex;
+	int temp;
+	int *currentGravityPath;
+	int currentPathLength = 0;
+	int x=0;
+
+	#pragma omp parallel num_threads(2) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
 	{
-		
-		permute[i]--;
-		if(i % 2 == 0)
-			j = 0;
-		else
-			j = permute[i];
-		//swap
-		temp = gravityValues[j];
-		gravityValues[j] = gravityValues[i];
-		gravityValues[i] = temp;
-
-		findGravity(adjMatrix,gravityValues,pathLengths);
-
-		i = 1;
-		while(permute[i] == 0)
+		while(i < global_nodes)
 		{
-			permute[i] = i;
-			i++;
-		}//end while
-		count++;
+			permute[i]--;
+			if(i % 2 == 0)
+				j = 0;
+			else
+				j = permute[i];
+			//swap
+			tempPermute = gravityValues[j];
+			gravityValues[j] = gravityValues[i];
+			gravityValues[i] = tempPermute;
+			flag = true;
 
-	}//end outer while
+			currentGravityPath = new int[global_nodes];
+			for (int i = 0; i < global_nodes; i++)
+			{
+				currentGravityPath[i] = -1;
+			}//end for i
+			//cout << "Thread NUM = " << omp_get_thread_num() << " Location of variable = " << &currentGravityPath << endl;
+			#pragma omp for
+			for (int source = 0; source < global_nodes; source++)
+			{
+				for (int destination = 0; destination < global_nodes; destination++)
+				{
+					for (int i = 0; i < global_nodes; i++)
+					{
+						currentGravityPath[i] = -1;
+					}//end for i
+					currentPathLength = 0;
+					if(flag)
+					{
+						if (source != destination)
+						{
+							x = 0;
+							currentGravityPath[x] = source;
+							nextVertex = source;
+							while (nextVertex != destination && nextVertex != -1)//this goes through and determines which node has the gravity path going from it
+							{
+								vertex = nextAdjacent(nextVertex, -1, adjMatrix, currentGravityPath);
+								minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+								temp = vertex;
+								vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
+								while (vertex != -1)
+								{
+									if (abs(gravityValues[vertex] - gravityValues[destination]) < minimum)
+									{
+										minimum = abs(gravityValues[vertex] - gravityValues[destination]);
+										temp = vertex;
+									}//end if
+									vertex = nextAdjacent(nextVertex, vertex, adjMatrix, currentGravityPath);
+								}//end inner while
+								nextVertex = temp;
+								currentGravityPath[x] = temp;//holds the destination node position for the gravity path
+								//if (x > 3)
+									//cout << "Problem encountered. X = " << x << endl;
+								x++;
+								currentPathLength++;
+							}//end outer while
+
+							//begin checking for the paths by comparing them
+
+							if (currentPathLength != pathLengths[source][destination])
+							{
+								//cout << "This graph is improperly flavored" << endl;
+								#pragma omp critical 
+								{
+									flag = false;
+								}
+							}
+					}//end if flag
+					}//end  if the source destination check
+				}//end for destination node
+			}//end for source node
+
+			i = 1;
+			while(permute[i] == 0)
+			{
+				permute[i] = i;
+				i++;
+			}//end while
+			count++;
+
+		}//end outer while
+		delete[]currentGravityPath;
+	}//end parallel region
 }//end function permute
 int nextAdjacent(int from, int last,int **adjMatrix,int *currentGravityPath)
 {
@@ -264,7 +332,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
 
-	xml_parse_result result = doc.load_file("test.xml");
+	xml_parse_result result = doc.load_file("10nodes.xml");
 
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())

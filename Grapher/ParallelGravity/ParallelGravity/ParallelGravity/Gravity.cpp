@@ -63,7 +63,7 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 			currentGravityPath[i] = -1;
 		}//end for i
 		//cout << "Thread NUM = " << omp_get_thread_num() << " Location of variable = " << &currentGravityPath << endl;
-		#pragma omp parallel for  
+#pragma omp parallel for  
 		for (int source = 0; source < global_nodes; source++)
 		{
 			for (int destination = 0; destination < global_nodes; destination++)
@@ -120,7 +120,6 @@ bool findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	if (flag)
 	{
 		//cout << " This is a valid permutation: ";
-		#pragma omp critical 
 		writeXML(adjMatrix, gravityValues);
 		return true;
 	}
@@ -260,7 +259,7 @@ void parseGraph(int ***adjMatrix,int **gravityValues, int ***pathLengths) {
 	int nodeCounter = 0; //counts the number of nodes in the graph
 	xml_document doc;
 
-	xml_parse_result result = doc.load_file("10nodes.xml");
+	xml_parse_result result = doc.load_file("7nodes.xml");
 
 	xml_node nodes = doc.child("graph");
 	for(xml_node node = nodes.first_child(); node; node = node.next_sibling())

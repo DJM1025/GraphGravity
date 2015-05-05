@@ -49,16 +49,23 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	int nextVertex;
 	int vertex;
 	int temp;
-	int *currentGravityPath = new int [global_nodes];
+	//int *currentGravityPath = new int [global_nodes];
+	int *currentGravityPath;
 	int currentPathLength = 0;
 	int x=0;
-	for (int i = 0; i < global_nodes; i++)
+	/*for (int i = 0; i < global_nodes; i++)
 	{
 		currentGravityPath[i] = -1;
-	}//end for i
+	}//end for i*/
 
-#pragma omp parallel num_threads(4) shared(adjMatrix) firstprivate(currentGravityPath,gravityValues,pathLengths,currentPathLength,minimum,x) private(vertex,nextVertex,temp) 
+#pragma omp parallel num_threads(4) shared(adjMatrix,gravityValues,pathLengths,flag) firstprivate(currentPathLength,minimum,x) private(vertex,nextVertex,temp,currentGravityPath) 
 	{
+		currentGravityPath = new int[global_nodes];
+		for (int i = 0; i < global_nodes; i++)
+		{
+			currentGravityPath[i] = -1;
+		}//end for i
+		//cout << "Thread NUM = " << omp_get_thread_num() << " Location of variable = " << &currentGravityPath << endl;
 		#pragma omp for  
 		for (int source = 0; source < global_nodes; source++)
 		{
@@ -91,23 +98,27 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 						}//end inner while
 						nextVertex = temp;
 						currentGravityPath[x] = temp;//holds the destination node position for the gravity path
+						//if (x > 3)
+							//cout << "Problem encountered. X = " << x << endl;
 						x++;
-						
 						currentPathLength++;
 					}//end outer while
-
 
 					//begin checking for the paths by comparing them
 
 					if (currentPathLength != pathLengths[source][destination])
 					{
 						//cout << "This graph is improperly flavored" << endl;
-						flag = false;
+						#pragma omp critical 
+						{
+							flag = false;
+						}
 					}
 
 				}//end  if the source destination check
 			}//end for destination node
 		}//end for source node
+		delete[]currentGravityPath;
 	}//end omp parallel region
 
 	if(flag)
@@ -121,8 +132,6 @@ void findGravity(int **adjMatrix,int *gravityValues,int **pathLengths)
 	}
 	//else
 		//cout << "Invalid Permutation." << endl;
-
-	delete currentGravityPath;
 }//end function findGravity()
 
 void writeXML(int **adjMatrix, int *gravityValues){

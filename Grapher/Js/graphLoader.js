@@ -89,7 +89,7 @@ function exportClipboard()
 	window.prompt("Copy to clipboard: Ctrl+C, Enter", s);
 }
 
-function Node(x, y, nodeLabel, id, color, gravityValue, image,edgesArray)
+function Node(x, y, nodeLabel, id, color, strokeColor, gravityValue, image,edgesArray)
 {
 
 	this.X = x;
@@ -97,6 +97,7 @@ function Node(x, y, nodeLabel, id, color, gravityValue, image,edgesArray)
 	this.label = nodeLabel;
 	this.id = id;
 	this.color = color;
+	this.strokeColor = strokeColor;
 	this.gravityValue = gravityValue;
 	this.image = image;
 	this.edges = edgesArray;
@@ -105,7 +106,6 @@ function Node(x, y, nodeLabel, id, color, gravityValue, image,edgesArray)
 function importClipboard(code)
 {
 	Graph.deleteGraph();
-	console.log(code);
 	var parser = new DOMParser();
 	if(code == null) 
 		var data = window.prompt("Please enter your Grapher data!");
@@ -122,6 +122,7 @@ function importClipboard(code)
 		var id = numNodes[i].getAttribute("id");
 		var gravity = parseInt(numNodes[i].getAttribute("gravityValue"));
 		var color = numNodes[i].getAttribute("color");
+		var strokeColor = "black";
 		var img = xmlDoc.getElementsByTagName("img")[i].getAttribute("src");
 		var edges = new Array();
 		var numEdges = numNodes[i].getElementsByTagName("edge");
@@ -131,7 +132,7 @@ function importClipboard(code)
 			edges.push(parseInt(edgeNum.substring(1,edgeNum.length)));
 		}
 		
-		var node = new Node(x,y,nodeLabel,id,color,gravity,img,edges);
+		var node = new Node(x,y,nodeLabel,id,color, strokeColor, gravity,img,edges);
 		Graph.createImportedNode(node);
 	}
 	
@@ -158,6 +159,12 @@ function importClipboardLegacy(code)
 		var idString = numNodes[i].getAttribute("id");
 		var id = parseInt(idString.substring(1,idString.length));
 		var color = numNodes[i].getAttribute("color");
+		var strokeColor = numNodes[i].getAttribute("object");
+		console.log(numNodes[i].getAttribute("object"));
+		if(strokeColor == "true")
+			strokeColor = "white";
+		else
+			strokeColor = "black";
 		var img;
 		var gravity;
 		try{
@@ -181,7 +188,7 @@ function importClipboardLegacy(code)
 			
 		}
 		
-		var node = new Node(x,y,nodeLabel,id,color,null,null,edges);
+		var node = new Node(x,y,nodeLabel,id,color, strokeColor, null,null,edges);
 		Graph.createImportedNode(node);
 	}
 	

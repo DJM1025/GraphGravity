@@ -808,7 +808,10 @@ window.addEventListener("load", function loadGraph() {
     Graph.plane.appendChild(Graph.selectedNodesGroup);
 
     //create a node
-    Graph.createNode = function (x, y, gravityValue, nodeLabel) {
+    Graph.createNode = function (x, y, gravityValue, nodeLabel, strokeColor) {
+		if (!strokeColor) {	// if no stroke color is specified
+			strokeColor = "black";
+		}
         var nodeGroup = document.createElementNS(xmlns, "g");
         //nodeGroup.midpoint = { x: x, y: y };
         nodeGroup.adjacentNodes = {};
@@ -829,7 +832,7 @@ window.addEventListener("load", function loadGraph() {
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
         nodeRect.setAttributeNS(null, "fill", "red");
-        nodeRect.setAttributeNS(null, "stroke", "black");
+        nodeRect.setAttributeNS(null, "stroke", strokeColor);
         nodeRect.setAttributeNS(null, "stroke-width", "2.5");
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (x - (nodeGroup.nodeWidth / 2)));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (y - (Graph.nodeHeight / 2)));
@@ -872,6 +875,7 @@ window.addEventListener("load", function loadGraph() {
 		nodeGroup.gravityValue = node.gravityValue;
         nodeGroup.edges = {};
 		nodeGroup.color = node.color;
+		nodeGroup.strokeColor = node.strokeColor;
 		nodeGroup.image = node.image;
 		nodeGroup.timesVisited = 0;
 		nodeGroup.edgesList = node.edges;
@@ -883,7 +887,7 @@ window.addEventListener("load", function loadGraph() {
         var nodeRect = nodeGroup.rect = document.createElementNS(xmlns, "rect");
         nodeRect.setAttributeNS(null, "rx", "2.5");
         nodeRect.setAttributeNS(null, "fill", node.color);
-        nodeRect.setAttributeNS(null, "stroke", "black");
+        nodeRect.setAttributeNS(null, "stroke", node.strokeColor);
         nodeRect.setAttributeNS(null, "stroke-width", "2.5");
         nodeRect.setAttributeNS(null, "x", nodeGroup.X = (node.X));
         nodeRect.setAttributeNS(null, "y", nodeGroup.Y = (node.Y));

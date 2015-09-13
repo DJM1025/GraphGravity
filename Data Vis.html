@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="stylesheet" type="text/css" href="styles.css"><title>Data Visualization of Website Traffic</title>
+
+<meta name="description" content="Abstract of the presentation">
+<meta name="keywords" content="conference proceedings, keywords of the presentation">
+<!-- saved from url=(0022)http://internet.e-mail -->
+</head>
+ 
+<body>
+<div class="article" lang="en">
+<div class="titlepage">
+
+<h1 class="title" style="clear: both;"><a id="L1T2">Data Visualization of Website Traffic</a></h1>
+<div align="center">
+Dr. Deborah Whitfield <br>
+Mr. William Botzer<br>
+Mr. Eric McAlpine<br>
+Dr. David Dailey<br>
+<br>
+<font color="green">Slippery Rock University</font>
+</div>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Presentation Overview </a></h2>
+<ul>
+	<li>Grapher software used to generate graphs for rapid prototyping of web sites
+	</li>
+	<li>Constructor used to modify pages</li>
+<li>Grapher and Constructor use the same XML structure</li>
+<li>Both tools permit importing and exporting of graphs and updates</li> 
+<li>Data maintained even if not visible in particular tool<br>
+e.g., the x,y coordinates of a node are not used by the constructor</li>
+	<li>Random traversals of site generated visualized</li>
+	<li>User data traversals visualized</li>
+	<li>Graph numbering technique gravity theory </li>
+	<li>Reduce the number of edges traversed on web site</li>
+	<li>Reduce search time</li>
+</ul>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Grapher </a></h2>
+<ul>
+<li>Grapher was originally developed in 1987 ported to SVG in 2009</li>
+<li>GUI that permits graph building</li>
+<li>Written with HTML, Javascript, and SVG</li>
+<li>Features include:
+<ul>
+<li>graph scaling</li>
+<li>graph compliment</li>
+<li>extrude (i.e., Multiply by K2)</li>
+</ul></li>
+<li>Utility:
+<ul><li>Research the types of graphs that are easy to navigate</li>
+<li>Optimization of web site design for ease of navigation</li>
+<li>Used for testing Mathematical hypotheses regarding graph navigability</li>
+</li></ul>	<li>relate website to graphs (briefly)</li>
+	<li>building graphs</li>
+</ul>
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<image src="webPage.PNG" width="700">
+				<P>Figure 1. A webpage</P>
+			</td>
+			<td>
+				<image src="webPageAsGraph.PNG" width="500">
+				<P>Figure 2. A graph built in Grapher based on the website in Figure 1</P>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Random Traversals (Eric/Will for the process) (Whitfield for what we can gain from random traversals)</a></h2>
+<ul>
+<li>Random traversals used for comparing techniques
+	<li>Visualization process</li>
+	<li>Properties of graphs seen in random traversals</li>
+	<ul>
+		<li>Nodes with more edges are "hotter"</li>
+		<li>Bridges and articulation points are more popular</li>
+	</ul>
+</ul>
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<image src="randomTraversal.PNG" width="600">
+				<P>Figure 2. A graph built in Grapher based on the website in Figure 1</P>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Constructor (Eric/Will)</a></h2>
+<ul><li>Developed by the SRU Virtual Gravity Group in 2013  </li>
+<li>Creates a prototype of a website based on a graph structure</li>
+<li>Not intended to be a web <b>page design</b> tool, rather a web <b>site layout</b> tool</li>
+<li>Constructor used to determine ease of site navigation</li>
+<li>Graph nodes are displayed as web pages
+</li> 
+<li>Graph edges are displayed as buttons ("doors") that link to other pages</li>
+<li>Each page's background color is the same as the color of the door  that leads to it</li>
+<li>Constructor's options include:</li>
+<ul><li>Selection of words on each page</li>
+<li>Selection of a numbering scheme for the pages</li>
+<li>Create a search game with goal of finding all pages and returning home</li>
+<li>Create a search game to find object (e.g., turkey) and return them to home base</li>
+<li>Demonstration</li>
+</ul>
+
+</ul
+
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<image src="constructorGraph.jpg">
+				<P>Figure 3. A graph created through the Grapher utility</P>
+			</td>
+			<td>
+				<image src="constructorImage.jpg">
+				<P>Figure 4. A website created through Constructor using the exported XML from Grapher</P>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">User Data Traversals (Eric/Will)</a></h2>
+<ul>
+	<li>How gravity works (lots of depth)</li>
+	<ul>
+		<li>non gravity traversal</li>
+		<li>gravity traversal</li>
+	</ul>
+	<li>Turkey Search</li>
+	<ul>
+		<li>non gravity traversal</li>
+		<li>gravity traversal</li>
+	</ul>
+	<li>Site Traversal</li>
+	<ul>
+		<li>non gravity traversal</li>
+		<li>gravity traversal</li>
+	</ul>
+</ul>
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<image src="dataTraversals.PNG" width="700">
+				<P>Figure 5. A graph created through the Grapher utility</P>
+			</td>
+			<td>
+				<image src="dataTraversals2.PNG" width="500">
+				<P>Figure 6. A website created through Constructor using the exported XML from Grapher</P>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Gravity (Whitfield)</a></h2>
+<ul>
+<li>An assignment to each node of unique integers
+ in the range 1 to N such that between any pair of nodes a shortest path 
+ may be found by a simple greedy algorithm that chooses the next node from among those 
+neighbors which have gravity values closest to that of the destination node</li>
+	<li>What it is (labelling nodes/pages)</li>
+	<li>Why it works</li>
+	<li>Why it is important (speedup)</li>
+</ul>
+
+<h2 class="title" style="clear: both;"><a id="L1T2">Future Works (Whitfield)</a></h2>
+<ul>
+	<li>Algorithms to flavor graphs gravitationally</li>
+</ul>
+
+
+
+<h2 class="title" style="clear: both;"><a id="L1T2">References</a></h2>
+
+</body></html>

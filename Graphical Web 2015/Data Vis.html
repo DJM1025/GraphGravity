@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html xmlns="http://www.w3.org/1999/xhtml"><head>
 <link rel="stylesheet" type="text/css" href="styles.css"><title>Data Visualization of Website Traffic</title>
 
@@ -20,23 +21,38 @@ Dr. David Dailey<br>
 <font color="green">Slippery Rock University</font>
 </div>
 
-<h2 class="title" style="clear: both;"><a id="L1T2">Overview (Goal) (Whitfield)</a></h2>
+<h2 class="title" style="clear: both;"><a id="L1T2">Presentation Overview </a></h2>
 <ul>
-	<li>Grapher</li>
-	<li>Constructor</li>
-	<li>Random Traversals</li>
-	<li>User Data Traversals</li>
-	<li>Gravity</li>
-	<li>Future Works</li>
-</ul>
-<ul>
-	<li>Trying to reduce the number of edges between the start and end</li>
-	<li>Why it is important</li>
+	<li>Grapher software used to generate graphs for rapid prototyping of web sites
+	</li>
+	<li>Constructor used to modify pages</li>
+<li>Grapher and Constructor use the same XML structure</li>
+<li>Both tools permit importing and exporting of graphs and updates</li> 
+<li>Data maintained even if not visible in particular tool<br>
+e.g., the x,y coordinates of a node are not used by the constructor</li>
+	<li>Random traversals of site generated visualized</li>
+	<li>User data traversals visualized</li>
+	<li>Graph numbering technique gravity theory </li>
+	<li>Reduce the number of edges traversed on web site</li>
+	<li>Reduce search time</li>
 </ul>
 
-<h2 class="title" style="clear: both;"><a id="L1T2">Grapher (Eric/Will)</a></h2>
+<h2 class="title" style="clear: both;"><a id="L1T2">Grapher </a></h2>
 <ul>
-	<li>relate website to graphs (briefly)</li>
+<li>Grapher was originally developed in 1987 ported to SVG in 2009</li>
+<li>GUI that permits graph building</li>
+<li>Written with HTML, Javascript, and SVG</li>
+<li>Features include:
+<ul>
+<li>graph scaling</li>
+<li>graph compliment</li>
+<li>extrude (i.e., Multiply by K2)</li>
+</ul></li>
+<li>Utility:
+<ul><li>Research the types of graphs that are easy to navigate</li>
+<li>Optimization of web site design for ease of navigation</li>
+<li>Used for testing Mathematical hypotheses regarding graph navigability</li>
+</li></ul>	<li>relate website to graphs (briefly)</li>
 	<li>building graphs</li>
 </ul>
 <table>
@@ -56,6 +72,7 @@ Dr. David Dailey<br>
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Random Traversals (Eric/Will for the process) (Whitfield for what we can gain from random traversals)</a></h2>
 <ul>
+<li>Random traversals used for comparing techniques
 	<li>Visualization process</li>
 	<li>Properties of graphs seen in random traversals</li>
 	<ul>
@@ -76,11 +93,24 @@ Dr. David Dailey<br>
 
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Constructor (Eric/Will)</a></h2>
-<ul>
-	<li>how it works (is this needed if it was presented last year?)</li>
-	<li>show how it works</li>
-	<li>visualize demo website (side by side with grapher)</li>
+<ul><li>Developed by the SRU Virtual Gravity Group in 2013  </li>
+<li>Creates a prototype of a website based on a graph structure</li>
+<li>Not intended to be a web <b>page design</b> tool, rather a web <b>site layout</b> tool</li>
+<li>Constructor used to determine ease of site navigation</li>
+<li>Graph nodes are displayed as web pages
+</li> 
+<li>Graph edges are displayed as buttons ("doors") that link to other pages</li>
+<li>Each page's background color is the same as the color of the door  that leads to it</li>
+<li>Constructor's options include:</li>
+<ul><li>Selection of words on each page</li>
+<li>Selection of a numbering scheme for the pages</li>
+<li>Create a search game with goal of finding all pages and returning home</li>
+<li>Create a search game to find object (e.g., turkey) and return them to home base</li>
+<li>Demonstration</li>
 </ul>
+
+</ul>
+
 <table>
 	<tbody>
 		<tr>
@@ -131,6 +161,10 @@ Dr. David Dailey<br>
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Gravity (Whitfield)</a></h2>
 <ul>
+<li>An assignment to each node of unique integers
+ in the range 1 to N such that between any pair of nodes a shortest path 
+ may be found by a simple greedy algorithm that chooses the next node from among those 
+neighbors which have gravity values closest to that of the destination node</li>
 	<li>What it is (labelling nodes/pages)</li>
 	<li>Why it works</li>
 	<li>Why it is important (speedup)</li>

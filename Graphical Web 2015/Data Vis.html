@@ -21,7 +21,20 @@ Dr. David Dailey<br>
 <font color="green">Slippery Rock University</font>
 </div>
 
-<h2 class="title" style="clear: both;"><a id="L1T2">Presentation Overview </a></h2>
+<h2 class="title" style="clear: both;"><a id="L1T2">Presentation Overview </a></h2>	
+
+Visualization of Web Traffic
+<ul>
+	<li>Web sites represented as graphs</li>
+	<li>Nodes are pages; Edges are links</li>
+	<li>Visualizations of random traversal of a graph</li>
+	<li>Visualization of actual users traversing</li>
+	<li>Use color to indicate the temperature of a node</li>
+	<li>Width of edge increases as the amount of traversals increases</li>
+	<li>Speed control</li>
+	<li>Path where a particular user has been</li>
+</ul>
+Software Overview
 <ul>
 	<li>Grapher software used to generate graphs for rapid prototyping of web sites
 	</li>
@@ -69,8 +82,8 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 		</tr>
 	</tbody>
 </table>
-
-<h2 class="title" style="clear: both;"><a id="L1T2">Random Traversals (Eric/Will for the process) (Whitfield for what we can gain from random traversals)</a></h2>
+<a href="http://granite.sru.edu/~gravity/">Demonstration of graph creation</a>
+<h2 class="title" style="clear: both;"><a id="L1T2">Random Traversals </a></h2>
 <ul>
 <li>Random traversals used for comparing techniques
 	<li>Visualization process</li>
@@ -91,8 +104,8 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 	</tbody>
 </table>
 
-
-<h2 class="title" style="clear: both;"><a id="L1T2">Constructor (Eric/Will)</a></h2>
+<a href="http::/granite.sru.edu/~gravity">Demonsttration of random traversal</a>
+<h2 class="title" style="clear: both;"><a id="L1T2">Constructor </a></h2>
 <ul><li>Developed by the SRU Virtual Gravity Group in 2013  </li>
 <li>Creates a prototype of a website based on a graph structure</li>
 <li>Not intended to be a web <b>page design</b> tool, rather a web <b>site layout</b> tool</li>
@@ -106,7 +119,7 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 <li>Selection of a numbering scheme for the pages</li>
 <li>Create a search game with goal of finding all pages and returning home</li>
 <li>Create a search game to find object (e.g., turkey) and return them to home base</li>
-<li>Demonstration</li>
+
 </ul>
 
 </ul>
@@ -125,8 +138,8 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 		</tr>
 	</tbody>
 </table>
-
-<h2 class="title" style="clear: both;"><a id="L1T2">User Data Traversals (Eric/Will)</a></h2>
+<a href="http://granite.sru.edu/~gravity">Demonstration of constructor</a>
+<h2 class="title" style="clear: both;"><a id="L1T2">User Data Traversals </a></h2>
 <ul>
 	<li>How gravity works (lots of depth)</li>
 	<ul>
@@ -159,7 +172,7 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 	</tbody>
 </table>
 
-<h2 class="title" style="clear: both;"><a id="L1T2">Gravity (Whitfield)</a></h2>
+<h2 class="title" style="clear: both;"><a id="L1T2">Gravity</a></h2>
 <ul>
 <li>An assignment to each node of unique integers
  in the range 1 to N such that between any pair of nodes a shortest path 
@@ -169,10 +182,44 @@ neighbors which have gravity values closest to that of the destination node</li>
 	<li>Why it works</li>
 	<li>Why it is important (speedup)</li>
 </ul>
-
-<h2 class="title" style="clear: both;"><a id="L1T2">Future Works (Whitfield)</a></h2>
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<image src="16flavored.jpg" width="700">
+				<P>Figure 7. A 16 node graph that is gravitationally flavored</P>
+			</td>
+			<td>
+				<image src="12not2,10.jpg" width="500">
+				<P>Figure 8. A 12 node graph that is not gravitationally flavored</P>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<ul>
+	<li>Gravitationally flavored graphs have been shown to be faster to navigate</li>
+	<li>Many graphs cannot be gravitationally flavored</li>
+	<li>Many graphs have landmarks and vantage points</li>
+	<li>Landmarks 
+	<ul><li> seen from anywhere</li>
+	<li>flavoring of the graph can always flow (making the same greedy choices as gravity) to the landmark node
+	using the shortest path</li>
+	<li>a tall mountain on a flat plain: 
+	wherever you are on the plain the mountain can still be seen</li>	
+	</ul>
+	<li>Vantage Point 
+	<ul>
+	<li>node that can find any other node on a graph using the shortest path to get to a destination</li>
+	<li>In a graph if the current location is a vantage point
+	then one can move to a destination using gravity and fallow the shortest path </li>
+	
+	</ul></li>
+</ul>
+<h2 class="title" style="clear: both;"><a id="L1T2">Future Works </a></h2>
 <ul>
 	<li>Algorithms to flavor graphs gravitationally</li>
+	<li>Experimentation with landmarks and vantage points</li>
+	<li>Visualization of landmark and vantage point graphs</li>
 </ul>
 
 

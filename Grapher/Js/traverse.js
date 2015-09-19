@@ -16,7 +16,7 @@ function graphWalker(){
 	this.nodeDestArray = new Array();
 	this.nodeTimeArray = new Array();
 	this.currentNodeIndex = 0;
-	this.minTravelTime = .1
+	this.minTravelTime = .1;
 }
 
 /******
@@ -61,6 +61,9 @@ graphWalker.prototype.init = function(){
 	circle.setAttributeNS(null,"cx", this.cx);
 	circle.setAttributeNS(null,"cy", this.cy);
 	circle.setAttributeNS(null,"fill", this.color);
+	circle.setAttributeNS(null, "stroke", this.color);
+	circle.setAttributeNS(null, "stroke-width", 2);
+	circle.setAttributeNS(null,"fill-opacity", 0.5);
 	document.getElementById("graphPlane").appendChild(circle);
 	this.element = circle;
 }
@@ -259,7 +262,7 @@ function specifyDirection (node) {
 		}
 		node.moveTo("specified");
 		
-		node.color = "brown"
+		node.color = "white"
 		node.element.setAttributeNS(null, "fill", node.color);
 		node.element.setAttributeNS(null, "stroke", "black");
 		node.element.setAttributeNS(null, "stroke-width", 4);

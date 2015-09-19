@@ -660,9 +660,15 @@ function callToWalkerOnClick(i){
 			var walker=walkers[i];
 			if(walker.clicked){
 				walker.color = "black";
+				//walker.element.setAttributeNS(null, "stroke", null);
+				walker.element.setAttributeNS(null, "stroke-width", 2);
+				walker.element.setAttributeNS(null, "fill-opacity", 0.5);
 			}
 			else{
 				walker.color = "yellow";
+				//walker.element.setAttributeNS(null, "stroke", "black");
+				walker.element.setAttributeNS(null, "stroke-width", 4);
+				walker.element.setAttributeNS(null, "fill-opacity", 1);
 			}
 			walker.element.fill = walker.color;
 			walker.clicked=!(walker.clicked);

@@ -705,27 +705,27 @@ function exportXML()
 		s += "<graph>\n";
 		for(var i = 0; i < nodes;i++)
 		{
-			s += "<node id=\"g" + nodeArray[i][0] + "\" ";
+			s += "<node id=\"g" + (parseInt(nodeArray[i][0])+1) +  "\" ";
 			s += "x=\"" + xCords[i] + "\" ";
 			s += "y=\"" + yCords[i] + "\" ";
 			s += "color=\"" + nodeColors[i] + "\" ";
 			s += "label=\"" + nodeContents[i] + "\" ";
-			s += "gravityValue=\"" + gravityValue[i] + "\" ";
+			//s += "gravityValue=\"" + gravityValue[i] + "\" ";
 			
-			/* CONSTRUCTOR XML INFO
+			///* CONSTRUCTOR XML INFO
 			s += "object=\"" + objectArray[i] + "\" ";
 			if(i == homeLocation)
 				s += "home=\"true\"";
 			else
 				s += "home=\"false\"";
-			*/
+			
 			
 			s += ">\n" 
-			s += "<img src=\"" + nodeImages[i] + "\" ";
-			s += "/>"
+			/*s += "<img src=\"" + nodeImages[i] + "\" ";
+			s += "/>"*/
 			for(j =1; j < nodeArray[i].length;j++)
 			{
-				s += "<edge to=\"g" + nodeArray[i][j] + "\" />\n";
+				s += "<edge to=\"g" + (parseInt(nodeArray[i][j])+1) + "\" />\n";
 			}
 			s += "</node>\n";
 		}
@@ -858,3 +858,4 @@ Hello please enter in your properly formatted graph data to begin a traversal.
 
 </body>
 </html>
+

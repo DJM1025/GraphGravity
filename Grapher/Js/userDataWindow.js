@@ -61,6 +61,12 @@ function fetchUserData(graphType) {
 				walkers[x].setMinTravelTime(time);
 				//walkers[x].pauseTraversal();
 			}
+				
+			//loop through walkers and add mouseover
+			for(var i=0; i<walkers.length; i++){
+				if(walkers[i].element)
+					walkers[i].element.addEventListener("mouseover", callToMouseOver(i));
+			}
 		}
 	}
 	sendString = "graphName="+document.getElementById("graphType").value;
@@ -111,9 +117,13 @@ function LoadUserDataWindow(parent) {
     function changedGraph(){
 		Graph.deleteGraph();
     }
-
+	
 	function pause(){  
         document.getElementById("graphPlane").pauseAnimations();
+	}
+	
+	function resume(){
+		document.getElementById("graphPlane").unpauseAnimations();
 	}
     
 	function changeSpeed(mod){
@@ -240,7 +250,7 @@ function LoadUserDataWindow(parent) {
     playBtn.setAttributeNS(null, "points", points);
     playBtn.setAttributeNS(null, "fill", "#4CBB17");
 	playBtn.setAttributeNS(null, "id", "Z");
-    playBtn.addEventListener("click", function () { document.getElementById("graphPlane").unpauseAnimations(); });
+    playBtn.addEventListener("click", resume);
 
     //Play button title (hover over text)
     var playTxt = document.createElementNS(xmlns, "title");
@@ -607,4 +617,37 @@ function populateSelect(selectInput) {
 	
 	
 	xmlhttp.send();
+}
+
+function callToMouseOver(i)
+{
+	var onWalkerMouseOver = function() {
+		if(document.getElementById("graphPlane").animationsPaused()){
+			walker=walkers[i];
+			this.setAttributeNS(null, "fill", "green");
+				Graph.changeNodeColor(Graph.nodes[walker.nodeDestArray[0]-1],"rgb(200,200,200)","black");
+			for(var j = 1; j< walker.currentNodeIndex; j++){
+				Graph.changeNodeColor(Graph.nodes[walker.nodeDestArray[j]-1],"rgb(200,200,200)","black");
+			var edge=document.getElementById((walker.nodeDestArray[j]-1).toString()+"-"+(walker.nodeDestArray[j-1]-1).toString());
+				if(edge == null)
+					edge = document.getElementById((walker.nodeDestArray[j-1]-1).toString()+"-"+(walker.nodeDestArray[j]-1).toString());
+				edge.setAttributeNS(null, "stroke", "white");
+			}
+			//loop through list of edges
+			this.removeEventListener("mouseover", onWalkerMouseOver);
+			this.addEventListener("mouseout", function onWalkerMouseOut() {
+				walker.updateColors(1);
+				for(var k =1; k< walker.currentNodeIndex; k++){
+					var edge = document.getElementById((walker.nodeDestArray[k]-1).toString()+"-"+(walker.nodeDestArray[k-1]-1).toString());
+					if(edge==null)
+						edge=document.getElementById((walker.nodeDestArray[k-1]-1).toString()+"-"+(walker.nodeDestArray[k]-1).toString());
+					edge.setAttributeNS(null, "stroke", null);
+				}
+				this.setAttributeNS(null, "fill", "black");
+				this.removeEventListener("mouseout", onWalkerMouseOut);
+				this.addEventListener("mouseover", onWalkerMouseOver);
+			}, false);
+		}
+	};
+	return onWalkerMouseOver;
 }

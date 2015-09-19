@@ -9,6 +9,7 @@ var xmlns="http://www.w3.org/2000/svg";
 var S = document.getElementById("svg");
 var w = window.innerWidth;             //gets the maximum width of the users page
 var h = window.innerHeight;            //gets the maximum height of the users page
+var graphGlobal = "";
 numberOfClicks = 0;         //number of rooms the user has clicked on
 nodeArray = new Array();  //creates our 2-d array to hold the value for each node and all the edges it is connected to.
 nodeColors = new Array();   //holds the color that will be associated with each node
@@ -41,21 +42,33 @@ var binBox = {// this is the binding box for our play area      <------->
 };
 function highScores()
 {
-	window.location = "http://cs.sru.edu/~gravity/botzer/gravity/highScores.php?topScore="+highScore+"&userTime="+elapsed+"&graphName="+graph+"";
+	var highScore = getHighScore();
+	try {
+		window.location = "http://cs.sru.edu/~gravity/botzer/gravity/highScores.php?topScore="+highScore+"&userTime="+elapsed+"&graphName="+graph+"";
+	}
+	catch (err) {
+		window.location = "http://cs.sru.edu/~gravity/botzer/gravity/highScores.php?topScore="+highScore+"&userTime="+elapsed+"&graphName="+graphGlobal+"";
+	}	
 }
 function getHighScore()
 {
 	xmlhttp = new XMLHttpRequest();
-	newGraph = graph.substring(0,(graph.length-4));
-	xmlhttp.open("GET","http://cs.sru.edu/~gravity/botzer/gravity/highScores/"+newGraph+".txt",true);
-	xmlhttp.onreadystatechange=function(){
-		if(xmlhttp.readyState==4)
-		{
-			highScore = xmlhttp.responseText;
-			displayScore(highScore);
+	try {
+		newGraph = graph.substring(0,(graph.length-4));
+		xmlhttp.open("GET","http://cs.sru.edu/~gravity/botzer/gravity/highScores/"+newGraph+".txt",true);
+		xmlhttp.onreadystatechange=function(){
+			if(xmlhttp.readyState==4)
+			{
+				highScore = xmlhttp.responseText;
+				displayScore(highScore);
+			}
 		}
+		xmlhttp.send();
 	}
-	xmlhttp.send();
+	catch (err) {
+		displayScore("0.0");
+	}
+	
 }
 //******************************************************************************************************************
 //taken from an online answer to a question on stackoverflow
@@ -120,8 +133,10 @@ function displayScore(highScore)
 	}*/
 	
 	
-	S.appendChild(text);
-	S.appendChild(text2);
+	/*S.appendChild(text);
+	S.appendChild(text2);*/
+	document.getElementById("svg").appendChild(text);
+	document.getElementById("svg").appendChild(text2);
 	setTimeout("chooseGame()",5000);
 }
 function scanDirectory()
@@ -212,7 +227,9 @@ function graphChoices()
 	addEventHandeler2(x);
 	var textNode = document.createTextNode(graphNames[x]);
     text.appendChild(textNode);
-    S.appendChild(text);
+	document.getElementById("svg").appendChild(text);
+    /* Below line is commented out for Graphical Web 2015. I don't know if it will break things later... -WBotzer */
+	//S.appendChild(text);
     yCord += 70;
 	}
 }//end graphChoices()
@@ -259,6 +276,7 @@ function initalizeEdges(nodes)
 }//end initalizeEdges()
 function getData(graph)
 {
+		graphGlobal = graph;
 		selectedGraph = graph;    //holds the name of the chosen graph to compare if they have completeed it
         xmlhttp.open("GET","testGraphs/"+graph,true);
      	xmlhttp.onreadystatechange=function(){
@@ -272,6 +290,7 @@ function getData(graph)
 }
 function removeSVG()
 {
+	S = document.getElementById("svg");
 	while(S.lastChild) //loops through and removes all the children in the svg tag
 	{
 	    S.removeChild(S.lastChild);
@@ -282,7 +301,16 @@ function removeSVG()
 function chooseGame()
 {
 	removeSVG();
-	if(graph.charAt(0) == 'T')
+	if(graphGlobal.charAt(0) == 'T' || graphGlobal.charAt(0) == 't')
+	{
+		initalizeTraverse();
+		beginTraversal(1);
+	}
+	else if(graphGlobal.charAt(0) == 'F')
+	{
+		beginTraversal(3);
+	}
+	/*if(graph.charAt(0) == 'T')
 	{
 		initalizeTraverse();
 		beginTraversal(1);
@@ -290,7 +318,7 @@ function chooseGame()
 	else if(graph.charAt(0) == 'F')
 	{
 		beginTraversal(3);
-	}
+	}*/
 }
 //this function is used to display a page that allows you to click and select the game that you wish to test
 //--------------------------------------------------------------------------------------------------------------------
@@ -353,7 +381,7 @@ function generateRooms(currentNode)
     displayCurrentRoom(currentNode);
 }
 function dataDump()
-{
+{	
 	var footPrintString = "";
 	for(var g=0; g < footPrintArray.length;g++)
 	{
@@ -363,8 +391,13 @@ function dataDump()
 	xmlhttp2 = new XMLHttpRequest();
 	xmlhttp2.open("POST","http://cs.sru.edu/~gravity/botzer/gravity/dataDump.php",true);
 	xmlhttp2.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xmlhttp2.send("footPrintString="+footPrintString+"&graphName="+newGraph+"");
-	
+	try {
+		xmlhttp2.send("footPrintString="+footPrintString+"&graphName="+newGraph+"");
+	}
+	catch (err) {
+		xmlhttp2.send("footPrintString="+footPrintString+"&graphName="+graphGlobal.substring(0,(graphGlobal.length-4))+"");
+	}
+
 }//end dataDump()
 function displayCurrentRoom(currentNode)
 {
@@ -826,7 +859,9 @@ function foundEverything()
 </script>
 <title>HTML Constructor</title>
 </head>
-<body onload="graphsTraversed()">
+
+<!-- <body onload="graphsTraversed()"> --> <!-- Allows for auto selection of graph -->
+<body onload="scanDirectory();"> <!-- Manual graph selection -->
 <svg xmlns="http://www.w3.org/2000/svg" version="1.2" id="svg" width="100%" height="100%">
 
 </svg>

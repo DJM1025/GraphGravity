@@ -64,8 +64,10 @@ function fetchUserData(graphType) {
 				
 			//loop through walkers and add mouseover
 			for(var i=0; i<walkers.length; i++){
-				if(walkers[i].element)
+				if(walkers[i].element){
 					walkers[i].element.addEventListener("mouseover", callToMouseOver(i));
+					walkers[i].element.addEventListener("mousedown", callToWalkerOnClick(i));
+				}
 			}
 		}
 	}
@@ -628,7 +630,7 @@ function callToMouseOver(i)
 				Graph.changeNodeColor(Graph.nodes[walker.nodeDestArray[0]-1],"rgb(200,200,200)","black");
 			for(var j = 1; j< walker.currentNodeIndex; j++){
 				Graph.changeNodeColor(Graph.nodes[walker.nodeDestArray[j]-1],"rgb(200,200,200)","black");
-			var edge=document.getElementById((walker.nodeDestArray[j]-1).toString()+"-"+(walker.nodeDestArray[j-1]-1).toString());
+				var edge=document.getElementById((walker.nodeDestArray[j]-1).toString()+"-"+(walker.nodeDestArray[j-1]-1).toString());
 				if(edge == null)
 					edge = document.getElementById((walker.nodeDestArray[j-1]-1).toString()+"-"+(walker.nodeDestArray[j]-1).toString());
 				edge.setAttributeNS(null, "stroke", "white");
@@ -643,11 +645,28 @@ function callToMouseOver(i)
 						edge=document.getElementById((walker.nodeDestArray[k-1]-1).toString()+"-"+(walker.nodeDestArray[k]-1).toString());
 					edge.setAttributeNS(null, "stroke", null);
 				}
-				this.setAttributeNS(null, "fill", "black");
+				this.setAttributeNS(null, "fill", walker.color);
 				this.removeEventListener("mouseout", onWalkerMouseOut);
 				this.addEventListener("mouseover", onWalkerMouseOver);
 			}, false);
 		}
 	};
 	return onWalkerMouseOver;
+}
+
+function callToWalkerOnClick(i){
+	var walkerOnClick = function() {
+		if(document.getElementById("graphPlane").animationsPaused()){
+			var walker=walkers[i];
+			if(walker.clicked){
+				walker.color = "black";
+			}
+			else{
+				walker.color = "yellow";
+			}
+			walker.element.fill = walker.color;
+			walker.clicked=!(walker.clicked);
+		}
+	};
+	return walkerOnClick;
 }

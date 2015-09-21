@@ -21,40 +21,37 @@ Dr. David Dailey<br>
 <font color="green">Slippery Rock University</font>
 </div>
 
-<h2 class="title" style="clear: both;"><a id="L1T2">Presentation Overview </a></h2>	
+<h2 class="title" style="clear: both;"><a id="L1T2">Overview </a></h2>	
 
 Visualization of Web Traffic
 <ul>
 	<li>Web sites represented as graphs</li>
 	<li>Nodes are pages; Edges are links</li>
-	<li>Visualizations of random traversal of a graph</li>
-	<li>Visualization of actual users traversing</li>
+	<li>Visualizations of random traversals of a graph</li>
+	<li>Visualization of actual users traversing a graph</li>
 	<li>Use color to indicate the temperature of a node</li>
 	<li>Width of edge increases as the amount of traversals increases</li>
 	<li>Speed control</li>
 	<li>Path where a particular user has been</li>
 </ul>
-Software Overview
+Presentation Overview
 <ul>
 	<li>Grapher software used to generate graphs for rapid prototyping of web sites
 	</li>
-	<li>Constructor used to modify pages</li>
-<li>Grapher and Constructor use the same XML structure</li>
-<li>Both tools permit importing and exporting of graphs and updates</li> 
-<li>Data maintained even if not visible in particular tool<br>
-e.g., the x,y coordinates of a node are not used by the constructor</li>
 	<li>Random traversals of site generated visualized</li>
+	<li>Grapher and Constructor use the same XML structure</li>
+	<li>Constructor used to modify pages</li>	
+	<li>Software permits importing and exporting of graphs and updates</li> 
 	<li>User data traversals visualized</li>
-	<li>Graph numbering technique gravity theory </li>
-	<li>Reduce the number of edges traversed on web site</li>
-	<li>Reduce search time</li>
+	<li>Graph numbering technique (i.e., flavoring)</li>
+	<li>Purpose of the research is to reduce user search time on a website</li>
 </ul>
 
 <h2 class="title" style="clear: both;"><a id="L1T2">Grapher </a></h2>
 <ul>
 	<li>Grapher was originally developed in 1987 ported to SVG in 2009</li>
 	<li>GUI that permits graph building</li>
-	<li>Written with HTML, Javascript, and SVG</li>
+	<li>Written with HTML, Javascript, SVG, and PHP</li>
 	<li>Features include:
 		<ul>
 		<li>graph scaling</li>
@@ -62,10 +59,10 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 		<li>extrude (i.e., Multiply by K2)</li>
 		</ul>
 	</li>
-	<li>Utility:
+	<li>Purpose:
 	<ul><li>Research the types of graphs that are easy to navigate</li>
 	<li>Optimization of web site design for ease of navigation</li>
-	<li>Used for testing Mathematical hypotheses regarding graph navigability</li>
+	<li>Used for testing mathematical hypotheses regarding graph navigability</li>
 	</ul></li>
 </ul>
 <table>
@@ -86,12 +83,12 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 <a href="http://granite.sru.edu/~ewm1001/Grapher.html">Demonstration of graph creation</a>
 <h2 class="title" style="clear: both;"><a id="L1T2">Random Traversals </a></h2>
 <ul>
-<li>Random traversals used for comparing techniques
+<li>Random traversals used as a proof of concept
 	<li>Visualization process</li>
 	<li>Properties of graphs seen in random traversals</li>
 	<ul>
 		<li>Nodes with more edges are "hotter"</li>
-		<li>Bridges and articulation points are more popular</li>
+		<li>Bridges and articulation points are visited more often</li>
 	</ul>
 </ul>
 <table>
@@ -116,13 +113,11 @@ e.g., the x,y coordinates of a node are not used by the constructor</li>
 <li>Graph edges are displayed as buttons ("doors") that link to other pages</li>
 <li>Each page's background color is the same as the color of the door  that leads to it</li>
 <li>Constructor's options include:</li>
-<ul><li>Selection of words on each page</li>
-<li>Selection of a numbering scheme for the pages</li>
-<li>Create a search game with goal of finding all pages and returning home</li>
-<li>Create a search game to find object (e.g., turkey) and return them to home base</li>
-
+<ul>
+	<li>Selection of words on each page</li>
+	<li>Selection of a numbering scheme for the pages</li>
 </ul>
-
+<li>Create a search game with one of two goals</li>
 </ul>
 
 <table>
@@ -221,7 +216,5 @@ neighbors which have gravity values closest to that of the destination node</li>
 </ul>
 
 
-
-<h2 class="title" style="clear: both;"><a id="L1T2">References</a></h2>
 
 </body></html>

@@ -547,7 +547,7 @@ window.addEventListener("load", function () {
             Graph.clipboard.addToHistory("Extruded subgraph");
             Graph.extrude();
         });
-        menu.bindAction(["Graph", "Breadth-First"], function () { temp("Graph -> Breadth-First"); });
+        menu.bindAction(["Graph", "Breadth-First"], function () { Graph.breadthFirst(); });
         menu.bindAction(["Graph", "Force"], function () { temp("Graph -> Force"); });
         menu.bindAction(["Graph", "Adjacency Matrix"], function () { temp("Graph -> Adjacency Matrix"); });
 

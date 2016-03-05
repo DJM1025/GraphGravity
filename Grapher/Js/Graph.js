@@ -1857,7 +1857,36 @@ window.addEventListener("load", function loadGraph() {
 		}
 	};
     Graph.breadthFirst = function () {
+		var nodeQueue = [];
+		var visitedNodes = [];
+		var count = 0;
+		Graph.selectAllNodes();
+		nodeQueue.push(Graph.selectedNodes[0]);
+		Graph.breadthFirstTree(nodeQueue, visitedNodes, count);
+		
     };
+	Graph.breadthFirstTree = function(nodeQueue, visited, count) {
+		if(nodeQueue.length > 0){
+			var current = nodeQueue.shift();
+			visited[visited.length] = current;
+			current.nodeLabel = ++count;
+			current.text.textContent = current.nodeLabel;
+			for(var i in current.adjacentNodes){
+				if(visited.indexOf(current.adjacentNodes[i]) == -1){
+					if(nodeQueue.indexOf(current.adjacentNodes[i]) == -1){
+						nodeQueue[nodeQueue.length] = current.adjacentNodes[i];
+					}
+					else{
+						Graph.deleteEdge(current, current.adjacentNodes[i]);
+					}
+				}
+			}
+			Graph.breadthFirstTree(nodeQueue, visited, count);
+		}
+		else{
+			alert("Complete!");
+		}
+	};
 
     Graph.force = function () {
     };
